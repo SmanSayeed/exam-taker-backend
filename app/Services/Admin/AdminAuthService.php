@@ -5,13 +5,14 @@ namespace App\Services\Admin;
 use App\DTOs\Admin\Auth\AdminRegistrationData;
 use App\DTOs\Admin\Auth\AdminLoginData;
 use App\Helpers\ApiResponseHelper;
-use App\Repositories\AdminRepositoryInterface;
-use App\Http\Resources\AdminResource;
+use App\Repositories\Admin\AdminRepositoryInterface;
+use App\Http\Resources\Admin\AdminResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 class AdminAuthService
 {
@@ -23,14 +24,20 @@ class AdminAuthService
     }
     public function createAdmin(AdminRegistrationData $adminRegistrationData): JsonResponse
     {
+        DB::beginTransaction();
+
         try {
             $data = $adminRegistrationData->toArray();
-            $data['password'] = Hash::make($adminRegistrationData->password);
+            $data['password'] = bcrypt($adminRegistrationData->password);
 
             $admin = $this->adminRepository->create($data);
 
+            DB::commit();
+
             return ApiResponseHelper::success(new AdminResource($admin), 'Admin created successfully', 201);
         } catch (Exception $e) {
+            DB::rollback();
+
             return ApiResponseHelper::error('Failed to create admin: ' . $e->getMessage(), 500);
         }
     }
