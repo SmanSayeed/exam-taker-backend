@@ -2,8 +2,16 @@
 
 namespace App\Exceptions;
 
+use App\Helpers\ApiResponseHelper;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use Throwable;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -44,5 +52,25 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+          if ($request->acceptsJson()) {
+            return ApiResponseHelper::error('Unauthenticated.', null, 401);
+        }
+
+        return redirect()->guest(route('login'));
+    }
+
+    public function render($request, Throwable $e)
+    {
+        // Handle ModelNotFoundException as JSON response
+        if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
+            Log::error($e);
+            return ApiResponseHelper::error('Resource not found. '.$e->getMessage(), null, 404);
+        }
+        // Handle other exceptions as needed
+        return parent::render($request, $e);
     }
 }

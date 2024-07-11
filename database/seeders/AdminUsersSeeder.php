@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Admin;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class AdminUsersSeeder extends Seeder
 {
@@ -19,21 +20,21 @@ class AdminUsersSeeder extends Seeder
         $adminUser = Admin::firstOrCreate([
             'name' => 'Super Admin',
             'email' => 'superadmin@example.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
         ]);
         $adminUser->assignRole($adminRole);
 
         $subAdminUser = Admin::firstOrCreate([
             'name' => 'Sub Admin',
             'email' => 'subadmin@example.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
         ]);
         $subAdminUser->assignRole($subAdminRole);
 
         $editorUser = Admin::firstOrCreate([
             'name' => 'Editor',
             'email' => 'editor@example.com',
-            'password' => bcrypt('password'),
+            'password' => Hash::make('password'),
         ]);
         $editorUser->assignRole($editorRole);
     }

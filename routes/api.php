@@ -6,8 +6,9 @@ use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->group(function () {
-    Route::post('/register', [AdminRegistrationController::class, 'store']);
-    Route::post('/login', [AdminLoginController::class, 'login']);// create AuthController for authentication
+    // Route::post('/register', [AdminRegistrationController::class, 'store']);
+    // Route::post('/login', [AdminLoginController::class, 'login']);
+    // create AuthController for authentication
     // Other admin routes
 });
 

@@ -6,12 +6,12 @@ use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->group(function () {
+
     Route::get('/check',function(){
         return response()->json(['data'=>"Checked",'message' => 'success'], 200);
     });
     Route::post('/create', [AdminRegistrationController::class, 'store']);
-    Route::post('/login', [AdminLoginController::class, 'login']);// create AuthController for authentication
-    // Other admin routes
+    Route::post('/login', [AdminLoginController::class, 'login']);
 });
 
 // Route::prefix('student')->group(function () {

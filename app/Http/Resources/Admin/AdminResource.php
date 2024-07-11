@@ -20,7 +20,7 @@ class AdminResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'active_status' => $this->active_status,
-            'roles' => $this->roles->pluck('name'), 
+            'roles' => $this->roles->pluck('name'),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];

@@ -28,7 +28,7 @@ class AdminAuthService
 
         try {
             $data = $adminRegistrationData->toArray();
-            $data['password'] = bcrypt($adminRegistrationData->password);
+            $data['password'] = Hash::make($adminRegistrationData->password);
 
             $admin = $this->adminRepository->create($data);
 
@@ -46,12 +46,19 @@ class AdminAuthService
     {
         try {
             $credentials = $adminLoginData->toArray();
-            if (!Auth::attempt($credentials)) {
+            // $admin = $this->adminRepository->findByEmail($credentials['email']);
+            $admin = Auth::guard('admin-api')->getProvider()->retrieveByCredentials($credentials);
+            // if (!$admin || !Hash::check($credentials['password'], $admin->password)) {
+            //     return ApiResponseHelper::error('Invalid credentials', 401);
+            // }
+
+             if (!$admin || !Hash::check($credentials['password'], $admin->password)) {
                 return ApiResponseHelper::error('Invalid credentials', 401);
             }
 
-            $admin = Auth::user();
+            // If credentials are correct, generate a new token
             $token = $admin->createToken('API Token')->plainTextToken;
+
             return ApiResponseHelper::success([
                 'token' => $token,
                 'admin' => new AdminResource($admin)
@@ -60,6 +67,8 @@ class AdminAuthService
             return ApiResponseHelper::error('Failed to authenticate: ' . $e->getMessage(), 500);
         }
     }
+
+
 
     public function findAdminByEmail(string $email): JsonResponse
     {
