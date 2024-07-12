@@ -6,21 +6,32 @@ use App\DTOs\StudentDTO\StudentRegistrationData;
 use App\Http\Resources\StudentResource\StudentResource;
 use App\Models\Student;
 use App\Helpers\ApiResponseHelper;
+use App\Repositories\Admin\StudentCRUDRepository\StudentCRUDRepositoryInterface;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 
 class StudentCRUDService
 {
+    protected StudentCRUDRepositoryInterface $studentRepository;
+
+    public function __construct(StudentCRUDRepositoryInterface $studentRepository)
+    {
+        $this->studentRepository = $studentRepository;
+    }
+
+    public function getAll(int $perPage = 15)
+    {
+        return $this->studentRepository->getAll($perPage);
+    }
 
     public function store(StudentRegistrationData $data)
     {
         try {
             $studentData = $data->toArray();
             $studentData['password'] = Hash::make($studentData['password']);
-
+            unset($studentData['password_confirmation']); // Remove password confirmation field
             // Optional logic before creating student
-            $student = Student::create($studentData);
-
+            $student = $this->studentRepository->create($studentData);
             // Return success response
             return ApiResponseHelper::success('Student created successfully', new StudentResource($student));
         } catch (Exception $e) {

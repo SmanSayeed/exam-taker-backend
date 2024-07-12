@@ -12,6 +12,7 @@ use App\Models\Student;
 use App\Services\StudentService\StudentCRUDService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+
 class StudentCRUDController extends Controller
 {
     protected $studentService;
@@ -21,43 +22,54 @@ class StudentCRUDController extends Controller
         $this->studentService = $studentService;
     }
 
-    public function index():JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $students = Student::all();
+            $perPage = $request->get('per_page', 15);
+            $students = $this->studentService->getAll($perPage);
             return ApiResponseHelper::success(StudentResource::collection($students), 'Students retrieved successfully');
         } catch (\Exception $e) {
-            throw new \Exception('Failed to retrieve students: ' . $e->getMessage());
+            return ApiResponseHelper::error('Failed to retrieve students: ' . $e->getMessage(), 500);
         }
     }
 
-    public function store(StudentRegistrationRequest $request):JsonResponse
+    public function store(StudentRegistrationRequest $request): JsonResponse
     {
         try {
             $studentData = StudentRegistrationData::from($request->validated());
-
             $result = $this->studentService->store($studentData);
-
             return $result;
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to register student: ' . $e->getMessage()], 500);
+            return ApiResponseHelper::error('Failed to register student: ' . $e->getMessage(), 500);
         }
     }
 
-    public function show(Student $student)
+    public function show(Student $student): JsonResponse
     {
-        return new StudentResource($student);
+        try {
+            return ApiResponseHelper::success(new StudentResource($student), 'Student retrieved successfully');
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('Failed to retrieve student: ' . $e->getMessage(), 500);
+        }
     }
 
-    public function update(StudentUpdateRequest $request, Student $student)
+    public function update(StudentUpdateRequest $request, Student $student): JsonResponse
     {
-        $student->update($request->validated());
-        return new StudentResource($student);
+        try {
+            $student->update($request->validated());
+            return ApiResponseHelper::success(new StudentResource($student), 'Student updated successfully');
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('Failed to update student: ' . $e->getMessage(), 500);
+        }
     }
 
-    public function destroy(Student $student)
+    public function destroy(Student $student): JsonResponse
     {
-        $student->delete();
-        return response()->json(['message' => 'Student deleted successfully']);
+        try {
+            $student->delete();
+            return ApiResponseHelper::success(null, 'Student deleted successfully');
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('Failed to delete student: ' . $e->getMessage(), 500);
+        }
     }
 }
