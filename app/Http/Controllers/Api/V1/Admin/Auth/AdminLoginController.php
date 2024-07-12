@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Admin\Auth;
 
+use App\DTOs\AdminDTO\AdminLoginData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminLoginRequest;
 use App\Services\Admin\AdminAuthService;
-use App\DTOs\Admin\Auth\AdminLoginData;
 use Illuminate\Http\JsonResponse;
 use Exception;
 

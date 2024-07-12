@@ -2,8 +2,8 @@
 
 namespace App\Services\Admin;
 
-use App\DTOs\Admin\Auth\AdminRegistrationData;
-use App\DTOs\Admin\Auth\AdminLoginData;
+use App\DTOs\AdminDTO\AdminRegistrationData;
+use App\DTOs\AdminDTO\AdminLoginData;
 use App\Helpers\ApiResponseHelper;
 use App\Repositories\Admin\AdminRepositoryInterface;
 use App\Http\Resources\Admin\AdminResource;

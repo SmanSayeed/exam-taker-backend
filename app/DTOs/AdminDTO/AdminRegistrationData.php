@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DTOs\Admin\Auth;
+namespace App\DTOs\AdminDTO;
 
 use Spatie\LaravelData\Data;
 

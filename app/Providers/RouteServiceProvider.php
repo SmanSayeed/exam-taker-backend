@@ -19,6 +19,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/home';
 
+    private const ADMIN_ROUTE_PATH = 'routes/api/v1/admin_routes';
+
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
@@ -28,7 +30,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $this->routes(function () {
             Route::middleware('api')
-                ->prefix('api')
+                ->prefix('api/v1')
                 ->group(base_path('routes/api.php'));
 
             Route::prefix('api/v1')
@@ -36,7 +38,6 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(function () {
                     // Public API routes
                     $this->mapPublicRoutes();
-
                     // Protected API routes
                     Route::middleware(['auth:sanctum'])->group(function () {
                         $this->mapProtectedRoutes();
@@ -56,11 +57,11 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     /**
-     * Map the public API routes.
+ * Map the public API routes.
      */
     protected function mapPublicRoutes()
     {
-        Route::group([], base_path('routes/api/v1/admin/admin_public_routes.php'));
+        Route::group([], base_path(self::ADMIN_ROUTE_PATH.'/admin_public_routes.php'));
     }
 
     /**
@@ -68,7 +69,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapProtectedRoutes()
     {
-        Route::prefix('admin')->group(base_path('routes/api/v1/admin/admin_protected_routes.php'));
+        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH.'/admin_protected_routes/admin_profile_routes.php'));
+
+        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH.'/admin_protected_routes/admin_profile_routes.php'));
         // You can add more route groups for different user roles or sections.
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminRegistrationRequest;
 use App\Services\Admin\AdminAuthService;
-use App\DTOs\Admin\Auth\AdminRegistrationData;
+use App\DTOs\AdminDTO\AdminRegistrationData;
 use Illuminate\Http\JsonResponse;
 use Exception;
 

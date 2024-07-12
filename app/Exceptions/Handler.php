@@ -56,11 +56,11 @@ class Handler extends ExceptionHandler
 
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-          if ($request->acceptsJson()) {
-            return ApiResponseHelper::error('Unauthenticated.', null, 401);
-        }
+        // if ($request->expectsJson()) {
+            return ApiResponseHelper::error('Unauthenticated.', 401);
+        // }
 
-        return redirect()->guest(route('login'));
+        // return redirect()->guest(route('login'));
     }
 
     public function render($request, Throwable $e)
@@ -68,9 +68,28 @@ class Handler extends ExceptionHandler
         // Handle ModelNotFoundException as JSON response
         if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
             Log::error($e);
-            return ApiResponseHelper::error('Resource not found. '.$e->getMessage(), null, 404);
+            return ApiResponseHelper::error('Resource not found. ' . $e->getMessage(), 404);
         }
+
         // Handle other exceptions as needed
-        return parent::render($request, $e);
+        Log::error($e);
+
+        // Handle AuthenticationException for JSON responses
+        if ($e instanceof AuthenticationException) {
+            return ApiResponseHelper::error($e->getMessage(), 401);
+        }
+        // Ensure that the response is always in JSON format
+        if ($request->expectsJson() || $request->is('api/*')) {
+            return ApiResponseHelper::error('An unexpected error occurred. ' . $e->getMessage(), 500);
+        }
+
+        // For other exceptions, fall back to the default Laravel behavior
+        // return parent::render($request, $e);
+        // Handle other exceptions
+        return ApiResponseHelper::error('An unexpected error occurred. ' . $e->getMessage(), 500);
+
+
     }
+
+
 }

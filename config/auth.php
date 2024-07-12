@@ -45,6 +45,15 @@ return [
             'provider' => 'admins',
             'hash' => true,
         ],
+        'student-api' => [
+            'driver' => 'sanctum',
+            'provider' => 'students',
+            'hash' => true,
+        ],
+        'students' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Student::class,
+        ],
     ],
 
     /*

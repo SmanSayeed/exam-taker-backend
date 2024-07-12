@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminLoginController;
+use App\Http\Controllers\Api\V1\Admin\Auth\AdminLogoutController;
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminRegistrationController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
