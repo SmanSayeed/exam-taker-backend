@@ -24,16 +24,15 @@ class StudentCRUDService
         return $this->studentRepository->getAll($perPage);
     }
 
-    public function store(StudentRegistrationData $data)
+    public function store(array $studentData)
     {
         try {
-            $studentData = $data->toArray();
             $studentData['password'] = Hash::make($studentData['password']);
             unset($studentData['password_confirmation']); // Remove password confirmation field
             // Optional logic before creating student
             $student = $this->studentRepository->create($studentData);
             // Return success response
-            return ApiResponseHelper::success('Student created successfully', new StudentResource($student));
+            return $student;
         } catch (Exception $e) {
             // Return error response
             return ApiResponseHelper::error('Failed to create student: ' . $e->getMessage(), 500);
@@ -44,8 +43,7 @@ class StudentCRUDService
     {
         try {
             $student->update($data);
-
-            return ApiResponseHelper::success('Student updated successfully', new StudentResource($student));
+            return $student;
         } catch (Exception $e) {
             return ApiResponseHelper::error('Failed to update student: ' . $e->getMessage(), 500);
         }

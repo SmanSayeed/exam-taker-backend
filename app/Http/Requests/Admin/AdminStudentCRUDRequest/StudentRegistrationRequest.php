@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\StudentRequest;
+namespace App\Http\Requests\Admin\AdminStudentCRUDRequest;
 
 use App\Helpers\ApiResponseHelper;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-
-class StudentUpdateRequest extends FormRequest
+use Illuminate\Support\Facades\Auth;
+class StudentRegistrationRequest extends FormRequest
 {
     public function authorize()
     {
