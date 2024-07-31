@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Topic extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['lesson_id', 'title', 'description', 'image'];
+
+    public function lesson()
+    {
+        return $this->belongsTo(Lesson::class);
+    }
 }

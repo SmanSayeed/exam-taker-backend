@@ -11,14 +11,41 @@ use App\Helpers\ApiResponseHelper;
 use App\Http\Resources\Admin\AdminResource;
 use Exception;
 
+/**
+ * @OA\Swagger(
+ * schemes={"https"},
+ * host="mywebsite.com",
+ * basePath="http://localhost:8000/api/v1",
+ * @OA\Info(
+ * version="1.0.0",
+ * title="My Website",
+ * description="Put Markdown Here [a Link](https://www.google.com)",
+ * @OA\Contact(
+ * email="my@email"
+ *      ),
+ *   ),
+ * )
+ */
+
 class AdminProfileController extends Controller
 {
+
     protected AdminAuthService $adminAuthService;
 
     public function __construct(AdminAuthService $adminAuthService)
     {
         $this->adminAuthService = $adminAuthService;
     }
+
+    /**
+   * @OA\Get(path="/users", description="Get all users",       operationId="",
+   *   @OA\Response(response=200, description="OK",
+   *     @OA\JsonContent(type="string")
+   *   ),
+   *   @OA\Response(response=401, description="Unauthorized"),
+   *   @OA\Response(response=404, description="Not Found")
+   * )
+   */
 
     public function getAdminProfile(): JsonResponse
     {

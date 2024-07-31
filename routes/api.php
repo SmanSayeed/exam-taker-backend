@@ -5,6 +5,11 @@ use App\Http\Controllers\Api\V1\Admin\Auth\AdminRegistrationController;
 use App\Http\Controllers\Api\V1\Admin\Maintenance\AdminMaintenanceController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
+use OpenApi\Generator;
+
+Route::get('/swagger.json', function () {
+    Generator::scan([ app_path(), ])->toJson();
+});
 
 Route::prefix('admin')->group(function () {
     Route::post('/maintenance/clear-cache', [AdminMaintenanceController::class, 'clearCache']);
