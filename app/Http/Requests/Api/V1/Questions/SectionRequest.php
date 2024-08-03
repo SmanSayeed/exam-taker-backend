@@ -7,7 +7,7 @@ class SectionRequest extends FormRequest
 {
     public function authorize()
     {
-        return true; // Adjust as needed based on your authorization logic
+        return auth('admin')->check();
     }
 
     public function rules()

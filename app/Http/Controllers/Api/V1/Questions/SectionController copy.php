@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Http\Controllers\Api\V1\Questions;
+
+use App\DTOs\QuestionDTO\SectionData;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\Questions\SectionRequest;
+use App\Services\Question\SectionService;
+use App\Models\Section;
+use App\Helpers\ApiResponseHelper;
+use Illuminate\Http\JsonResponse;
+use Exception;
+
+class SectionController extends Controller
+{
+    protected SectionService $sectionService;
+
+    public function __construct(SectionService $sectionService)
+    {
+        $this->sectionService = $sectionService;
+    }
+
+    public function index(): JsonResponse
+    {
+        try {
+            $sections = $this->sectionService->getAllSections();
+            return ApiResponseHelper::success($sections, 'Sections retrieved successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to retrieve sections: ' . $e->getMessage());
+        }
+    }
+
+    public function store(SectionRequest $request): JsonResponse
+    {
+        try {
+            $sectionData = SectionData::from($request->validated());
+            $section = $this->sectionService->createSection($sectionData);
+            return ApiResponseHelper::success($section, 'Section created successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to create section: ' . $e->getMessage());
+        }
+    }
+
+    public function update(SectionRequest $request, Section $section): JsonResponse
+    {
+        try {
+            $sectionData = SectionData::from($request->validated());
+            $section = $this->sectionService->updateSection($section, $sectionData);
+            return ApiResponseHelper::success($section, 'Section updated successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to update section: ' . $e->getMessage());
+        }
+    }
+
+    public function destroy(Section $section): JsonResponse
+    {
+        try {
+            $this->sectionService->deleteSection($section);
+            return ApiResponseHelper::success([], 'Section deleted successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to delete section: ' . $e->getMessage());
+        }
+    }
+
+    public function changeStatus(Section $section, $status): JsonResponse
+    {
+        try {
+            $section = $this->sectionService->changeStatus($section, (bool)$status);
+            return ApiResponseHelper::success($section, 'Section status changed successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to change section status: ' . $e->getMessage());
+        }
+    }
+}
