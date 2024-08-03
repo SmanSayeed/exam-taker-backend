@@ -81,8 +81,9 @@ class QuestionBaseController extends Controller
         return $dtoClasses[$resourceType];
     }
 
-    public function getData(string $resourceType): JsonResponse
+    public function getData($resourceType)
     {
+        return ApiResponseHelper::success("index - ",$resourceType);
         try {
             $model = $this->getModel($resourceType);
             $this->service->setModel($model);

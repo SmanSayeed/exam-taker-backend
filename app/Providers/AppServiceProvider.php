@@ -25,14 +25,6 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(QuestionBaseRepositoryInterface::class, QuestionBaseRepository::class);
 
-        // $this->app->bind(SectionRepositoryInterface::class, SectionRepository::class);
-         // Binding repositories
-
-
-        // Binding services
-        $this->app->singleton(QuestionBaseService::class, function ($app) {
-            return new QuestionBaseService($app->make(QuestionBaseService::class));
-        });
     }
 
     /**

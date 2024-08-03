@@ -10,7 +10,7 @@ use App\Http\Requests\Api\V1\Questions\QuestionBaseRequest;
 use App\DTOs\QuestionDTO\QuestionEntityData;
 use Exception;
 
-abstract class QuestionBaseController extends Controller
+// abstract class QuestionBaseController extends Controller
 {
     protected QuestionBaseService $service;
 
