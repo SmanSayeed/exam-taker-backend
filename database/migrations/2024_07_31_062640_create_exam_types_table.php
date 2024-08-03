@@ -11,10 +11,11 @@ class CreateExamTypesTable extends Migration
         Schema::create('exam_types', function (Blueprint $table) {
             $table->id();
             $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
-            $table->string('title');
+            $table->string('title')->unique();
             $table->text('details')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);
+            $table->string('year')->nullable();
             $table->timestamps();
         });
     }

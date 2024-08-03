@@ -10,8 +10,8 @@ class CreateYearsTable extends Migration
     {
         Schema::create('years', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
-            $table->string('title');
+            // $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
+            $table->string('title')->unique();
             $table->text('details')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);

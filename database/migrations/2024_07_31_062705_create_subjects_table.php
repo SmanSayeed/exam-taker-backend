@@ -13,7 +13,7 @@ class CreateSubjectsTable extends Migration
             $table->foreignId('level_id')->constrained('levels')->onDelete('cascade');
             $table->foreignId('group_id')->constrained('groups')->onDelete('cascade');
             $table->enum('part', ['1st', '2nd']);
-            $table->string('title');
+            $table->string('title')->unique();
             $table->text('details')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);

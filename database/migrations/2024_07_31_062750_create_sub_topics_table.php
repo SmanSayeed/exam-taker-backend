@@ -11,7 +11,7 @@ class CreateSubTopicsTable extends Migration
         Schema::create('sub_topics', function (Blueprint $table) {
             $table->id();
             $table->foreignId('topic_id')->constrained('topics')->onDelete('cascade');
-            $table->string('title');
+            $table->string('title')->unique();
             $table->text('details')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);

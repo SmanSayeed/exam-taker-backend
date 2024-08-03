@@ -11,7 +11,7 @@ class CreateLessonsTable extends Migration
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
-            $table->string('title');
+            $table->string('title')->unique();
             $table->text('details')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);

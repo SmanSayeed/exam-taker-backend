@@ -11,7 +11,7 @@ class CreateExamSubTypesTable extends Migration
         Schema::create('exam_sub_types', function (Blueprint $table) {
             $table->id();
             $table->foreignId('exam_type_id')->constrained('exam_types')->onDelete('cascade');
-            $table->string('title');
+            $table->string('title')->unique();
             $table->text('details')->nullable();
             $table->string('image')->nullable();
             $table->boolean('status')->default(true);

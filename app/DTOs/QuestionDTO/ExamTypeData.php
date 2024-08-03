@@ -10,6 +10,7 @@ class ExamTypeData extends Data
         public string $title,
         public ?string $details,
         public ?string $image,
+        public ?string $year,
         public bool $status
     ) {}
 }

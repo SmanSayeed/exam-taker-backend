@@ -55,6 +55,7 @@ class QuestionBaseController extends Controller
 
     protected function getDtoFromRequest(QuestionBaseRequest $request, string $resourceType)
     {
+
         $dtoClass = $this->getDtoClass($resourceType);
         return $dtoClass::from($request->validated());
     }
@@ -157,9 +158,14 @@ class QuestionBaseController extends Controller
         }
     }
 
-    public function changeStatus(string $resourceType, int $id, bool $status): JsonResponse
+    public function changeStatus(Request $request, string $resourceType, int $id): JsonResponse
     {
         try {
+            $status = $request->input('status'); // Get status from request
+            if (!is_bool($status)) {
+                return ApiResponseHelper::error('Invalid status value. It must be a boolean.', 400);
+            }
+
             $model = $this->getModel($resourceType);
             $this->service->setModel($model);
 
