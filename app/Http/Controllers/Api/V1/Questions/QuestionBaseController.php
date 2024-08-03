@@ -109,11 +109,20 @@ class QuestionBaseController extends Controller
 
     public function store(QuestionBaseRequest $request, string $resourceType): JsonResponse
     {
+        // dd($request->all());
         try {
             $model = $this->getModel($resourceType);
             $this->service->setModel($model);
 
-            $dto = $this->getDtoFromRequest($request, $resourceType);
+            // dd($request);
+            try {
+                $dto = $this->getDtoFromRequest($request, $resourceType);
+            } catch (\Throwable $e) {
+                // Log or debug the error
+                dd('Error creating DTO:', $e->getMessage());
+            }
+
+
             $item = $this->service->create($dto->toArray());
             return ApiResponseHelper::success($item, 'Item created successfully', 201);
         } catch (Exception $e) {

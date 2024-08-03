@@ -3,13 +3,13 @@
 namespace App\Http\Requests\Api\V1\Questions;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Support\Facades\Auth;
 class QuestionBaseRequest extends FormRequest
 {
     public function authorize(): bool
     {
         // Here you can add authorization logic based on the user's role or permissions
-        return auth('admin')->check();
+        return Auth::guard('admin-api')->check();
     }
 
     public function rules(): array

@@ -3,12 +3,14 @@ namespace App\DTOs\QuestionDTO;
 
 use Spatie\LaravelData\Data;
 
-class SectionData extends QuestionEntityData
+
+class ExamSubTypeData extends QuestionEntityData
 {
     public function __construct(
-        ?string $title,
-        ?string $details = null,
-        ?string $image = null,
+        public int $exam_type_id,
+        string $title,
+        ?string $details,
+        ?string $image,
         bool $status
     ) {
         parent::__construct($title, $details, $image, $status);
