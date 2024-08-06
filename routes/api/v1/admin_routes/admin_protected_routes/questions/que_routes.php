@@ -47,3 +47,11 @@ Route::delete('/delete/normal-text/{id}', [QuestionController::class, 'deleteNor
 
 // Creative Question Routes
 Route::delete('/delete/creative/{id}', [QuestionController::class, 'deleteCreativeQuestion']);
+
+// Define routes for MCQ questions
+Route::get('/mcq', [QuestionController::class, 'getAllMcqQuestions']);
+Route::get('/mcq/{id}', [QuestionController::class, 'getMcqQuestion']);
+
+// Define routes for Creative questions
+Route::get('/creative', [QuestionController::class, 'getAllCreativeQuestions']);
+Route::get('/creative/{id}', [QuestionController::class, 'getCreativeQuestion']);

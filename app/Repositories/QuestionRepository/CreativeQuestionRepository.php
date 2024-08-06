@@ -3,6 +3,8 @@
 namespace App\Repositories\QuestionRepository;
 
 use App\Models\CreativeQuestion;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class CreativeQuestionRepository implements QuestionRepositoryInterface
 {
@@ -41,5 +43,14 @@ class CreativeQuestionRepository implements QuestionRepositoryInterface
             $question->save();
         }
         return $question;
+    }
+
+    public function getAllWithPagination(int $perPage): LengthAwarePaginator
+    {
+        return CreativeQuestion::with('question')->paginate($perPage);
+    }
+    public function findWithDetails(int $id)
+    {
+        return CreativeQuestion::with('question')->findOrFail($id);
     }
 }

@@ -183,5 +183,46 @@ class QuestionController extends Controller
     }
 
 
+    public function getAllMcqQuestions(int $perPage = 10): JsonResponse
+    {
+        try {
+            $mcqQuestions = $this->questionService->getAllMcqQuestions($perPage);
+            return ApiResponseHelper::success($mcqQuestions, 'MCQ questions retrieved successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to retrieve MCQ questions', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function getAllCreativeQuestions(int $perPage = 10): JsonResponse
+    {
+        try {
+            $creativeQuestions = $this->questionService->getAllCreativeQuestions($perPage);
+            return ApiResponseHelper::success($creativeQuestions, 'Creative questions retrieved successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to retrieve creative questions', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function getMcqQuestion(int $id): JsonResponse
+    {
+        try {
+            $mcqQuestion = $this->questionService->getMcqQuestion($id);
+            return ApiResponseHelper::success($mcqQuestion, 'MCQ question retrieved successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to retrieve MCQ question', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function getCreativeQuestion(int $id): JsonResponse
+    {
+        try {
+            $mcqQuestion = $this->questionService->getCreativeQuestion($id);
+            return ApiResponseHelper::success($mcqQuestion, 'Creative question retrieved successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to retrieve MCQ question', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
+
 
 }

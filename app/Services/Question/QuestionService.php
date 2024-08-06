@@ -69,7 +69,7 @@ class QuestionService
     {
         return $this->creativeQuestionRepository->update($id, $creativeQuestionDTO->toArray());
     }
-   
+
 
     public function getQuestion(int $id)
     {
@@ -104,6 +104,26 @@ class QuestionService
     public function deleteCreativeQuestion(int $id)
     {
         return $this->creativeQuestionRepository->delete($id);
+    }
+
+    public function getAllMcqQuestions(int $perPage)
+    {
+        return $this->mcqQuestionRepository->getAllWithPagination($perPage);
+    }
+
+    public function getAllCreativeQuestions(int $perPage)
+    {
+        return $this->creativeQuestionRepository->getAllWithPagination($perPage);
+    }
+
+    public function getMcqQuestion(int $id)
+    {
+        return $this->mcqQuestionRepository->findWithDetails($id);
+    }
+
+    public function getCreativeQuestion(int $id)
+    {
+        return $this->creativeQuestionRepository->findWithDetails($id);
     }
 
 }
