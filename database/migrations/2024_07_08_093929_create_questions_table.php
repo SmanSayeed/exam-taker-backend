@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('is_featured');
             $table->enum('question_type', ['mcq', 'creative', 'normal']);
             $table->integer('mark');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

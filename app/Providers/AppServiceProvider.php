@@ -12,6 +12,11 @@ use App\Repositories\QuestionRepository\SectionRepository;
 use App\Repositories\QuestionRepository\SectionRepositoryInterface;
 use App\Services\Question\QuestionBaseService;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\QuestionRepository\QuestionRepositoryInterface;
+use App\Repositories\QuestionRepository\QuestionRepository;
+use App\Repositories\QuestionRepository\McqQuestionRepository;
+use App\Repositories\QuestionRepository\NormalTextQuestionRepository;
+use App\Repositories\QuestionRepository\CreativeQuestionRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +29,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(StudentCRUDRepositoryInterface::class, StudentCRUDRepository::class);
 
         $this->app->bind(QuestionBaseRepositoryInterface::class, QuestionBaseRepository::class);
+
+        $this->app->bind(QuestionRepositoryInterface::class, QuestionRepository::class);
+        $this->app->bind(QuestionRepositoryInterface::class, McqQuestionRepository::class);
+        $this->app->bind(QuestionRepositoryInterface::class, NormalTextQuestionRepository::class);
+        $this->app->bind(QuestionRepositoryInterface::class, CreativeQuestionRepository::class);
 
     }
 

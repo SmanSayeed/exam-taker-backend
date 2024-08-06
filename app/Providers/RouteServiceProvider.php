@@ -71,7 +71,9 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH.'/admin_protected_routes/admin_profile_routes.php'));
 
-        Route::prefix('admin/questions')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/questions/questions_routes.php'));
+        Route::prefix('admin/questions')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/questions/questions_category_routes.php'));
+
+        Route::prefix('admin/que')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/questions/que_routes.php'));
 
 
 
