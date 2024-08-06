@@ -24,13 +24,26 @@ Route::get('/all', [QuestionController::class, 'getAllQuestions']);
 Route::get('/single/{id}', [QuestionController::class, 'getQuestion']);
 
 /* update */
-Route::put('/{id}', [QuestionController::class, 'updateQuestion']);
+Route::put('/update/{id}', [QuestionController::class, 'updateQuestion']);
 
 // MCQ question update
-Route::put('/mcq/{id}', [QuestionController::class, 'updateMcqQuestion']);
+Route::put('/update/mcq/{id}', [QuestionController::class, 'updateMcqQuestion']);
 
 // Normal text question update
-Route::put('/normal-text/{id}', [QuestionController::class, 'updateNormalTextQuestion']);
+Route::put('/update/normal-text/{id}', [QuestionController::class, 'updateNormalTextQuestion']);
 
 // Creative question update
-Route::put('/creative/{id}', [QuestionController::class, 'updateCreativeQuestion']);
+Route::put('/update/creative/{id}', [QuestionController::class, 'updateCreativeQuestion']);
+
+
+// Generic Question Routes
+Route::delete('/delete/{id}', [QuestionController::class, 'deleteQuestion']);
+
+// MCQ Question Routes
+Route::delete('/delete/mcq/{id}', [QuestionController::class, 'deleteMcqQuestion']);
+
+// Normal Text Question Routes
+Route::delete('/delete/normal-text/{id}', [QuestionController::class, 'deleteNormalTextQuestion']);
+
+// Creative Question Routes
+Route::delete('/delete/creative/{id}', [QuestionController::class, 'deleteCreativeQuestion']);

@@ -69,11 +69,7 @@ class QuestionService
     {
         return $this->creativeQuestionRepository->update($id, $creativeQuestionDTO->toArray());
     }
-
-    public function deleteQuestion(int $id)
-    {
-        return $this->questionRepository->delete($id);
-    }
+   
 
     public function getQuestion(int $id)
     {
@@ -89,4 +85,25 @@ class QuestionService
     {
         return $this->questionRepository->changeStatus($id);
     }
+
+    public function deleteQuestion(int $id)
+    {
+        return $this->questionRepository->delete($id);
+    }
+
+    public function deleteMcqQuestion(int $id)
+    {
+        return $this->mcqQuestionRepository->delete($id);
+    }
+
+    public function deleteNormalTextQuestion(int $id)
+    {
+        return $this->normalTextQuestionRepository->delete($id);
+    }
+
+    public function deleteCreativeQuestion(int $id)
+    {
+        return $this->creativeQuestionRepository->delete($id);
+    }
+
 }

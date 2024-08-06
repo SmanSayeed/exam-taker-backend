@@ -141,4 +141,47 @@ class QuestionController extends Controller
             return ApiResponseHelper::error('Failed to retrieve question', 500, ['error' => $e->getMessage()]);
         }
     }
+
+    public function deleteQuestion(int $id): JsonResponse
+    {
+        try {
+            $this->questionService->deleteQuestion($id);
+            return ApiResponseHelper::success(null, 'Question deleted successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to delete question', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteMcqQuestion(int $id): JsonResponse
+    {
+        try {
+            $this->questionService->deleteMcqQuestion($id);
+            return ApiResponseHelper::success(null, 'MCQ question deleted successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to delete MCQ question', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteNormalTextQuestion(int $id): JsonResponse
+    {
+        try {
+            $this->questionService->deleteNormalTextQuestion($id);
+            return ApiResponseHelper::success(null, 'Normal text question deleted successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to delete normal text question', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteCreativeQuestion(int $id): JsonResponse
+    {
+        try {
+            $this->questionService->deleteCreativeQuestion($id);
+            return ApiResponseHelper::success(null, 'Creative question deleted successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to delete creative question', 500, ['error' => $e->getMessage()]);
+        }
+    }
+
+
+
 }
