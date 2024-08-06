@@ -6,6 +6,7 @@ use App\Repositories\Admin\AdminRepositoryInterface;
 use App\Repositories\Admin\AdminAuthRepository;
 use App\Repositories\Admin\StudentCRUDRepository\StudentCRUDRepository;
 use App\Repositories\Admin\StudentCRUDRepository\StudentCRUDRepositoryInterface;
+use App\Repositories\QuestionRepository\QueBaseRepository;
 use App\Repositories\QuestionRepository\QuestionBaseRepository;
 use App\Repositories\QuestionRepository\QuestionBaseRepositoryInterface;
 use App\Repositories\QuestionRepository\SectionRepository;
@@ -30,10 +31,11 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(QuestionBaseRepositoryInterface::class, QuestionBaseRepository::class);
 
-        $this->app->bind(QuestionRepositoryInterface::class, QuestionRepository::class);
-        $this->app->bind(QuestionRepositoryInterface::class, McqQuestionRepository::class);
-        $this->app->bind(QuestionRepositoryInterface::class, NormalTextQuestionRepository::class);
-        $this->app->bind(QuestionRepositoryInterface::class, CreativeQuestionRepository::class);
+        // $this->app->bind(QuestionRepositoryInterface::class, QuestionRepository::class);
+        // $this->app->bind(QuestionRepositoryInterface::class, McqQuestionRepository::class);
+        // $this->app->bind(QuestionRepositoryInterface::class, NormalTextQuestionRepository::class);
+
+        $this->app->bind(QuestionRepositoryInterface::class, QueBaseRepository::class);
 
     }
 

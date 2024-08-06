@@ -15,6 +15,7 @@ class McqQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'question_id'=>'required|exists:questions,id',
             'mcq_question_text' => 'required|string',
             'is_correct' => 'required|boolean',
             'description' => 'nullable|string',

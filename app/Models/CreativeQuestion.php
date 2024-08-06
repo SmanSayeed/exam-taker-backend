@@ -21,5 +21,7 @@ class CreativeQuestion extends Model
         return $this->belongsTo(Question::class);
     }
 
+  
+
     // Add any additional methods or relationships if necessary
 }

@@ -20,7 +20,7 @@ class QuestionRequest extends FormRequest
             'images' => 'nullable|array',
             'is_paid' => 'required|boolean',
             'is_featured' => 'required|boolean',
-            'question_type' => 'required|in:mcq,creative,normal',
+            'type' => 'required|in:mcq,creative,normal',
             'status'=>'required|boolean',
             'mark' => 'required|integer',
         ];

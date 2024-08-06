@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('images')->nullable();
             $table->boolean('is_paid');
             $table->boolean('is_featured');
-            $table->enum('question_type', ['mcq', 'creative', 'normal']);
+            $table->enum('type', ['mcq', 'creative', 'normal']);
             $table->integer('mark');
             $table->boolean('status')->default(true);
             $table->timestamps();

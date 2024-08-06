@@ -13,6 +13,7 @@ use App\Services\Question\QuestionService;
 use App\Helpers\ApiResponseHelper;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Exception;
 
 class QuestionController extends Controller
@@ -35,10 +36,10 @@ class QuestionController extends Controller
         }
     }
 
-    public function storeMcqQuestion(McqQuestionRequest $request, int $questionId): JsonResponse
+    public function storeMcqQuestion(McqQuestionRequest $request): JsonResponse
     {
         try {
-            $dto = McqQuestionData::from(array_merge($request->validated(), ['question_id' => $questionId]));
+            $dto = McqQuestionData::from(array_merge($request->validated()));
             $mcqQuestion = $this->questionService->createMcqQuestion($dto);
             return ApiResponseHelper::success($mcqQuestion, 'MCQ question created successfully', 201);
         } catch (Exception $e) {
@@ -46,10 +47,10 @@ class QuestionController extends Controller
         }
     }
 
-    public function storeNormalTextQuestion(NormalTextQuestionRequest $request, int $questionId): JsonResponse
+    public function storeNormalTextQuestion(NormalTextQuestionRequest $request): JsonResponse
     {
         try {
-            $dto = NormalTextQuestionData::from(array_merge($request->validated(), ['question_id' => $questionId]));
+            $dto = NormalTextQuestionData::from(array_merge($request->validated()));
             $normalTextQuestion = $this->questionService->createNormalTextQuestion($dto);
             return ApiResponseHelper::success($normalTextQuestion, 'Normal text question created successfully', 201);
         } catch (Exception $e) {
@@ -57,10 +58,10 @@ class QuestionController extends Controller
         }
     }
 
-    public function storeCreativeQuestion(CreativeQuestionRequest $request, int $questionId): JsonResponse
+    public function storeCreativeQuestion(CreativeQuestionRequest $request): JsonResponse
     {
         try {
-            $dto = CreativeQuestionData::from(array_merge($request->validated(), ['question_id' => $questionId]));
+            $dto = CreativeQuestionData::from(array_merge($request->validated()));
             $creativeQuestion = $this->questionService->createCreativeQuestion($dto);
             return ApiResponseHelper::success($creativeQuestion, 'Creative question created successfully', 201);
         } catch (Exception $e) {
@@ -122,15 +123,20 @@ class QuestionController extends Controller
         }
     }
 
-    public function getAllQuestions(): JsonResponse
-    {
-        try {
-            $questions = $this->questionService->getAllQuestions();
-            return ApiResponseHelper::success($questions, 'Questions retrieved successfully');
-        } catch (Exception $e) {
-            return ApiResponseHelper::error('Failed to retrieve questions', 500, ['error' => $e->getMessage()]);
-        }
-    }
+     // Retrieve all questions
+
+     public function getAllQuestions(Request $request): JsonResponse
+     {
+         $type = $request->query('type');
+         $perPage = $request->query('perPage', 10);
+
+         try {
+             $questions = $this->questionService->getQuestionsByType($type, $perPage);
+             return ApiResponseHelper::success($questions, 'Questions retrieved successfully');
+         } catch (Exception $e) {
+             return ApiResponseHelper::error('Failed to retrieve questions', 500, ['error' => $e->getMessage()]);
+         }
+     }
 
     public function getQuestion(int $id): JsonResponse
     {

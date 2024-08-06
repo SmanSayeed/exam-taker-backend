@@ -10,9 +10,9 @@ use App\Http\Controllers\Api\V1\Questions\QuestionController;
 Route::post('/create', [QuestionController::class, 'storeQuestion']);
 
 // Create specific types of questions
-Route::post('/mcq/{questionId}', [QuestionController::class, 'storeMcqQuestion']);
-Route::post('/normal-text/{questionId}', [QuestionController::class, 'storeNormalTextQuestion']);
-Route::post('/creative/{questionId}', [QuestionController::class, 'storeCreativeQuestion']);
+Route::post('/mcq', [QuestionController::class, 'storeMcqQuestion']);
+Route::post('/normal-text', [QuestionController::class, 'storeNormalTextQuestion']);
+Route::post('/creative', [QuestionController::class, 'storeCreativeQuestion']);
 
 // Update the status of a specific question
 Route::patch('/{id}/status', [QuestionController::class, 'changeQuestionStatus']);

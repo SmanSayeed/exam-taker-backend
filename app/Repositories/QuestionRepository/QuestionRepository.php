@@ -3,43 +3,28 @@
 namespace App\Repositories\QuestionRepository;
 
 use App\Models\Question;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class QuestionRepository implements QuestionRepositoryInterface
+class QuestionRepository extends QueBaseRepository
 {
-    public function create(array $data)
+    public function __construct(Question $model)
     {
-        return Question::create($data);
+        parent::__construct($model);
     }
 
-    public function update(int $id, array $data)
+    public function getNormalQuestionWithPagination(int $perPage): LengthAwarePaginator
     {
-        $question = Question::findOrFail($id);
-        $question->update($data);
-        return $question;
+        return Question::where('type', 'normal')->paginate($perPage);
     }
 
-    public function delete(int $id)
+    public function getQuestionsWithTypes(?string $type, int $perPage): LengthAwarePaginator
     {
-        return Question::destroy($id);
-    }
+        $query = Question::query();
 
-    public function find(int $id)
-    {
-        return Question::find($id);
-    }
-
-    public function getAll()
-    {
-        return Question::all();
-    }
-
-    public function changeStatus(int $id)
-    {
-        $question = $this->find($id);
-        if ($question) {
-            $question->status = !$question->status;
-            $question->save();
+        if ($type) {
+            $query->where('type', $type);
         }
-        return $question;
+
+        return $query->with(['mcqQuestions', 'creativeQuestions'])->paginate($perPage);
     }
 }

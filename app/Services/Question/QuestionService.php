@@ -126,4 +126,23 @@ class QuestionService
         return $this->creativeQuestionRepository->findWithDetails($id);
     }
 
+    public function getTypesWithQuestions(string $type = null, int $perPage = 10)
+    {
+        switch ($type) {
+            case 'mcq':
+                return $this->mcqQuestionRepository->getAllWithPagination($perPage);
+            case 'creative':
+                return $this->creativeQuestionRepository->getAllWithPagination($perPage);
+            case 'normal':
+                return $this->questionRepository->getNormalQuestionWithPagination($perPage);
+            default:
+                return $this->questionRepository->getAllWithPagination($perPage); // Fallback to generic
+        }
+    }
+
+    public function getQuestionsByType(?string $type, int $perPage)
+    {
+        return $this->questionRepository->getQuestionsWithTypes($type, $perPage);
+    }
+
 }

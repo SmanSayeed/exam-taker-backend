@@ -6,51 +6,20 @@ use App\Models\CreativeQuestion;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 
-class CreativeQuestionRepository implements QuestionRepositoryInterface
+class CreativeQuestionRepository extends QueBaseRepository
 {
-    public function create(array $data)
+    public function __construct()
     {
-        return CreativeQuestion::create($data);
+        parent::__construct(new CreativeQuestion());
     }
 
-    public function update(int $id, array $data)
+    public function findWithDetails(int $id)
     {
-        $creativeQuestion = CreativeQuestion::findOrFail($id);
-        $creativeQuestion->update($data);
-        return $creativeQuestion;
-    }
-
-    public function delete(int $id)
-    {
-        return CreativeQuestion::destroy($id);
-    }
-
-    public function find(int $id)
-    {
-        return CreativeQuestion::find($id);
-    }
-
-    public function getAll()
-    {
-        return CreativeQuestion::all();
-    }
-
-    public function changeStatus(int $id)
-    {
-        $question = $this->find($id);
-        if ($question) {
-            $question->status = !$question->status;
-            $question->save();
-        }
-        return $question;
+        return CreativeQuestion::with('question')->findOrFail($id);
     }
 
     public function getAllWithPagination(int $perPage): LengthAwarePaginator
     {
         return CreativeQuestion::with('question')->paginate($perPage);
-    }
-    public function findWithDetails(int $id)
-    {
-        return CreativeQuestion::with('question')->findOrFail($id);
     }
 }
