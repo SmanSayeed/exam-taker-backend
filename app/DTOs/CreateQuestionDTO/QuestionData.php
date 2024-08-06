@@ -13,7 +13,7 @@ class QuestionData extends Data
         public bool $is_paid,
         public bool $is_featured,
         public bool $status,
-        public string $question_type,
+        public string $type,
         public int $mark
     ) {}
 }

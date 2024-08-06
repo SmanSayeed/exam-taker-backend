@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Requests\Api\V1\Questions;
+use App\Rules\UniqueCreativeQuestionType;
+use App\Rules\ValidateQuestionType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
@@ -15,9 +17,15 @@ class CreativeQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'question_id' => ['required', 'exists:questions,id', new ValidateQuestionType('creative')],
             'creative_question_text' => 'required|string',
-            'creative_question_type' => 'required|in:a,b,c,d',
-            'creative_question_text_description' => 'nullable|string',
+            'creative_question_type' => [
+                'required',
+                'string',
+                'in:a,b,c,d',
+                new UniqueCreativeQuestionType($this->question_id, $this->creative_question_type)
+            ],
+            'description' => 'nullable|string',
         ];
     }
     protected function failedValidation(Validator $validator)

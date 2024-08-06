@@ -22,9 +22,29 @@ class QuestionRepository extends QueBaseRepository
         $query = Question::query();
 
         if ($type) {
-            $query->where('type', $type);
+            $query =  $query->where('type', $type);
         }
 
-        return $query->with(['mcqQuestions', 'creativeQuestions'])->paginate($perPage);
+        switch($type){
+            case "mcq":
+                $query =  $query->with(['mcqQuestions']);
+                break;
+            case "creative":
+                $query =  $query->with(['creativeQuestions']);
+                break;
+            case "normal":
+                // keep at it is
+                break;
+            default:
+                $query =  $query->with(['creativeQuestions','mcqQuestions']);
+                break;
+
+        }
+
+        $query = $query->orderBy('created_at', 'desc')->paginate($perPage);
+
+        return $query;
+
+
     }
 }

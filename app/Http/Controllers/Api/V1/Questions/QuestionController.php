@@ -60,8 +60,10 @@ class QuestionController extends Controller
 
     public function storeCreativeQuestion(CreativeQuestionRequest $request): JsonResponse
     {
+      
         try {
             $dto = CreativeQuestionData::from(array_merge($request->validated()));
+
             $creativeQuestion = $this->questionService->createCreativeQuestion($dto);
             return ApiResponseHelper::success($creativeQuestion, 'Creative question created successfully', 201);
         } catch (Exception $e) {

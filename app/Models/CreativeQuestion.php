@@ -13,7 +13,7 @@ class CreativeQuestion extends Model
         'question_id',
         'creative_question_text',
         'creative_question_type', //a,b,c,d
-        'creative_question_description',
+        'description',
     ];
 
     public function question()
@@ -21,7 +21,7 @@ class CreativeQuestion extends Model
         return $this->belongsTo(Question::class);
     }
 
-  
+
 
     // Add any additional methods or relationships if necessary
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('description')->nullable();
+            $table->longText('description')->nullable();
             $table->string('images')->nullable();
             $table->boolean('is_paid');
             $table->boolean('is_featured');

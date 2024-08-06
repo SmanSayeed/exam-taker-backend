@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
             $table->text('creative_question_text');
             $table->enum('creative_question_type', ['a', 'b', 'c', 'd']);
-            $table->text('creative_question_text_description')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
