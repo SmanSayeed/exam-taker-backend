@@ -41,7 +41,7 @@ class QuestionRepository extends QueBaseRepository
 
         }
 
-        $query = $query->orderBy('created_at', 'desc')->paginate($perPage);
+        $query = $query->with('attachable')->orderBy('created_at', 'desc')->paginate($perPage);
 
         return $query;
 

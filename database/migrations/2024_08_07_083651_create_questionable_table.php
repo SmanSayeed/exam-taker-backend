@@ -9,7 +9,7 @@ class CreateQuestionableTable extends Migration
     {
         Schema::create('questionable', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
+            $table->foreignId('question_id')->unique()->constrained('questions')->onDelete('cascade');
             $table->unsignedBigInteger('section_id')->nullable();
             $table->unsignedBigInteger('exam_type_id')->nullable();
             $table->unsignedBigInteger('exam_sub_type_id')->nullable();

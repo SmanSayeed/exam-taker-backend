@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Questions;
 
+use App\DTOs\CreateQuestionDTO\AttachTypeData;
 use App\Http\Controllers\Controller;
 use App\Helpers\ApiResponseHelper;
 use App\Http\Requests\AttachTypeRequest;
@@ -19,18 +20,17 @@ class QuestionableController extends Controller
     public function attach(AttachTypeRequest $request)
     {
         $validatedData = $request->validated();
-        $questionId = $validatedData['question_id'];
-        $types = $validatedData['types'];
+        $dto = new AttachTypeData($validatedData['question_id'], $validatedData['types']);
 
         try {
             // Ensure there is a record for the question
-            $questionable = Questionable::firstOrCreate(['question_id' => $questionId]);
+            $questionable = Questionable::firstOrCreate(['question_id' => $dto->question_id]);
 
             // Detach existing types
-            $this->detachTypes($questionId, array_keys($types));
+            $this->detachTypes($dto->question_id, array_keys($dto->types));
 
             // Attach new types
-            foreach ($types as $key => $typeId) {
+            foreach ($dto->types as $key => $typeId) {
                 if ($typeId) {
                     $questionable->{$key} = $typeId;
                 }
@@ -53,18 +53,17 @@ class QuestionableController extends Controller
     public function detach(AttachTypeRequest $request)
     {
         $validatedData = $request->validated();
-        $questionId = $validatedData['question_id'];
-        $types = $validatedData['types'];
+        $dto = new AttachTypeDTO($validatedData['question_id'], $validatedData['types']);
 
         try {
-            $questionable = Questionable::where('question_id', $questionId)->first();
+            $questionable = Questionable::where('question_id', $dto->question_id)->first();
 
             if (!$questionable) {
                 return ApiResponseHelper::error('No record found for the question', 404);
             }
 
             // Detach specified types
-            foreach ($types as $key => $typeId) {
+            foreach ($dto->types as $key => $typeId) {
                 if ($typeId) {
                     if ($this->canDetachType($key, $questionable)) {
                         $questionable->{$key} = null;
