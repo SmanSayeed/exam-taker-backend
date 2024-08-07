@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Questions\QuestionBaseController;
 use App\Http\Controllers\Api\V1\Questions\QuestionController;
 
+use App\Http\Controllers\Api\V1\Questions\QuestionableController;
+
 /* creating questions */
 
 // Create a generic question
@@ -55,3 +57,9 @@ Route::get('/mcq/{id}', [QuestionController::class, 'getMcqQuestion']);
 // Define routes for Creative questions
 Route::get('/creative', [QuestionController::class, 'getAllCreativeQuestions']);
 Route::get('/creative/{id}', [QuestionController::class, 'getCreativeQuestion']);
+
+
+
+Route::post('questionables/{questionable}/attach', [QuestionableController::class, 'attachTypes']);
+Route::post('questionables/{questionable}/detach', [QuestionableController::class, 'detachTypes']);
+

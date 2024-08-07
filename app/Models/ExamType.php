@@ -20,4 +20,9 @@ class ExamType extends Model
     {
         return $this->hasMany(ExamSubType::class);
     }
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 }

@@ -22,6 +22,8 @@ return new class extends Migration
             $table->integer('mark');
             $table->boolean('status')->default(true);
             $table->timestamps();
+
+            
         });
     }
 

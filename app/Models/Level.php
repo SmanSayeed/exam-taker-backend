@@ -20,5 +20,10 @@ class Level extends Model
     {
         return $this->belongsTo(Group::class);
     }
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 }
 

@@ -20,4 +20,9 @@ class Group extends Model
     {
         return $this->hasMany(Subject::class);
     }
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 }
