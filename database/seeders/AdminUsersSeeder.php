@@ -24,6 +24,13 @@ class AdminUsersSeeder extends Seeder
         ]);
         $adminUser->assignRole($adminRole);
 
+        $adminUser = Admin::firstOrCreate([
+            'name' => 'Saadman',
+            'email' => 'saad@gmail.com',
+            'password' => Hash::make('11112222'),
+        ]);
+        $adminUser->assignRole($adminRole);
+
         $subAdminUser = Admin::firstOrCreate([
             'name' => 'Sub Admin',
             'email' => 'subadmin@example.com',

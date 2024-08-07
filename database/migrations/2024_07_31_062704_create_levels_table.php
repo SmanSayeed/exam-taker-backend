@@ -10,6 +10,7 @@ class CreateLevelsTable extends Migration
     {
         Schema::create('levels', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('group_id')->constrained('groups')->onDelete('cascade');
             $table->string('title')->unique();
             $table->text('details')->nullable();
             $table->string('image')->nullable();

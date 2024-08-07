@@ -5,6 +5,7 @@ namespace App\Services\Question;
 use App\Repositories\QuestionRepository\QuestionBaseRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class QuestionBaseService
 {
@@ -20,9 +21,9 @@ class QuestionBaseService
         $this->repository->setModel($model);
     }
 
-    public function getAll(): Collection
+    public function getAll(array $relations = [], int $perPage = 15): LengthAwarePaginator
     {
-        return $this->repository->getAll();
+        return $this->repository->getAll($relations,$perPage);
     }
 
     public function findById(int $id): ?Model

@@ -11,8 +11,14 @@ class Topic extends Model
 
     protected $fillable = ['lesson_id', 'title', 'description', 'image'];
 
+
     public function lesson()
     {
         return $this->belongsTo(Lesson::class);
+    }
+
+    public function subTopics()
+    {
+        return $this->hasMany(SubTopic::class);
     }
 }

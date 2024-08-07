@@ -4,12 +4,12 @@ namespace App\Repositories\QuestionRepository;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
-
+use Illuminate\Pagination\LengthAwarePaginator;
 interface QuestionBaseRepositoryInterface
 {
     public function setModel(Model $model): void;
 
-    public function getAll(): Collection;
+    public function getAll(array $relations = [], int $perPage = 15): LengthAwarePaginator;
 
     public function findById(int $id): ?Model;
 

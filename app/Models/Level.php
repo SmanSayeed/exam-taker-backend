@@ -9,6 +9,16 @@ class Level extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'details', 'image', 'status'];
+    protected $fillable = ['group_id','title', 'details', 'image', 'status'];
+
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
+    }
 }
 

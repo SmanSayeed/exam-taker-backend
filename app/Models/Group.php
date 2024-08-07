@@ -10,4 +10,14 @@ class Group extends Model
     use HasFactory;
 
     protected $fillable = ['title', 'details', 'image', 'status'];
+
+    public function levels()
+    {
+        return $this->hasMany(Level::class);
+    }
+
+    public function subjects()
+    {
+        return $this->hasMany(Subject::class);
+    }
 }

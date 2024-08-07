@@ -15,4 +15,9 @@ class ExamType extends Model
     {
         return $this->belongsTo(Section::class);
     }
+
+    public function examSubTypes()
+    {
+        return $this->hasMany(ExamSubType::class);
+    }
 }

@@ -82,13 +82,36 @@ class QuestionBaseController extends Controller
         return $dtoClasses[$resourceType];
     }
 
+      // Add this method to specify relations to load based on the resource type
+      protected function getRelations(string $resourceType): array
+      {
+          $relations = [
+              'sections' => ['examTypes'],
+              'exam-types' => ['section', 'examSubTypes'],
+              'exam-sub-types' => ['examType'],
+              'years' => [], // No direct relationships defined in the models for years
+              'groups' => ['levels', 'subjects'],
+              'levels' => ['subjects', 'group'],
+              'subjects' => ['lessons', 'level', 'group'],
+              'lessons' => ['subject', 'topics'],
+              'topics' => ['subTopics', 'lesson'],
+              'sub-topics' => ['topic'],
+          ];
+
+          return $relations[$resourceType] ?? [];
+      }
+
+
     public function getData(string $resourceType): JsonResponse
     {
         try {
             $model = $this->getModel($resourceType);
             $this->service->setModel($model);
 
-            $items = $this->service->getAll();
+            // Specify relations to load
+            $relations = $this->getRelations($resourceType);
+
+            $items = $this->service->getAll($relations);
             return ApiResponseHelper::success($items);
         } catch (Exception $e) {
             return ApiResponseHelper::error('Failed to retrieve items: ' . $e->getMessage());

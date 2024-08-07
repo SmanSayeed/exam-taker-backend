@@ -8,7 +8,7 @@ class Year extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['section_id', 'title', 'details', 'image', 'status'];
+    protected $fillable = ['title', 'details', 'image', 'status'];
 
     public function section()
     {

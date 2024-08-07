@@ -10,4 +10,8 @@ class Section extends Model
     use HasFactory;
 
     protected $fillable = ['title', 'details', 'image', 'status'];
+    public function examTypes()
+    {
+        return $this->hasMany(ExamType::class);
+    }
 }

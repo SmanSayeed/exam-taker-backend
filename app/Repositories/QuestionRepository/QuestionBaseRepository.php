@@ -4,6 +4,7 @@ namespace App\Repositories\QuestionRepository;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class QuestionBaseRepository implements QuestionBaseRepositoryInterface
 {
@@ -14,12 +15,12 @@ class QuestionBaseRepository implements QuestionBaseRepositoryInterface
         $this->model = $model;
     }
 
-    public function getAll(): Collection
+    public function getAll(array $relations = [], int $perPage = 15): LengthAwarePaginator
     {
         if (!$this->model) {
             throw new \Exception('Model not set.');
         }
-        return $this->model->all();
+        return $this->model->with($relations)->paginate($perPage);
     }
 
     public function findById(int $id): ?Model

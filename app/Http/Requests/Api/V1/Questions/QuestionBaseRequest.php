@@ -45,6 +45,9 @@ class QuestionBaseRequest extends FormRequest
             case 'sub-topics':
                 $rules['topic_id'] = 'required|exists:topics,id';
                 break;
+            case 'level':
+                    $rules['group_id'] = 'required|exists:groups,id';
+                    break;
         }
 
         return $rules;
