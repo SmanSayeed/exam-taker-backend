@@ -60,6 +60,6 @@ Route::get('/creative/{id}', [QuestionController::class, 'getCreativeQuestion'])
 
 
 
-Route::post('questionables/{questionable}/attach', [QuestionableController::class, 'attachTypes']);
-Route::post('questionables/{questionable}/detach', [QuestionableController::class, 'detachTypes']);
+Route::post('attach', [QuestionableController::class, 'attach']);
+Route::post('detach', [QuestionableController::class, 'detach']);
 

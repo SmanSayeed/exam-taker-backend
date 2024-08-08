@@ -6,8 +6,9 @@ use App\DTOs\CreateQuestionDTO\AttachTypeData;
 use App\Http\Controllers\Controller;
 use App\Helpers\ApiResponseHelper;
 use App\Http\Requests\AttachTypeRequest;
+use App\Http\Requests\DetachTypeRequest; // Ensure this request is used if you have a specific class for detaching
 use App\Models\Questionable;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class QuestionableController extends Controller
 {
@@ -17,20 +18,53 @@ class QuestionableController extends Controller
      * @param \App\Http\Requests\AttachTypeRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function attach(AttachTypeRequest $request)
+    public function attach(AttachTypeRequest $request): JsonResponse
     {
         $validatedData = $request->validated();
-        $dto = new AttachTypeData($validatedData['question_id'], $validatedData['types']);
+
+        // Convert the validated data into a DTO
+        $dto = new AttachTypeData(
+            $validatedData['question_id'],
+            $validatedData['section_id'] ?? null,
+            $validatedData['exam_type_id'] ?? null,
+            $validatedData['exam_sub_type_id'] ?? null,
+            $validatedData['group_id'] ?? null,
+            $validatedData['level_id'] ?? null,
+            $validatedData['subject_id'] ?? null,
+            $validatedData['lesson_id'] ?? null,
+            $validatedData['topic_id'] ?? null,
+            $validatedData['sub_topic_id'] ?? null
+        );
 
         try {
             // Ensure there is a record for the question
             $questionable = Questionable::firstOrCreate(['question_id' => $dto->question_id]);
 
             // Detach existing types
-            $this->detachTypes($dto->question_id, array_keys($dto->types));
+            $this->detachTypes($dto->question_id, array_keys(array_filter([
+                'section_id' => $dto->section_id,
+                'exam_type_id' => $dto->exam_type_id,
+                'exam_sub_type_id' => $dto->exam_sub_type_id,
+                'group_id' => $dto->group_id,
+                'level_id' => $dto->level_id,
+                'subject_id' => $dto->subject_id,
+                'lesson_id' => $dto->lesson_id,
+                'topic_id' => $dto->topic_id,
+                'sub_topic_id' => $dto->sub_topic_id
+            ])));
 
             // Attach new types
-            foreach ($dto->types as $key => $typeId) {
+            foreach ([
+                'section_id' => $dto->section_id,
+                'exam_type_id' => $dto->exam_type_id,
+                'exam_sub_type_id' => $dto->exam_sub_type_id,
+                'group_id' => $dto->group_id,
+                'level_id' => $dto->level_id,
+                'subject_id' => $dto->subject_id,
+                'lesson_id' => $dto->lesson_id,
+                'topic_id' => $dto->topic_id,
+                'sub_topic_id' => $dto->sub_topic_id
+            ] as $key => $typeId) {
                 if ($typeId) {
                     $questionable->{$key} = $typeId;
                 }
@@ -47,13 +81,26 @@ class QuestionableController extends Controller
     /**
      * Detach types from a question.
      *
-     * @param \App\Http\Requests\AttachTypeRequest $request
+     * @param \App\Http\Requests\DetachTypeRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function detach(AttachTypeRequest $request)
+    public function detach(DetachTypeRequest $request): JsonResponse
     {
         $validatedData = $request->validated();
-        $dto = new AttachTypeDTO($validatedData['question_id'], $validatedData['types']);
+
+        // Convert the validated data into a DTO
+        $dto = new AttachTypeData(
+            $validatedData['question_id'],
+            $validatedData['section_id'] ?? null,
+            $validatedData['exam_type_id'] ?? null,
+            $validatedData['exam_sub_type_id'] ?? null,
+            $validatedData['group_id'] ?? null,
+            $validatedData['level_id'] ?? null,
+            $validatedData['subject_id'] ?? null,
+            $validatedData['lesson_id'] ?? null,
+            $validatedData['topic_id'] ?? null,
+            $validatedData['sub_topic_id'] ?? null
+        );
 
         try {
             $questionable = Questionable::where('question_id', $dto->question_id)->first();
@@ -63,7 +110,17 @@ class QuestionableController extends Controller
             }
 
             // Detach specified types
-            foreach ($dto->types as $key => $typeId) {
+            foreach ([
+                'section_id' => $dto->section_id,
+                'exam_type_id' => $dto->exam_type_id,
+                'exam_sub_type_id' => $dto->exam_sub_type_id,
+                'group_id' => $dto->group_id,
+                'level_id' => $dto->level_id,
+                'subject_id' => $dto->subject_id,
+                'lesson_id' => $dto->lesson_id,
+                'topic_id' => $dto->topic_id,
+                'sub_topic_id' => $dto->sub_topic_id
+            ] as $key => $typeId) {
                 if ($typeId) {
                     if ($this->canDetachType($key, $questionable)) {
                         $questionable->{$key} = null;
@@ -120,5 +177,24 @@ class QuestionableController extends Controller
         ];
 
         return $hierarchy[$typeKey] ?? [];
+    }
+
+    /**
+     * Detach existing types.
+     *
+     * @param int $questionId
+     * @param array $typeKeys
+     * @return void
+     */
+    protected function detachTypes(int $questionId, array $typeKeys)
+    {
+        $questionable = Questionable::where('question_id', $questionId)->first();
+
+        if ($questionable) {
+            foreach ($typeKeys as $typeKey) {
+                $questionable->{$typeKey} = null;
+            }
+            $questionable->save();
+        }
     }
 }

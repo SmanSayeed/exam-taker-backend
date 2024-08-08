@@ -1,13 +1,14 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateQuestionableTable extends Migration
+class CreateQuestionablesTable extends Migration
 {
     public function up()
     {
-        Schema::create('questionable', function (Blueprint $table) {
+        Schema::create('questionables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('question_id')->unique()->constrained('questions')->onDelete('cascade');
             $table->unsignedBigInteger('section_id')->nullable();
@@ -21,9 +22,12 @@ class CreateQuestionableTable extends Migration
             $table->unsignedBigInteger('sub_topic_id')->nullable();
             $table->timestamps();
 
-            // Index for performance optimization
-            $table->index(['section_id', 'exam_type_id', 'exam_sub_type_id', 'group_id', 'level_id', 'subject_id', 'lesson_id', 'topic_id', 'sub_topic_id']);
-
+            // Specify a shorter name for the index
+            $table->index([
+                'section_id', 'exam_type_id', 'exam_sub_type_id',
+                'group_id', 'level_id', 'subject_id',
+                'lesson_id', 'topic_id', 'sub_topic_id'
+            ], 'questionables_composite_index'); // Custom index name
 
             // Foreign key constraints
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
@@ -40,6 +44,6 @@ class CreateQuestionableTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('questionable');
+        Schema::dropIfExists('questionables');
     }
 }
