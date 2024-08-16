@@ -31,6 +31,9 @@ class QuestionBaseRequest extends FormRequest
             case 'exam-sub-types':
                 $rules['exam_type_id'] = 'required|exists:exam_types,id';
                 break;
+            case 'levels':
+                    $rules['group_id'] = 'required|exists:exam_types,id';
+                    break;
             case 'subjects':
                 $rules['level_id'] = 'required|exists:levels,id';
                 $rules['group_id'] = 'required|exists:groups,id';

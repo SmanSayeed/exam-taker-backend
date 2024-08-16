@@ -23,7 +23,7 @@ class CreativeQuestionRequest extends FormRequest
                 'required',
                 'string',
                 'in:a,b,c,d',
-                new UniqueCreativeQuestionType($this->question_id, $this->creative_question_type)
+                // new UniqueCreativeQuestionType($this->question_id, $this->creative_question_type)
             ],
             'description' => 'nullable|string',
         ];

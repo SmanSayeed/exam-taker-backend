@@ -147,10 +147,11 @@ class QuestionBaseController extends Controller
             }
 
 
+
             $item = $this->service->create($dto->toArray());
-            return ApiResponseHelper::success($item, 'Item created successfully', 201);
+            return ApiResponseHelper::success($item, $resourceType.' created successfully', 201);
         } catch (Exception $e) {
-            return ApiResponseHelper::error('Failed to create item: ' . $e->getMessage());
+            return ApiResponseHelper::error('Failed to create '.$resourceType.': ' . $e->getMessage());
         }
     }
 
@@ -162,9 +163,9 @@ class QuestionBaseController extends Controller
 
             $dto = $this->getDtoFromRequest($request, $resourceType);
             $updated = $this->service->update($id, $dto->toArray());
-            return $updated ? ApiResponseHelper::success(null, 'Item updated successfully') : ApiResponseHelper::error('Item not found', 404);
+            return $updated ? ApiResponseHelper::success(null, $resourceType.' updated successfully') : ApiResponseHelper::error('Item not found', 404);
         } catch (Exception $e) {
-            return ApiResponseHelper::error('Failed to update item: ' . $e->getMessage());
+            return ApiResponseHelper::error('Failed to update '.$resourceType.': ' . $e->getMessage());
         }
     }
 

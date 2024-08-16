@@ -1,0 +1,371 @@
+[
+    {
+        "title": "What is the chemical symbol for water?",
+        "description": "Identify the chemical symbol for water.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "normal",
+        "status": true,
+        "mark": 3,
+        "mcq_options": [
+            {"option_text": "H2O", "is_correct": true},
+            {"option_text": "O2", "is_correct": false},
+            {"option_text": "CO2", "is_correct": false},
+            {"option_text": "H2", "is_correct": false}
+        ]
+    },
+    {
+        "title": "Who wrote 'Romeo and Juliet'?",
+        "description": "Identify the author of the play 'Romeo and Juliet'.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "normal",
+        "status": true,
+        "mark": 3,
+        "mcq_options": [
+            {"option_text": "William Shakespeare", "is_correct": true},
+            {"option_text": "Charles Dickens", "is_correct": false},
+            {"option_text": "Jane Austen", "is_correct": false},
+            {"option_text": "Mark Twain", "is_correct": false}
+        ]
+    },
+    {
+        "title": "What is the capital city of Japan?",
+        "description": "Identify the capital city of Japan.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "normal",
+        "status": true,
+        "mark": 5,
+        "mcq_options": [
+            {"option_text": "Tokyo", "is_correct": true},
+            {"option_text": "Kyoto", "is_correct": false},
+            {"option_text": "Osaka", "is_correct": false},
+            {"option_text": "Nagoya", "is_correct": false}
+        ]
+    },
+    {
+        "title": "Solve the equation: 5x - 3 = 2",
+        "description": "Find the value of x.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "mcq",
+        "status": true,
+        "mark": 5,
+        "mcq_options": [
+            {"option_text": "x = 1", "is_correct": true},
+            {"option_text": "x = 2", "is_correct": false},
+            {"option_text": "x = 3", "is_correct": false},
+            {"option_text": "x = 4", "is_correct": false}
+        ]
+    },
+    {
+        "title": "Which planet is known as the Red Planet?",
+        "description": "Identify the planet in our solar system known as the Red Planet.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "mcq",
+        "status": true,
+        "mark": 5,
+        "mcq_options": [
+            {"option_text": "Mars", "is_correct": true},
+            {"option_text": "Venus", "is_correct": false},
+            {"option_text": "Jupiter", "is_correct": false},
+            {"option_text": "Saturn", "is_correct": false}
+        ]
+    },
+    {
+        "title": "Write an essay on climate change.",
+        "description": "Discuss the causes, effects, and possible solutions for climate change.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "creative",
+        "status": true,
+        "mark": 10,
+        "creative_options": {
+            "a": "Introduction",
+            "b": "Causes of Climate Change",
+            "c": "Effects of Climate Change",
+            "d": "Solutions for Climate Change"
+        }
+    },
+    {
+        "title": "Explain the process of photosynthesis.",
+        "description": "Discuss the steps involved in the process of photosynthesis.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "creative",
+        "status": true,
+        "mark": 10,
+        "creative_options": {
+            "a": "Light Absorption",
+            "b": "Carbon Dioxide Fixation",
+            "c": "Glucose Production",
+            "d": "Oxygen Release"
+        }
+    },
+    {
+        "title": "What is the boiling point of water at sea level?",
+        "description": "Identify the boiling point of water at sea level in degrees Celsius.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "normal",
+        "status": true,
+        "mark": 5,
+        "mcq_options": [
+            {"option_text": "100°C", "is_correct": true},
+            {"option_text": "90°C", "is_correct": false},
+            {"option_text": "80°C", "is_correct": false},
+            {"option_text": "110°C", "is_correct": false}
+        ]
+    },
+    {
+        "title": "What is the largest mammal in the world?",
+        "description": "Identify the largest mammal in the world by mass.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "mcq",
+        "status": true,
+        "mark": 5,
+        "mcq_options": [
+            {"option_text": "Blue Whale", "is_correct": true},
+            {"option_text": "Elephant", "is_correct": false},
+            {"option_text": "Giraffe", "is_correct": false},
+            {"option_text": "Hippopotamus", "is_correct": false}
+        ]
+    },
+    {
+        "title": "Describe the water cycle.",
+        "description": "Explain the steps involved in the water cycle.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "creative",
+        "status": true,
+        "mark": 10,
+        "creative_options": {
+            "a": "Evaporation",
+            "b": "Condensation",
+            "c": "Precipitation",
+            "d": "Collection"
+        }
+    },
+      {
+        "title": "What is the capital of Germany?",
+        "description": "Identify the capital city of Germany.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "normal",
+        "status": true,
+        "mark": 3,
+        "mcq_options": [
+            {"option_text": "Berlin", "is_correct": true},
+            {"option_text": "Munich", "is_correct": false},
+            {"option_text": "Frankfurt", "is_correct": false},
+            {"option_text": "Hamburg", "is_correct": false}
+        ]
+    },
+    {
+        "title": "Who is known as the father of modern physics?",
+        "description": "Identify the scientist known as the father of modern physics.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "normal",
+        "status": true,
+        "mark": 3,
+        "mcq_options": [
+            {"option_text": "Albert Einstein", "is_correct": true},
+            {"option_text": "Isaac Newton", "is_correct": false},
+            {"option_text": "Niels Bohr", "is_correct": false},
+            {"option_text": "Galileo Galilei", "is_correct": false}
+        ]
+    },
+    {
+        "title": "What is the hardest natural substance on Earth?",
+        "description": "Identify the hardest natural substance on Earth.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "normal",
+        "status": true,
+        "mark": 3,
+        "mcq_options": [
+            {"option_text": "Diamond", "is_correct": true},
+            {"option_text": "Graphite", "is_correct": false},
+            {"option_text": "Quartz", "is_correct": false},
+            {"option_text": "Emerald", "is_correct": false}
+        ]
+    },
+
+    {
+        "title": "Which element is represented by the symbol 'Na'?",
+        "description": "Identify the element with the symbol 'Na'.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "mcq",
+        "status": true,
+        "mark": 5,
+        "mcq_options": [
+            {"option_text": "Sodium", "is_correct": true},
+            {"option_text": "Nitrogen", "is_correct": false},
+            {"option_text": "Nickel", "is_correct": false},
+            {"option_text": "Neon", "is_correct": false}
+        ]
+    },
+    {
+        "title": "What is the chemical formula for table salt?",
+        "description": "Identify the chemical formula for table salt.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "mcq",
+        "status": true,
+        "mark": 5,
+        "mcq_options": [
+            {"option_text": "NaCl", "is_correct": true},
+            {"option_text": "KCl", "is_correct": false},
+            {"option_text": "CaCl2", "is_correct": false},
+            {"option_text": "MgCl2", "is_correct": false}
+        ]
+    },
+    {
+        "title": "Who was the first man to walk on the moon?",
+        "description": "Identify the first man to walk on the moon.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "mcq",
+        "status": true,
+        "mark": 5,
+        "mcq_options": [
+            {"option_text": "Neil Armstrong", "is_correct": true},
+            {"option_text": "Buzz Aldrin", "is_correct": false},
+            {"option_text": "Yuri Gagarin", "is_correct": false},
+            {"option_text": "Michael Collins", "is_correct": false}
+        ]
+    },
+
+    {
+        "title": "Discuss the advantages of renewable energy sources.",
+        "description": "Write about the benefits of using renewable energy sources.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "creative",
+        "status": true,
+        "mark": 10,
+        "creative_options": {
+            "a": "Introduction",
+            "b": "Types of Renewable Energy",
+            "c": "Benefits of Renewable Energy",
+            "d": "Conclusion"
+        }
+    },
+    {
+        "title": "Explain the significance of the Industrial Revolution.",
+        "description": "Discuss the impact and importance of the Industrial Revolution.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "creative",
+        "status": true,
+        "mark": 10,
+        "creative_options": {
+            "a": "Introduction",
+            "b": "Key Inventions",
+            "c": "Social and Economic Impacts",
+            "d": "Legacy of the Industrial Revolution"
+        }
+    },
+    {
+        "title": "Describe the role of the United Nations in international peacekeeping.",
+        "description": "Discuss the role and efforts of the United Nations in maintaining global peace.",
+        "images": "",
+        "is_paid": false,
+        "is_featured": false,
+        "type": "creative",
+        "status": true,
+        "mark": 10,
+        "creative_options": {
+            "a": "Introduction to the UN",
+            "b": "Peacekeeping Missions",
+            "c": "Challenges Faced",
+            "d": "Achievements and Future Directions"
+        }
+    },
+    {"title": "What is the capital of France?", "description": "Identify the capital city of France.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "Who wrote 'To Kill a Mockingbird'?", "description": "Name the author of the book 'To Kill a Mockingbird'.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "What is the chemical symbol for water?", "description": "Identify the chemical symbol for water.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "What is the largest planet in our solar system?", "description": "Name the largest planet in our solar system.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "Who was the first president of the United States?", "description": "Identify the first president of the United States.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "What is the boiling point of water?", "description": "State the boiling point of water in degrees Celsius.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "What is the largest ocean on Earth?", "description": "Identify the largest ocean on Earth.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "Who painted the Mona Lisa?", "description": "Name the artist who painted the Mona Lisa.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "What is the currency of Japan?", "description": "Identify the currency used in Japan.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "In which year did the Titanic sink?", "description": "State the year when the Titanic sank.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 5},
+    {"title": "What is the capital of Germany?", "description": "Identify the capital city of Germany.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Who is known as the father of modern physics?", "description": "Identify the scientist known as the father of modern physics.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the hardest natural substance on Earth?", "description": "Identify the hardest natural substance on Earth.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Who discovered penicillin?", "description": "Name the scientist who discovered penicillin.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the smallest prime number?", "description": "Identify the smallest prime number.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Which planet is known as the Red Planet?", "description": "Identify the planet known as the Red Planet.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the longest river in the world?", "description": "Name the longest river in the world.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Who wrote 'Pride and Prejudice'?", "description": "Name the author of the book 'Pride and Prejudice'.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the main ingredient in guacamole?", "description": "Identify the main ingredient used in guacamole.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Which gas do plants use for photosynthesis?", "description": "State the gas used by plants for photosynthesis.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Who was the first woman to win a Nobel Prize?", "description": "Name the first woman to win a Nobel Prize.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the capital of Australia?", "description": "Identify the capital city of Australia.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "In which country is the Great Wall located?", "description": "Name the country where the Great Wall is located.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the chemical symbol for gold?", "description": "Identify the chemical symbol for gold.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Who was the 16th President of the United States?", "description": "Name the 16th President of the United States.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the speed of light?", "description": "State the speed of light in a vacuum.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Who invented the telephone?", "description": "Name the inventor of the telephone.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the hardest known material?", "description": "Identify the hardest known material.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the smallest country in the world by land area?", "description": "Name the smallest country in the world by land area.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the chemical formula for table salt?", "description": "State the chemical formula for table salt.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Who painted the Sistine Chapel ceiling?", "description": "Identify the artist who painted the Sistine Chapel ceiling.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the capital of Canada?", "description": "Name the capital city of Canada.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "What is the main function of red blood cells?", "description": "State the main function of red blood cells.", "images": "", "is_paid": false, "is_featured": false, "type": "normal", "status": true, "mark": 3},
+    {"title": "Which element has the atomic number 1?", "description": "Identify the element with the atomic number 1.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Hydrogen", "is_correct": true}, {"option_text": "Helium", "is_correct": false}, {"option_text": "Oxygen", "is_correct": false}, {"option_text": "Carbon", "is_correct": false}]},
+    {"title": "What is the capital of Spain?", "description": "Identify the capital city of Spain.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Madrid", "is_correct": true}, {"option_text": "Barcelona", "is_correct": false}, {"option_text": "Seville", "is_correct": false}, {"option_text": "Valencia", "is_correct": false}]},
+    {"title": "Who developed the theory of relativity?", "description": "Identify the scientist who developed the theory of relativity.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Albert Einstein", "is_correct": true}, {"option_text": "Isaac Newton", "is_correct": false}, {"option_text": "Galileo Galilei", "is_correct": false}, {"option_text": "Niels Bohr", "is_correct": false}]},
+    {"title": "What is the main ingredient in traditional Japanese sushi?", "description": "Identify the main ingredient used in traditional Japanese sushi.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Rice", "is_correct": true}, {"option_text": "Noodles", "is_correct": false}, {"option_text": "Bread", "is_correct": false}, {"option_text": "Cheese", "is_correct": false}]},
+    {"title": "What is the chemical formula for carbon dioxide?", "description": "Identify the chemical formula for carbon dioxide.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "CO2", "is_correct": true}, {"option_text": "CO", "is_correct": false}, {"option_text": "C2O", "is_correct": false}, {"option_text": "C2H4O2", "is_correct": false}]},
+    {"title": "Which planet is known as the 'Red Planet'?", "description": "Identify the planet known as the 'Red Planet'.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Mars", "is_correct": true}, {"option_text": "Venus", "is_correct": false}, {"option_text": "Jupiter", "is_correct": false}, {"option_text": "Saturn", "is_correct": false}]},
+    {"title": "What is the smallest unit of life?", "description": "Identify the smallest unit of life.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Cell", "is_correct": true}, {"option_text": "Molecule", "is_correct": false}, {"option_text": "Atom", "is_correct": false}, {"option_text": "Organ", "is_correct": false}]},
+    {"title": "Who wrote 'The Catcher in the Rye'?", "description": "Name the author of the book 'The Catcher in the Rye'.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "J.D. Salinger", "is_correct": true}, {"option_text": "J.K. Rowling", "is_correct": false}, {"option_text": "Ernest Hemingway", "is_correct": false}, {"option_text": "F. Scott Fitzgerald", "is_correct": false}]},
+    {"title": "What is the hardest natural material on Earth?", "description": "Identify the hardest natural material on Earth.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Diamond", "is_correct": true}, {"option_text": "Graphite", "is_correct": false}, {"option_text": "Quartz", "is_correct": false}, {"option_text": "Emerald", "is_correct": false}]},
+    {"title": "Which gas is most abundant in Earth's atmosphere?", "description": "Identify the most abundant gas in Earth's atmosphere.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Nitrogen", "is_correct": true}, {"option_text": "Oxygen", "is_correct": false}, {"option_text": "Carbon Dioxide", "is_correct": false}, {"option_text": "Argon", "is_correct": false}]},
+    {"title": "What is the capital of Italy?", "description": "Identify the capital city of Italy.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Rome", "is_correct": true}, {"option_text": "Venice", "is_correct": false}, {"option_text": "Milan", "is_correct": false}, {"option_text": "Florence", "is_correct": false}]},
+    {"title": "Which planet is closest to the sun?", "description": "Identify the planet that is closest to the sun.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Mercury", "is_correct": true}, {"option_text": "Venus", "is_correct": false}, {"option_text": "Earth", "is_correct": false}, {"option_text": "Mars", "is_correct": false}]},
+    {"title": "What is the largest organ in the human body?", "description": "Identify the largest organ in the human body.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Skin", "is_correct": true}, {"option_text": "Liver", "is_correct": false}, {"option_text": "Heart", "is_correct": false}, {"option_text": "Lung", "is_correct": false}]},
+    {"title": "Who is the author of '1984'?", "description": "Name the author of the book '1984'.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "George Orwell", "is_correct": true}, {"option_text": "Aldous Huxley", "is_correct": false}, {"option_text": "Ray Bradbury", "is_correct": false}, {"option_text": "Margaret Atwood", "is_correct": false}]},
+    {"title": "What is the chemical symbol for sodium?", "description": "Identify the chemical symbol for sodium.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Na", "is_correct": true}, {"option_text": "N", "is_correct": false}, {"option_text": "So", "is_correct": false}, {"option_text": "S", "is_correct": false}]},
+    {"title": "Which is the smallest planet in our solar system?", "description": "Identify the smallest planet in our solar system.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Mercury", "is_correct": true}, {"option_text": "Mars", "is_correct": false}, {"option_text": "Venus", "is_correct": false}, {"option_text": "Earth", "is_correct": false}]},
+    {"title": "Who is known as the 'Father of Computers'?", "description": "Identify the person known as the 'Father of Computers'.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Charles Babbage", "is_correct": true}, {"option_text": "Alan Turing", "is_correct": false}, {"option_text": "John von Neumann", "is_correct": false}, {"option_text": "Ada Lovelace", "is_correct": false}]},
+    {"title": "What is the freezing point of water in degrees Celsius?", "description": "State the freezing point of water in degrees Celsius.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "0°C", "is_correct": true}, {"option_text": "100°C", "is_correct": false}, {"option_text": "50°C", "is_correct": false}, {"option_text": "-10°C", "is_correct": false}]},
+    {"title": "Which country is known as the Land of the Rising Sun?", "description": "Identify the country known as the Land of the Rising Sun.", "images": "", "is_paid": false, "is_featured": false, "type": "mcq", "status": true, "mark": 5, "mcq_options": [{"option_text": "Japan", "is_correct": true}, {"option_text": "China", "is_correct": false}, {"option_text": "South Korea", "is_correct": false}, {"option_text": "Thailand", "is_correct": false}]},
+    {"title": "Describe a time when you overcame a significant challenge.", "description": "Write about an experience where you faced and overcame a major obstacle.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10},
+    {"title": "How would you design a perfect day for yourself?", "description": "Explain your ideal day and how you would organize it from start to finish.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10},
+    {"title": "Imagine you are an astronaut on a new planet. What would you do first?", "description": "Describe the steps you would take if you were the first person to land on a new planet.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10},
+    {"title": "What is a new invention you would create to solve a current problem?", "description": "Propose a new invention and explain how it would address a specific problem in the world.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10},
+    {"title": "If you could meet any historical figure, who would it be and why?", "description": "Write about a historical figure you would like to meet and explain the reasons for your choice.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10},
+    {"title": "What are your thoughts on the impact of technology on education?", "description": "Discuss how technology has influenced education and what changes you foresee in the future.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10},
+    {"title": "Describe a book or movie that had a significant impact on your life.", "description": "Write about a book or movie that changed your perspective or influenced you in a meaningful way.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10},
+    {"title": "What is your dream job and why?", "description": "Explain what your ideal job would be and the reasons behind your choice.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10},
+    {"title": "How would you spend your time if you won a large lottery?", "description": "Describe how you would manage your life and resources if you suddenly became wealthy through a lottery win.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10},
+    {"title": "Write a letter to your future self ten years from now.", "description": "Compose a letter to yourself, reflecting on your current life and your hopes and goals for the future.", "images": "", "is_paid": false, "is_featured": false, "type": "creative", "status": true, "mark": 10}
+
+]

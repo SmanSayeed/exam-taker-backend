@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('status')->default(true);
             $table->timestamps();
 
-            
+
         });
     }
 
@@ -35,3 +35,4 @@ return new class extends Migration
         Schema::dropIfExists('questions');
     }
 };
+
