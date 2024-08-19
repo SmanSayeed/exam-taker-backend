@@ -123,8 +123,8 @@ class QuestionBaseController extends Controller
         try {
             $model = $this->getModel($resourceType);
             $this->service->setModel($model);
-
-            $item = $this->service->findById($id);
+            $relations = $this->getRelations($resourceType);
+            $item = $this->service->findById($id,$relations);
             return $item ? ApiResponseHelper::success($item) : ApiResponseHelper::error('Item not found', 404);
         } catch (Exception $e) {
             return ApiResponseHelper::error('Failed to retrieve item: ' . $e->getMessage());

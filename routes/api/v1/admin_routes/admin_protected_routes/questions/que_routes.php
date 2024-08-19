@@ -63,4 +63,4 @@ Route::get('/creative/{id}', [QuestionController::class, 'getCreativeQuestion'])
 Route::post('attach', [QuestionableController::class, 'attach']);
 Route::post('detach', [QuestionableController::class, 'detach']);
 
-Route::get('search', [QuestionController::class, 'searchAndFilterQuestions']);
+Route::get('search', [QuestionController::class, 'searchByKeywordAndType']);

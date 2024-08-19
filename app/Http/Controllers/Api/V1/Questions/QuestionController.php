@@ -232,6 +232,39 @@ class QuestionController extends Controller
         }
     }
 
+    public function searchByKeywordAndType(Request $request): JsonResponse
+{
+    // Validate the request
+    $validator = Validator::make($request->all(), [
+        'keyword' => 'nullable|string',
+        'types' => 'nullable|array',
+        'types.*' => 'in:mcq,creative,normal', // Validate that each type is one of the allowed values
+        'perPage' => 'nullable|integer|min:1', // Optional pagination parameter
+    ]);
+
+    if ($validator->fails()) {
+        return ApiResponseHelper::error('Validation failed', 422, $validator->errors());
+    }
+
+    try {
+        // Get the validated data
+        $filters = $validator->validated();
+        $keyword = $filters['keyword'] ?? ''; // Default to an empty string if keyword is not provided
+        $types = $filters['types'] ?? []; // Default to an empty array if types are not provided
+        $perPage = $filters['perPage'] ?? 10; // Default to 10 if perPage is not provided
+
+        // Call the service method
+        $questions = $this->questionService->searchByKeywordAndType($types, $keyword, $perPage);
+
+        // Return a successful response
+        return ApiResponseHelper::success($questions, 'Questions retrieved successfully');
+    } catch (Exception $e) {
+        // Return an error response in case of an exception
+        return ApiResponseHelper::error('Failed to retrieve questions', 500, ['error' => $e->getMessage()]);
+    }
+}
+
+
 
     public function searchAndFilterQuestions(Request $request): JsonResponse
     {

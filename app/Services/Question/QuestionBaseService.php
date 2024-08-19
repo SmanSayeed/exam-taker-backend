@@ -26,9 +26,10 @@ class QuestionBaseService
         return $this->repository->getAll($relations,$perPage);
     }
 
-    public function findById(int $id): ?Model
+    public function findById(int $id,array $relations = []): ?Model
     {
-        return $this->repository->findById($id);
+        $query= $this->repository->findById($id);
+        return $query->with($relations)->first();
     }
 
     public function create(array $data): Model
