@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
             $table->text('mcq_question_text');
+            $table->string('mcq_images')->nullable();
             $table->boolean('is_correct');
             $table->text('description')->nullable();
             $table->timestamps();

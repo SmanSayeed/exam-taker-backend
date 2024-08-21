@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Questions\ManageQuestionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Questions\QuestionBaseController;
 use App\Http\Controllers\Api\V1\Questions\QuestionController;
@@ -8,8 +9,13 @@ use App\Http\Controllers\Api\V1\Questions\QuestionableController;
 
 /* creating questions */
 
+
+Route::post('/create', [ManageQuestionController::class, 'create']);
+Route::put('/questions/{id}', [ManageQuestionController::class, 'update']);
+Route::delete('/questions/{id}', [ManageQuestionController::class, 'delete']);
+
 // Create a generic question
-Route::post('/create', [QuestionController::class, 'storeQuestion']);
+// Route::post('/create', [QuestionController::class, 'storeQuestion']);
 
 // Create specific types of questions
 Route::post('/mcq', [QuestionController::class, 'storeMcqQuestion']);
