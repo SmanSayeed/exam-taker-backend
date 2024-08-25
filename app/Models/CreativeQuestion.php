@@ -16,9 +16,10 @@ class CreativeQuestion extends Model
         'description',
     ];
 
+    // Relationship with Question
     public function question()
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(Question::class, 'question_id');
     }
 
 

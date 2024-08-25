@@ -19,6 +19,17 @@ class Question extends Model
         'mark',
         'status'
     ];
+
+    public function mcqQuestions()
+    {
+        return $this->hasMany(McqQuestion::class, 'question_id');
+    }
+
+    public function creativeQuestions()
+    {
+        return $this->hasMany(CreativeQuestion::class, 'question_id');
+    }
+
     public function mcqOptions()
     {
         return $this->hasMany(McqQuestion::class, 'question_id');

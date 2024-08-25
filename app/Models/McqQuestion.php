@@ -18,7 +18,7 @@ class McqQuestion extends Model
 
     public function question()
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(Question::class, 'question_id');
     }
 
     // Add any additional methods or relationships if necessary
