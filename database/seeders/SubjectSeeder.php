@@ -20,7 +20,7 @@ class SubjectSeeder extends Seeder
                     $subjects[] = [
                         'level_id' => $levelId,
                         'group_id' => $groupId,
-                        'part' => $i % 2 == 0 ? '2nd' : '1st',
+                        'part' => $i % 2 == 0 ? '2' : '1',
                         'title' => 'Subject ' . $i . ' for Level ' . $levelId . ' and Group ' . $groupId,
                         'details' => 'Details for Subject ' . $i,
                         'image' => 'subject' . $i . '.jpg',

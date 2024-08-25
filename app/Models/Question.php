@@ -19,60 +19,66 @@ class Question extends Model
         'mark',
         'status'
     ];
-
-    public function mcqQuestions()
+    public function mcqOptions()
     {
-        return $this->hasMany(McqQuestion::class);
+        return $this->hasMany(McqQuestion::class, 'question_id');
     }
 
-    public function creativeQuestions()
+    // Relationship with CreativeQuestion
+    public function creativeOptions()
     {
-        return $this->hasMany(CreativeQuestion::class);
+        return $this->hasMany(CreativeQuestion::class, 'question_id');
     }
 
-    public function sections()
+    public function questionable()
     {
-        return $this->belongsTo(Section::class, 'questionable', 'question_id', 'section_id');
+        return $this->hasOne(Questionable::class);
     }
 
-    public function examTypes()
+    // Accessing the related models through Questionable
+    public function section()
     {
-        return $this->belongsTo(ExamType::class, 'questionable', 'question_id', 'exam_type_id');
+        return $this->hasOneThrough(Section::class, Questionable::class, 'question_id', 'id', 'id', 'section_id');
     }
 
-    public function examSubTypes()
+    public function examType()
     {
-        return $this->belongsTo(ExamSubType::class, 'questionable', 'question_id', 'exam_sub_type_id');
+        return $this->hasOneThrough(ExamType::class, Questionable::class, 'question_id', 'id', 'id', 'exam_type_id');
     }
 
-    public function groups()
+    public function examSubType()
     {
-        return $this->belongsTo(Group::class, 'questionable', 'question_id', 'group_id');
+        return $this->hasOneThrough(ExamSubType::class, Questionable::class, 'question_id', 'id', 'id', 'exam_sub_type_id');
     }
 
-    public function levels()
+    public function group()
     {
-        return $this->belongsTo(Level::class, 'questionable', 'question_id', 'level_id');
+        return $this->hasOneThrough(Group::class, Questionable::class, 'question_id', 'id', 'id', 'group_id');
     }
 
-    public function subjects()
+    public function level()
     {
-        return $this->belongsTo(Subject::class, 'questionable', 'question_id', 'subject_id');
+        return $this->hasOneThrough(Level::class, Questionable::class, 'question_id', 'id', 'id', 'level_id');
     }
 
-    public function lessons()
+    public function subject()
     {
-        return $this->belongsTo(Lesson::class, 'questionable', 'question_id', 'lesson_id');
+        return $this->hasOneThrough(Subject::class, Questionable::class, 'question_id', 'id', 'id', 'subject_id');
     }
 
-    public function topics()
+    public function lesson()
     {
-        return $this->belongsTo(Topic::class, 'questionable', 'question_id', 'topic_id');
+        return $this->hasOneThrough(Lesson::class, Questionable::class, 'question_id', 'id', 'id', 'lesson_id');
     }
 
-    public function subTopics()
+    public function topic()
     {
-        return $this->belongsTo(SubTopic::class, 'questionable', 'question_id', 'sub_topic_id');
+        return $this->hasOneThrough(Topic::class, Questionable::class, 'question_id', 'id', 'id', 'topic_id');
+    }
+
+    public function subTopic()
+    {
+        return $this->hasOneThrough(SubTopic::class, Questionable::class, 'question_id', 'id', 'id', 'sub_topic_id');
     }
 
     public function attachable()

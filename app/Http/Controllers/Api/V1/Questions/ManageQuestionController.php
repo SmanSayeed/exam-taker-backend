@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\Questions;
 
+use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\McqQuestion;
 use App\Models\CreativeQuestion;
 use App\Models\Questionable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -51,7 +53,7 @@ class ManageQuestionController extends Controller
             ]);
 
             // Enforce hierarchical rules on categories
-            $this->validateCategoryHierarchy($validated['categories']);
+            // $this->validateCategoryHierarchy($validated['categories']);
 
             // Create the question inside a transaction
             DB::beginTransaction();
@@ -103,36 +105,32 @@ class ManageQuestionController extends Controller
             $question->load([
                 'mcqQuestions',
                 'creativeQuestions',
-                'sections',
-                'examTypes',
-                'examSubTypes',
-                'groups',
-                'levels',
-                'subjects',
-                'lessons',
-                'topics',
-                'subTopics'
+                'section',
+                'examType',
+                'examSubType',
+                'group',
+                'level',
+                'subject',
+                'lesson',
+                'topic',
+                'subTopic'
             ]);
 
-            return response()->json(['status' => 'success', 'message' => 'Question created successfully', 'data' => $question], 201);
+            return ApiResponseHelper::success($question, 'Question created successfully', 201);
 
         } catch (ValidationException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $e->errors(),
-            ], 422);
+            return ApiResponseHelper::error('Validation failed', 422, $e->errors());
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An unexpected error occurred. ' . $e->getMessage(),
-                'errors' => [],
-            ], 500);
+            return ApiResponseHelper::error('An unexpected error occurred. ' . $e->getMessage(), 500);
+
         }
     }
 
     /**
+     * Update an existing question.
+     */
+   /**
      * Update an existing question.
      */
     public function update(Request $request, $id)
@@ -150,11 +148,13 @@ class ManageQuestionController extends Controller
                 'mark' => 'required|integer',
                 'status' => 'boolean',
                 'mcq_options' => 'nullable|array',
+                'mcq_options.*.id' => 'sometimes|exists:mcq_questions,id',
                 'mcq_options.*.mcq_question_text' => 'required_if:type,mcq|string',
                 'mcq_options.*.mcq_images' => 'nullable|array',
                 'mcq_options.*.mcq_images.*' => 'string|url',
                 'mcq_options.*.is_correct' => 'required_if:type,mcq|boolean',
                 'creative_options' => 'nullable|array',
+                'creative_options.*.id' => 'sometimes|exists:creative_questions,id',
                 'creative_options.*.creative_question_text' => 'required_if:type,creative|string',
                 'creative_options.*.creative_question_type' => 'required_if:type,creative|in:a,b,c,d',
                 'categories' => 'nullable|array',
@@ -169,11 +169,12 @@ class ManageQuestionController extends Controller
                 'categories.sub_topic_id' => 'nullable|integer|exists:sub_topics,id',
             ]);
 
-            // Enforce hierarchical rules on categories for updating
-            $this->validateCategoryHierarchy($validated['categories'], $id);
-
             // Find the question by ID
             $question = Question::findOrFail($id);
+
+            if($question->type !== $validated['type']) {
+                throw new \Exception('Question type cannot be changed');
+            }
 
             // Start the transaction
             DB::beginTransaction();
@@ -192,38 +193,47 @@ class ManageQuestionController extends Controller
 
             // Update MCQ options if type is mcq
             if ($validated['type'] === 'mcq' && isset($validated['mcq_options'])) {
-                // Delete existing MCQ options
-                McqQuestion::where('question_id', $question->id)->delete();
-
-                // Create new MCQ options
                 foreach ($validated['mcq_options'] as $option) {
-                    McqQuestion::create([
-                        'question_id' => $question->id,
-                        'mcq_question_text' => $option['mcq_question_text'],
-                        'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
-                        'is_correct' => $option['is_correct'],
-                        'description' => $option['description'] ?? null,
-                    ]);
+                    if (isset($option['id'])) {
+                        // Update existing MCQ option
+                        McqQuestion::where('id', $option['id'])->update([
+                            'mcq_question_text' => $option['mcq_question_text'],
+                            'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
+                            'is_correct' => $option['is_correct'],
+                        ]);
+                    } else {
+                        // Create new MCQ option
+                        McqQuestion::create([
+                            'question_id' => $question->id,
+                            'mcq_question_text' => $option['mcq_question_text'],
+                            'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
+                            'is_correct' => $option['is_correct'],
+                        ]);
+                    }
                 }
             }
 
             // Update Creative options if type is creative
             if ($validated['type'] === 'creative' && isset($validated['creative_options'])) {
-                // Delete existing Creative options
-                CreativeQuestion::where('question_id', $question->id)->delete();
-
-                // Create new Creative options
                 foreach ($validated['creative_options'] as $option) {
-                    CreativeQuestion::create([
-                        'question_id' => $question->id,
-                        'creative_question_text' => $option['creative_question_text'],
-                        'creative_question_type' => $option['creative_question_type'],
-                        'description' => $option['description'] ?? null,
-                    ]);
+                    if (isset($option['id'])) {
+                        // Update existing Creative option
+                        CreativeQuestion::where('id', $option['id'])->update([
+                            'creative_question_text' => $option['creative_question_text'],
+                            'creative_question_type' => $option['creative_question_type'],
+                        ]);
+                    } else {
+                        // Create new Creative option
+                        CreativeQuestion::create([
+                            'question_id' => $question->id,
+                            'creative_question_text' => $option['creative_question_text'],
+                            'creative_question_type' => $option['creative_question_type'],
+                        ]);
+                    }
                 }
             }
 
-            // Update categories if provided
+            // Handle category data
             if (isset($validated['categories'])) {
                 $this->storeCategories($question->id, $validated['categories']);
             }
@@ -234,34 +244,76 @@ class ManageQuestionController extends Controller
             $question->load([
                 'mcqQuestions',
                 'creativeQuestions',
-                'sections',
-                'examTypes',
-                'examSubTypes',
-                'groups',
-                'levels',
-                'subjects',
-                'lessons',
-                'topics',
-                'subTopics'
+                'section',
+                'examType',
+                'examSubType',
+                'group',
+                'level',
+                'subject',
+                'lesson',
+                'topic',
+                'subTopic'
             ]);
 
-            return response()->json(['status' => 'success', 'message' => 'Question updated successfully', 'data' => $question], 200);
-
+            return ApiResponseHelper::success($question, 'Question updated successfully', 200);
         } catch (ValidationException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $e->errors(),
-            ], 422);
+            return ApiResponseHelper::error('Validation failed', 422, $e->errors());
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'status' => 'error',
-                'message' => 'An unexpected error occurred. ' . $e->getMessage(),
-                'errors' => [],
-            ], 500);
+            return ApiResponseHelper::error('An unexpected error occurred. ' . $e->getMessage(), 500);
         }
     }
+
+    public function deleteMcqOption($id)
+    {
+        try {
+            $mcqOption = McqQuestion::findOrFail($id);
+            $mcqOption->delete();
+
+            return ApiResponseHelper::success([], 'MCQ option deleted successfully', 200);
+        } catch (ModelNotFoundException $e) {
+            return ApiResponseHelper::error('MCQ option not found', 404);
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('An unexpected error occurred. ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function deleteCreativeOption($id)
+    {
+        try {
+            $creativeOption = CreativeQuestion::findOrFail($id);
+            $creativeOption->delete();
+
+            return ApiResponseHelper::success([], 'Creative option deleted successfully', 200);
+        } catch (ModelNotFoundException $e) {
+            return ApiResponseHelper::error('Creative option not found', 404);
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('An unexpected error occurred. ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function deleteQuestionWithOptions($id)
+{
+    try {
+        $question = Question::findOrFail($id);
+
+        // Check question type and delete associated options accordingly
+        if ($question->type === 'mcq') {
+            $question->mcqOptions()->delete();
+        } elseif ($question->type === 'creative') {
+            $question->creativeOptions()->delete();
+        }
+
+        // Delete the question itself
+        $question->delete();
+
+        return ApiResponseHelper::success([], 'Question and associated options deleted successfully', 200);
+    } catch (ModelNotFoundException $e) {
+        return ApiResponseHelper::error('Question not found', 404);
+    } catch (\Exception $e) {
+        return ApiResponseHelper::error('An unexpected error occurred. ' . $e->getMessage(), 500);
+    }
+}
 
     /**
      * Validate the hierarchy of categories.
@@ -335,6 +387,7 @@ class ManageQuestionController extends Controller
      */
     protected function storeCategories($questionId, $categories)
     {
+        // Prepare the categories data
         $categoriesData = [
             'section_id' => $categories['section_id'] ?? null,
             'exam_type_id' => $categories['exam_type_id'] ?? null,
@@ -347,15 +400,25 @@ class ManageQuestionController extends Controller
             'sub_topic_id' => $categories['sub_topic_id'] ?? null,
         ];
 
-        // Remove old entries
-        Questionable::where('question_id', $questionId)->delete();
+        try {
+            // Check if the question_id already exists
+            $questionable = Questionable::where('question_id', $questionId)->first();
 
-        // Insert new entries
-        foreach (array_filter($categoriesData) as $key => $value) {
-            Questionable::updateOrCreate(
-                ['question_id' => $questionId],
-                [$key => $value]
-            );
+            if ($questionable) {
+                // Update existing record
+                $questionable->update($categoriesData);
+            } else {
+                // Create a new record
+                Questionable::create(array_merge(['question_id' => $questionId], $categoriesData));
+            }
+        } catch (\Exception $e) {
+            // Log the error and throw an exception
+            \Log::error('Failed to store categories: ' . $e->getMessage(), [
+                'question_id' => $questionId,
+                'categories' => $categoriesData,
+            ]);
+
+            throw new \Exception('Failed to store categories for the question.');
         }
     }
 }

@@ -11,16 +11,24 @@ use App\Http\Controllers\Api\V1\Questions\QuestionableController;
 
 
 Route::post('/create', [ManageQuestionController::class, 'create']);
-Route::put('/questions/{id}', [ManageQuestionController::class, 'update']);
-Route::delete('/questions/{id}', [ManageQuestionController::class, 'delete']);
+Route::put('/update/{id}', [ManageQuestionController::class, 'update']);
+
+Route::delete('/delete-mcq-option/{id}', [ManageQuestionController::class, 'deleteMcqOption'])
+    ->name('deleteMcqOption');
+
+Route::delete('/delete-creative-option/{id}', [ManageQuestionController::class, 'deleteCreativeOption'])
+    ->name('deleteCreativeOption');
+
+Route::delete('/delete-question/{id}', [ManageQuestionController::class, 'deleteQuestionWithOptions'])
+    ->name('deleteQuestionWithOptions');
 
 // Create a generic question
 // Route::post('/create', [QuestionController::class, 'storeQuestion']);
 
 // Create specific types of questions
-Route::post('/mcq', [QuestionController::class, 'storeMcqQuestion']);
-Route::post('/normal-text', [QuestionController::class, 'storeNormalTextQuestion']);
-Route::post('/creative', [QuestionController::class, 'storeCreativeQuestion']);
+// Route::post('/mcq', [QuestionController::class, 'storeMcqQuestion']);
+// Route::post('/normal-text', [QuestionController::class, 'storeNormalTextQuestion']);
+// Route::post('/creative', [QuestionController::class, 'storeCreativeQuestion']);
 
 // Update the status of a specific question
 Route::patch('/{id}/status', [QuestionController::class, 'changeQuestionStatus']);
@@ -32,29 +40,29 @@ Route::get('/all', [QuestionController::class, 'getAllQuestions']);
 Route::get('/single/{id}', [QuestionController::class, 'getQuestion']);
 
 /* update */
-Route::put('/update/{id}', [QuestionController::class, 'updateQuestion']);
+// Route::put('/update/{id}', [QuestionController::class, 'updateQuestion']);
 
 // MCQ question update
-Route::put('/update/mcq/{id}', [QuestionController::class, 'updateMcqQuestion']);
+// Route::put('/update/mcq/{id}', [QuestionController::class, 'updateMcqQuestion']);
 
 // Normal text question update
-Route::put('/update/normal-text/{id}', [QuestionController::class, 'updateNormalTextQuestion']);
+// Route::put('/update/normal-text/{id}', [QuestionController::class, 'updateNormalTextQuestion']);
 
 // Creative question update
-Route::put('/update/creative/{id}', [QuestionController::class, 'updateCreativeQuestion']);
+// Route::put('/update/creative/{id}', [QuestionController::class, 'updateCreativeQuestion']);
 
 
 // Generic Question Routes
-Route::delete('/delete/{id}', [QuestionController::class, 'deleteQuestion']);
+// Route::delete('/delete/{id}', [QuestionController::class, 'deleteQuestion']);
 
 // MCQ Question Routes
-Route::delete('/delete/mcq/{id}', [QuestionController::class, 'deleteMcqQuestion']);
+// Route::delete('/delete/mcq/{id}', [QuestionController::class, 'deleteMcqQuestion']);
 
 // Normal Text Question Routes
-Route::delete('/delete/normal-text/{id}', [QuestionController::class, 'deleteNormalTextQuestion']);
+// Route::delete('/delete/normal-text/{id}', [QuestionController::class, 'deleteNormalTextQuestion']);
 
 // Creative Question Routes
-Route::delete('/delete/creative/{id}', [QuestionController::class, 'deleteCreativeQuestion']);
+// Route::delete('/delete/creative/{id}', [QuestionController::class, 'deleteCreativeQuestion']);
 
 // Define routes for MCQ questions
 Route::get('/mcq', [QuestionController::class, 'getAllMcqQuestions']);
