@@ -37,9 +37,11 @@ class ManageQuestionController extends Controller
                 'mcq_options.*.mcq_images' => 'nullable|array',
                 'mcq_options.*.mcq_images.*' => 'string|url',
                 'mcq_options.*.is_correct' => 'required_if:type,mcq|boolean',
+                'mcq_options.*.description' => 'nullable|string', // Description for MCQ
                 'creative_options' => 'required_if:type,creative|array',
                 'creative_options.*.creative_question_text' => 'required_if:type,creative|string',
                 'creative_options.*.creative_question_type' => 'required_if:type,creative|in:a,b,c,d',
+                'creative_options.*.description' => 'nullable|string', // Description for Creative
                 'categories' => 'nullable|array',
                 'categories.section_id' => 'nullable|integer|exists:sections,id',
                 'categories.exam_type_id' => 'nullable|integer|exists:exam_types,id',
@@ -123,16 +125,9 @@ class ManageQuestionController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return ApiResponseHelper::error('An unexpected error occurred. ' . $e->getMessage(), 500);
-
         }
     }
 
-    /**
-     * Update an existing question.
-     */
-   /**
-     * Update an existing question.
-     */
     public function update(Request $request, $id)
     {
         try {
@@ -153,10 +148,12 @@ class ManageQuestionController extends Controller
                 'mcq_options.*.mcq_images' => 'nullable|array',
                 'mcq_options.*.mcq_images.*' => 'string|url',
                 'mcq_options.*.is_correct' => 'required_if:type,mcq|boolean',
+                'mcq_options.*.description' => 'nullable|string', // Description for MCQ
                 'creative_options' => 'nullable|array',
                 'creative_options.*.id' => 'sometimes|exists:creative_questions,id',
                 'creative_options.*.creative_question_text' => 'required_if:type,creative|string',
                 'creative_options.*.creative_question_type' => 'required_if:type,creative|in:a,b,c,d',
+                'creative_options.*.description' => 'nullable|string', // Description for Creative
                 'categories' => 'nullable|array',
                 'categories.section_id' => 'nullable|integer|exists:sections,id',
                 'categories.exam_type_id' => 'nullable|integer|exists:exam_types,id',
@@ -200,6 +197,7 @@ class ManageQuestionController extends Controller
                             'mcq_question_text' => $option['mcq_question_text'],
                             'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
                             'is_correct' => $option['is_correct'],
+                            'description' => $option['description'] ?? null,
                         ]);
                     } else {
                         // Create new MCQ option
@@ -208,6 +206,7 @@ class ManageQuestionController extends Controller
                             'mcq_question_text' => $option['mcq_question_text'],
                             'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
                             'is_correct' => $option['is_correct'],
+                            'description' => $option['description'] ?? null,
                         ]);
                     }
                 }
@@ -221,6 +220,7 @@ class ManageQuestionController extends Controller
                         CreativeQuestion::where('id', $option['id'])->update([
                             'creative_question_text' => $option['creative_question_text'],
                             'creative_question_type' => $option['creative_question_type'],
+                            'description' => $option['description'] ?? null,
                         ]);
                     } else {
                         // Create new Creative option
@@ -228,6 +228,7 @@ class ManageQuestionController extends Controller
                             'question_id' => $question->id,
                             'creative_question_text' => $option['creative_question_text'],
                             'creative_question_type' => $option['creative_question_type'],
+                            'description' => $option['description'] ?? null,
                         ]);
                     }
                 }
@@ -256,6 +257,7 @@ class ManageQuestionController extends Controller
             ]);
 
             return ApiResponseHelper::success($question, 'Question updated successfully', 200);
+
         } catch (ValidationException $e) {
             return ApiResponseHelper::error('Validation failed', 422, $e->errors());
         } catch (\Exception $e) {
@@ -263,6 +265,7 @@ class ManageQuestionController extends Controller
             return ApiResponseHelper::error('An unexpected error occurred. ' . $e->getMessage(), 500);
         }
     }
+
 
     public function deleteMcqOption($id)
     {
