@@ -38,7 +38,8 @@ abstract class QueBaseRepository implements QuestionRepositoryInterface
 
     public function find(int $id)
     {
-        return $this->model->findOrFail($id);
+        $query = $this->model->with('attachable')->with(['creativeQuestions','mcqQuestions'])->where('id',$id)->first();
+        return $query;
     }
 
     public function getAll()
