@@ -46,17 +46,11 @@ class AdminAuthService
     {
         try {
             $credentials = $adminLoginData->toArray();
-            // $admin = $this->adminRepository->findByEmail($credentials['email']);
             $admin = Auth::guard('admin-api')->getProvider()->retrieveByCredentials($credentials);
-            // if (!$admin || !Hash::check($credentials['password'], $admin->password)) {
-            //     return ApiResponseHelper::error('Invalid credentials', 401);
-            // }
 
              if (!$admin || !Hash::check($credentials['password'], $admin->password)) {
                 return ApiResponseHelper::error('Invalid credentials', 401);
             }
-
-            // If credentials are correct, generate a new token
             $token = $admin->createToken('API Token')->plainTextToken;
 
             return ApiResponseHelper::success([

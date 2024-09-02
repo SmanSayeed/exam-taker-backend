@@ -20,6 +20,7 @@ class RouteServiceProvider extends ServiceProvider
     public const HOME = '/home';
 
     private const ADMIN_ROUTE_PATH = 'routes/api/v1/admin_routes';
+    private const STUDENT_ROUTE_PATH = 'routes/api/v1/student';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
@@ -62,6 +63,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapPublicRoutes()
     {
         Route::group([], base_path(self::ADMIN_ROUTE_PATH.'/admin_public_routes.php'));
+        Route::group([], base_path(self::STUDENT_ROUTE_PATH.'/student_public_routes.php'));
     }
 
     /**
@@ -74,6 +76,8 @@ class RouteServiceProvider extends ServiceProvider
         Route::prefix('admin/questions')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/questions/questions_category_routes.php'));
 
         Route::prefix('admin/que')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/questions/que_routes.php'));
+
+        Route::prefix('student')->group(base_path(self::STUDENT_ROUTE_PATH . '/student_protected_routes.php'));
 
 
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\StudentRequest;
+namespace App\Http\Requests\Student;
 
 use App\Helpers\ApiResponseHelper;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StudentLoginRequest extends FormRequest
+class StudentResetPasswordRequest extends FormRequest
 {
     public function authorize()
     {
@@ -17,8 +17,9 @@ class StudentLoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|string|email|max:255|unique:students',
-            'password' => 'required|string|min:8'
+            'email' => 'required|email|exists:students,email',
+            'password' => 'required|string|min:6|confirmed',
+            'token' => 'required|string',
         ];
     }
     protected function failedValidation(Validator $validator)

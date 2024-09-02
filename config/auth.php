@@ -83,10 +83,10 @@ return [
             'model' => App\Models\Admin::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'students' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Student::class,
+        ],
     ],
 
     /*
@@ -117,6 +117,12 @@ return [
     ],
     'admins' => [
         'provider' => 'admins',
+        'table' => 'password_reset_tokens',
+        'expire' => 60,
+        'throttle' => 60,
+    ],
+    'students' => [
+        'provider' => 'students',
         'table' => 'password_reset_tokens',
         'expire' => 60,
         'throttle' => 60,

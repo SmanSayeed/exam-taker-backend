@@ -18,7 +18,6 @@ Route::prefix('admin')->group(function () {
 
 
 
-
 // Route::prefix('student')->group(function () {
 //     Route::post('/register', [StudentController::class, 'store']);
 //     Route::post('/login', [AuthController::class, 'login']); // create AuthController for authentication

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\StudentService;
+namespace App\Services\Student;
 
 use App\DTOs\StudentDTO\StudentRegistrationData;
 use App\Http\Resources\StudentResource\StudentResource;
