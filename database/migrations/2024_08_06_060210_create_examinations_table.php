@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('exams', function (Blueprint $table) {
+        Schema::create('examinations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->integer('result')->nullable();
             $table->integer('total_duration')->nullable();
             $table->timestamp('start_time')->nullable();
             $table->timestamp('finished_time')->nullable();
-            $table->enum('exam_type', ['type1', 'type2', 'type3']); // Modify as per your exam types
+            $table->enum('exam_type', ['type1', 'type2', 'type3']);
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('exams');
+        Schema::dropIfExists('examinations');
     }
 };
