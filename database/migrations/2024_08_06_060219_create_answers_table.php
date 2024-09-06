@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('exam_id');
+            $table->unsignedBigInteger('examination_id');
             $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('question_id');
-            $table->enum('question_type', ['mcq', 'creative', 'normal']);
+            $table->enum('type', ['mcq', 'creative', 'normal']);
             $table->boolean('is_answer_submitted')->default(false);
             $table->boolean('is_exam_time_out')->default(false);
             $table->json('mcq_answers')->nullable(); // JSON for storing MCQ answers

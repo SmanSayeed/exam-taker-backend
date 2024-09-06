@@ -24,8 +24,15 @@ return new class extends Migration
             $table->timestamp('student_ended_at')->nullable();
             $table->float('time_limit', 8, 2)->nullable();
             $table->boolean('is_negative_mark_applicable')->default(false);
-            $table->json('section_categories')->nullable(); // JSON for section categories: Section → exam_types → exam_sub_types: Group→Level→Subject→lesson→topics→sub_topics
-            $table->json('subject_categories')->nullable(); // JSON for subject categories
+            $table->json('section_id')->nullable();
+            $table->json('exam_type_id')->nullable();
+            $table->json('exam_sub_type_id')->nullable();
+            $table->json('group_id')->nullable();
+            $table->json('level_id')->nullable();
+            $table->json('lesson_id')->nullable();
+            $table->json('topic_id')->nullable();
+            $table->json('sub_topic_id')->nullable();
+
             $table->json('questions'); // JSON for storing question IDs
             $table->softDeletes(); // For soft delete
             $table->timestamps();

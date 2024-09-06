@@ -3,6 +3,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminRegistrationController;
 use App\Http\Controllers\Api\V1\Admin\Maintenance\AdminMaintenanceController;
+use App\Http\Controllers\Examination\ExaminationController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 use OpenApi\Generator;
@@ -16,6 +17,10 @@ Route::prefix('admin')->group(function () {
     Route::post('/maintenance/optimize', [AdminMaintenanceController::class, 'optimize']);
 });
 
+
+Route::post('/exam/start', [ExaminationController::class, 'startExam']);
+Route::post('/exam/{exam_id}/finish', [ExaminationController::class, 'finishExam']);
+Route::get('/exam/{examId}/questions', [ExaminationController::class, 'getExamQuestions']);
 
 
 // Route::prefix('student')->group(function () {
