@@ -19,10 +19,10 @@ return new class extends Migration
             $table->enum('question_type', ['mcq', 'creative', 'normal']);
             $table->boolean('is_answer_submitted')->default(false);
             $table->boolean('is_exam_time_out')->default(false);
-            $table->string('mcq_option_submitted')->nullable(); // For MCQ type
-            $table->text('creative_answer_submitted')->nullable(); // For Creative type
-            $table->string('creative_answer_file')->nullable(); // For Creative type with file
-            $table->text('normal_answer_submitted')->nullable(); // For Normal type
+            $table->json('mcq_answers')->nullable(); // JSON for storing MCQ answers
+            $table->json('creative_answers')->nullable(); // For Creative type
+
+            $table->json('normal_answers')->nullable(); // For Normal type
             $table->decimal('obtained_mark', 8, 2)->nullable();
             $table->timestamp('exam_start_time')->nullable();
             $table->timestamp('submission_time')->nullable();

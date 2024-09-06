@@ -21,10 +21,12 @@ return new class extends Migration
             $table->enum('created_by_role', ['admin', 'student']);
             $table->timestamp('start_time');
             $table->timestamp('end_time');
+            $table->timestamp('student_ended_at')->nullable();
+            $table->float('time_limit', 8, 2)->nullable();
             $table->boolean('is_negative_mark_applicable')->default(false);
             $table->json('section_categories')->nullable(); // JSON for section categories: Section → exam_types → exam_sub_types: Group→Level→Subject→lesson→topics→sub_topics
             $table->json('subject_categories')->nullable(); // JSON for subject categories
-
+            $table->json('questions'); // JSON for storing question IDs
             $table->softDeletes(); // For soft delete
             $table->timestamps();
         });
