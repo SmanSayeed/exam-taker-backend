@@ -13,12 +13,19 @@ return new class extends Migration
     {
         Schema::create('examinations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->integer('result')->nullable();
-            $table->integer('total_duration')->nullable();
-            $table->timestamp('start_time')->nullable();
-            $table->timestamp('finished_time')->nullable();
-            $table->enum('exam_type', ['type1', 'type2', 'type3']);
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->enum('type', ['mcq', 'creative', 'normal']);
+            $table->boolean('is_paid')->default(false);
+            $table->unsignedBigInteger('created_by');
+            $table->enum('created_by_role', ['admin', 'student']);
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
+            $table->boolean('is_negative_mark_applicable')->default(false);
+            $table->json('section_categories')->nullable(); // JSON for section categories: Section → exam_types → exam_sub_types: Group→Level→Subject→lesson→topics→sub_topics
+            $table->json('subject_categories')->nullable(); // JSON for subject categories
+
+            $table->softDeletes(); // For soft delete
             $table->timestamps();
         });
     }
