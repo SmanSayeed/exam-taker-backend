@@ -17,11 +17,11 @@ Route::prefix('admin')->group(function () {
     Route::post('/maintenance/optimize', [AdminMaintenanceController::class, 'optimize']);
 });
 
-
+Route::prefix('student')->group(function () {
 Route::post('/exam/start', [ExaminationController::class, 'startExam']);
 Route::post('/exam/{exam_id}/finish', [ExaminationController::class, 'finishExam']);
 Route::get('/exam/{examId}/questions', [ExaminationController::class, 'getExamQuestions']);
-
+});
 
 // Route::prefix('student')->group(function () {
 //     Route::post('/register', [StudentController::class, 'store']);

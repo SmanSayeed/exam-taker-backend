@@ -34,7 +34,6 @@ class StartExamRequest extends FormRequest
             'time_limit' => 'required|numeric',
             'created_by' => 'required|integer',
             'created_by_role' => 'required|in:admin,student',
-            'question_type' => 'required|in:mcq,creative,normal',
             'questions_limit' => 'nullable|integer|min:1',
             'student_id' => 'required|integer',
         ];

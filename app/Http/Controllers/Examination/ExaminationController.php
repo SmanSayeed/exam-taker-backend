@@ -31,8 +31,7 @@ class ExaminationController extends Controller
         ];
 
         // Get the list of questions based on filtering
-        $query = Question::where('type', $validatedData['question_type']);
-
+        $query = Question::where('type', $validatedData['type']);
         $query = $this->filterQuestionsByCategories($query, $categories);
 
         // Randomly select the specified number of questions
@@ -65,11 +64,17 @@ class ExaminationController extends Controller
                 'questions' => implode(',', $questions), // Store question IDs as a comma-separated string
             ]);
 
+            if (!$exam) {
+                // Rollback and return error if exam creation fails
+                DB::rollBack();
+                return response()->json(['error' => 'Failed to create exam.'], 500);
+            }
+
             // Create initial answer record with exam information and start time
             Answer::create([
-                'examination_id' => $exam->id,
+                'examination_id' => $exam->id,  // Ensure this ID is set correctly
                 'student_id' => $validatedData['student_id'],
-                'type' => $validatedData['question_type'],
+                'type' => $validatedData['type'],
                 'exam_start_time' => $exam->start_time,
             ]);
 
@@ -79,11 +84,13 @@ class ExaminationController extends Controller
             return response()->json(['exam' => $exam], 201);
 
         } catch (\Exception $e) {
+            dd($e);
             // Rollback the transaction if any error occurs
             DB::rollBack();
             return response()->json(['error' => 'An error occurred while creating the exam.'], 500);
         }
     }
+
 
 
     private function filterQuestionsByCategories($query, $categories)

@@ -10,7 +10,7 @@ class Answer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'exam_id',
+        'examination_id',
         'student_id',
         'question_id',
         'question_type',
