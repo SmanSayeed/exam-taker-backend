@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Questions\ManageQuestionController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\Questions\QuestionBaseController;
+use App\Http\Controllers\Api\V1\Questions\QuestionCategoryController;
 use App\Http\Controllers\Api\V1\Questions\QuestionController;
 
 use App\Http\Controllers\Api\V1\Questions\QuestionableController;

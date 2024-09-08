@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class QuestionBaseRepository implements QuestionBaseRepositoryInterface
+class QuestionCategoryRepository implements QuestionCategoryRepositoryInterface
 {
     protected ?Model $model = null;
 

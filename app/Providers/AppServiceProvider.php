@@ -7,11 +7,11 @@ use App\Repositories\Admin\AdminAuthRepository;
 use App\Repositories\Admin\StudentCRUDRepository\StudentCRUDRepository;
 use App\Repositories\Admin\StudentCRUDRepository\StudentCRUDRepositoryInterface;
 use App\Repositories\QuestionRepository\QueBaseRepository;
-use App\Repositories\QuestionRepository\QuestionBaseRepository;
-use App\Repositories\QuestionRepository\QuestionBaseRepositoryInterface;
+use App\Repositories\QuestionRepository\QuestionCategoryRepository;
+use App\Repositories\QuestionRepository\QuestionCategoryRepositoryInterface;
 use App\Repositories\QuestionRepository\SectionRepository;
 use App\Repositories\QuestionRepository\SectionRepositoryInterface;
-use App\Services\Question\QuestionBaseService;
+use App\Services\Question\QuestionCategoryService;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\QuestionRepository\QuestionRepositoryInterface;
 use App\Repositories\QuestionRepository\QuestionRepository;
@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(AdminRepositoryInterface::class, AdminAuthRepository::class);
         $this->app->bind(StudentCRUDRepositoryInterface::class, StudentCRUDRepository::class);
 
-        $this->app->bind(QuestionBaseRepositoryInterface::class, QuestionBaseRepository::class);
+        $this->app->bind(QuestionCategoryRepositoryInterface::class, QuestionCategoryRepository::class);
 
         // $this->app->bind(QuestionRepositoryInterface::class, QuestionRepository::class);
         // $this->app->bind(QuestionRepositoryInterface::class, McqQuestionRepository::class);

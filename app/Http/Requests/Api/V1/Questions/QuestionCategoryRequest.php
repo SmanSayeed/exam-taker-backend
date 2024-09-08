@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class QuestionBaseRequest extends FormRequest
+class QuestionCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {

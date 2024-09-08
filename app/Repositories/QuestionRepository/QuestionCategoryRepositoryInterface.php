@@ -5,7 +5,7 @@ namespace App\Repositories\QuestionRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-interface QuestionBaseRepositoryInterface
+interface QuestionCategoryRepositoryInterface
 {
     public function setModel(Model $model): void;
 

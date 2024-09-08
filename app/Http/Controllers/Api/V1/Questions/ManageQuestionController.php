@@ -11,6 +11,7 @@ use App\Models\Questionable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ManageQuestionController extends Controller
@@ -416,7 +417,7 @@ class ManageQuestionController extends Controller
             }
         } catch (\Exception $e) {
             // Log the error and throw an exception
-            \Log::error('Failed to store categories: ' . $e->getMessage(), [
+            Log::error('Failed to store categories: ' . $e->getMessage(), [
                 'question_id' => $questionId,
                 'categories' => $categoriesData,
             ]);

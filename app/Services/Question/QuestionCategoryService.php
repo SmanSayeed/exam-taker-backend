@@ -2,16 +2,16 @@
 
 namespace App\Services\Question;
 
-use App\Repositories\QuestionRepository\QuestionBaseRepositoryInterface;
+use App\Repositories\QuestionRepository\QuestionCategoryRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class QuestionBaseService
+class QuestionCategoryService
 {
-    protected QuestionBaseRepositoryInterface $repository;
+    protected QuestionCategoryRepositoryInterface $repository;
 
-    public function __construct(QuestionBaseRepositoryInterface $repository)
+    public function __construct(QuestionCategoryRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
@@ -21,7 +21,7 @@ class QuestionBaseService
         $this->repository->setModel($model);
     }
 
-    public function getAll(array $relations = [], int $perPage = 15): LengthAwarePaginator
+    public function getAll(array $relations = [], int $perPage = 9999999999): LengthAwarePaginator
     {
         return $this->repository->getAll($relations,$perPage);
     }
