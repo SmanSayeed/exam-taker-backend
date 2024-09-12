@@ -111,6 +111,7 @@ class ExaminationController extends Controller
                 'student_id' => $validatedData['student_id'],
                 'type' => $validatedData['type'],
                 'exam_start_time' => $exam->start_time,
+                'is_second_timer' => $request->is_second_timer ?? false, // Optional field
             ]);
 
             // Commit the transaction

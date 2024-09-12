@@ -22,11 +22,14 @@ return new class extends Migration
             $table->json('creative_answers')->nullable(); // For Creative type
 
             $table->json('normal_answers')->nullable(); // For Normal type
-            $table->decimal('obtained_mark', 8, 2)->nullable();
+            $table->decimal('total_marks', 8, 2)->nullable();
+            $table->integer(column: 'correct_count')->nullable();
+            $table->integer(column: 'total_questions_count')->nullable();
             $table->timestamp('exam_start_time')->nullable();
             $table->timestamp('submission_time')->nullable();
             $table->boolean('is_second_timer')->default(false)->nullable(); // For admission test
             $table->boolean('status')->default(true); // Managed by admin
+            $table->longText('comments')->nullable();
             $table->softDeletes(); // For soft delete
             $table->timestamps();
         });

@@ -10,11 +10,11 @@ use App\Http\Requests\Admin\AdminStudentCRUDRequest\StudentRegistrationRequest;
 use App\Http\Requests\Admin\AdminStudentCRUDRequest\StudentUpdateRequest;
 use App\Http\Resources\StudentResource\StudentResource;
 use App\Models\Student;
-use App\Services\StudentService\StudentCRUDService;
+use App\Services\Student\StudentCRUDService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class StudentCRUDController extends Controller
+class AdminManagesStudent extends Controller
 {
     protected $studentService;
 
