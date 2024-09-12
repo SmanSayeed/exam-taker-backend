@@ -23,4 +23,14 @@ class Student extends  Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function answers()
+    {
+        return $this->hasMany(Answer::class, 'student_id');
+    }
+
+    public function examinations()
+    {
+        return $this->hasMany(Examination::class, 'created_by');
+    }
 }

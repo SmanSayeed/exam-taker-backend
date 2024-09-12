@@ -20,8 +20,12 @@ Route::prefix('admin')->group(function () {
 Route::prefix('student')->group(function () {
 Route::post('/exam/start', [ExaminationController::class, 'startExam']);
 Route::post('/exam/{exam_id}/finish', [ExaminationController::class, 'finishExam']);
-Route::get('/exam/{examId}/questions', [ExaminationController::class, 'getExamQuestions']);
+
+Route::get('/exam-details/{examId}', [ExaminationController::class, 'getExamById']);
+Route::get('/exams/student/{studentId}/{withQuestionList}', [ExaminationController::class, 'getExamsByStudent']);
+Route::get('/exams/all/{withQuestionList}', [ExaminationController::class, 'getAllExamsWithStudents']);
 });
+
 
 // Route::prefix('student')->group(function () {
 //     Route::post('/register', [StudentController::class, 'store']);

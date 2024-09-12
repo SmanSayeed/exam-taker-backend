@@ -37,4 +37,9 @@ class Examination extends Model
     {
         return $this->hasMany(Answer::class, 'examination_id');
     }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'created_by');
+    }
 }

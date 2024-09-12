@@ -12,6 +12,38 @@ use App\Http\Requests\StartExamRequest;
 use Illuminate\Support\Facades\DB;
 class ExaminationController extends Controller
 {
+
+    public function formatQuestionData($questions, $type = null)
+{
+    $query = Question::whereIn('id', $questions);
+
+    // Filter by type, if provided
+    if ($type) {
+        $query->where('type', $type);
+    }
+
+    // Include related data based on the question type
+    switch ($type) {
+        case 'mcq':
+            $query->with('mcqQuestions');
+            break;
+        case 'creative':
+            $query->with('creativeQuestions');
+            break;
+        case 'normal':
+            // No additional relations for normal questions
+            break;
+        default:
+            // Include both mcq and creative options
+            $query->with(['creativeQuestions', 'mcqQuestions']);
+            break;
+    }
+
+    // Always include the attachable relation
+    return $query->with('attachable')->get();
+}
+
+
     public function startExam(StartExamRequest $request)
     {
         $validatedData = $request->validated();
@@ -36,6 +68,9 @@ class ExaminationController extends Controller
 
         // Randomly select the specified number of questions
         $questions = $query->inRandomOrder()->limit($questionsLimit)->pluck('id')->toArray();
+
+        // Fetch the detailed question data
+        $questionsList = Question::whereIn('id', $questions)->with('attachable')->get();
 
         // Use a transaction to ensure both operations succeed or fail together
         DB::beginTransaction();
@@ -72,7 +107,7 @@ class ExaminationController extends Controller
 
             // Create initial answer record with exam information and start time
             Answer::create([
-                'examination_id' => $exam->id,  // Ensure this ID is set correctly
+                'examination_id' => $exam->id,
                 'student_id' => $validatedData['student_id'],
                 'type' => $validatedData['type'],
                 'exam_start_time' => $exam->start_time,
@@ -81,11 +116,12 @@ class ExaminationController extends Controller
             // Commit the transaction
             DB::commit();
 
-            return response()->json(['exam' => $exam], 201);
+            return response()->json([
+                'exam' => $exam,
+                'questions_list' => $questionsList // Add the detailed questions list to the response
+            ], 201);
 
         } catch (\Exception $e) {
-            dd($e);
-            // Rollback the transaction if any error occurs
             DB::rollBack();
             return response()->json(['error' => 'An error occurred while creating the exam.'], 500);
         }
@@ -119,24 +155,73 @@ class ExaminationController extends Controller
 
 
 
-    public function getExamQuestions($examId)
-    {
-        // Retrieve the exam record by ID
-        $exam = Examination::findOrFail($examId);
+   // 1. Get exam by exam ID with questions_list
+   public function getExamById($examId)
+   {
+       $exam = Examination::with('answers')->find($examId);
 
-        // Extract the question IDs from the `questions` field (comma-separated string)
-        $questionIds = explode(',', $exam->questions);
+       if (!$exam) {
+           return response()->json(['error' => 'Exam not found'], 404);
+       }
 
-        // Retrieve the questions based on the extracted IDs and load related MCQ and Creative options
-        $questions = Question::whereIn('id', $questionIds)
-            ->with(['mcqQuestions', 'creativeQuestions']) // Load relationships
-            ->get();
+       $questions = explode(',', $exam->questions);
 
-        return response()->json([
-            'exam' => $exam,
-            'questions' => $questions
-        ], 200);
-    }
+       // Use the helper function to format the question data
+       $questionsList = $this->formatQuestionData($questions, $exam->type);
+
+       return response()->json([
+           'exam' => $exam,
+           'questions_list' => $questionsList
+       ]);
+   }
+
+
+   // 2. Get exams by student ID with optional questions_list
+   public function getExamsByStudent($studentId, $withQuestionList = false)
+   {
+       $role = 'student';
+       // Fetch exams created by the specific student, ordered by created_at in descending order
+       $query = Examination::where('created_by', $studentId)
+                           ->where('created_by_role', $role)
+                           ->orderBy('created_at', 'desc');
+
+       // If the user requested questions_list, include it
+       if ($withQuestionList) {
+           $exams = $query->get(); // Get exams first
+           foreach ($exams as $exam) {
+               $questions = explode(',', $exam->questions); // Assumes questions are stored as a comma-separated string
+               $exam->questions_list = $this->formatQuestionData($questions, $exam->type); // Format questions list based on type
+           }
+       } else {
+           // Include answers relationship
+           $exams = $query->with('answers')->get();
+       }
+
+       return response()->json(['exams' => $exams]);
+   }
+
+
+   // 3. Get all exams with student information
+   public function getAllExamsWithStudents($withQuestionList = 0)
+   {
+       // Fetch all exams ordered by created_at in descending order
+       $query = Examination::with('answers', 'student') // Use the 'student' relationship
+                           ->orderBy('created_at', 'desc');
+
+       // If the user requested questions_list, include it
+       if ($withQuestionList) {
+           $exams = $query->get(); // Get exams first
+           foreach ($exams as $exam) {
+               $questions = explode(',', $exam->questions); // Assumes questions are stored as a comma-separated string
+               $exam->questions_list = $this->formatQuestionData($questions, $exam->type); // Format questions list based on type
+           }
+       } else {
+           $exams = $query->get();
+       }
+
+       return response()->json(['exams' => $exams]);
+   }
+
 
 
 
