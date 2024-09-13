@@ -35,7 +35,6 @@ class StartExamRequest extends FormRequest
             'created_by' => 'required|integer',
             'created_by_role' => 'required|in:admin,student',
             'questions_limit' => 'nullable|integer|min:1',
-            'student_id' => 'required|integer',
         ];
     }
 }

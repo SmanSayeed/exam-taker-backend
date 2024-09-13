@@ -109,7 +109,6 @@ class AnswerController extends Controller
      $answer = Answer::where('examination_id', $request->examination_id)
          ->where('student_id', $request->student_id)
          ->first();
-
      if (!$answer) {
          return response()->json(['error' => 'No active exam found for this student.'], 404);
      }

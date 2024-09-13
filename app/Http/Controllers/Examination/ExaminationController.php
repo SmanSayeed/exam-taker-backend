@@ -48,6 +48,11 @@ class ExaminationController extends Controller
     {
         $validatedData = $request->validated();
 
+        if($request->created_by_role!="student"){
+            return response()->json(['error' => 'Only students can start an exam'], 400);
+        }
+
+
         $questionsLimit = $validatedData['questions_limit'] ?? 20; // Default to 20 questions if not provided
 
         // Parse category-related IDs from request and store them as comma-separated strings
@@ -108,7 +113,7 @@ class ExaminationController extends Controller
             // Create initial answer record with exam information and start time
             Answer::create([
                 'examination_id' => $exam->id,
-                'student_id' => $validatedData['student_id'],
+                'student_id' => $validatedData['created_by'],
                 'type' => $validatedData['type'],
                 'exam_start_time' => $exam->start_time,
                 'is_second_timer' => $request->is_second_timer ?? false, // Optional field
@@ -274,7 +279,7 @@ class ExaminationController extends Controller
 
     // Fetch the answer record for the student and examination
     $answer = Answer::where('examination_id', $validatedData['examination_id'])
-                    ->where('student_id', $validatedData['student_id'])
+                    ->where('student_id', $validatedData['created_by'])
                     ->first();
 
     if (!$answer) {
