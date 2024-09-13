@@ -34,10 +34,12 @@ class QuestionSeeder extends Seeder
 
             // If it's an MCQ type, create the MCQ options
             if ($questionData['type'] === 'mcq') {
+                $i=1;
                 foreach ($questionData['mcq_options'] as $option) {
                     McqQuestion::create([
                         'question_id' => $question->id,
                         'mcq_question_text' => $option['option_text'],
+                        'mcq_option_serial' => $option['mcq_option_serial']??$i++,
                         'is_correct' => $option['is_correct'],
                         'description' => $questionData['description'],
                     ]);

@@ -14,6 +14,7 @@ class McqQuestion extends Model
         'mcq_question_text',
         'is_correct',
         'description',
+        'mcq_option_serial' //a,b,c,d
     ];
 
     public function question()

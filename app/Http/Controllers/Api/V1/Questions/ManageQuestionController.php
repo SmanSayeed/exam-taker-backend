@@ -35,6 +35,7 @@ class ManageQuestionController extends Controller
                 'status' => 'boolean',
                 'mcq_options' => 'required_if:type,mcq|array',
                 'mcq_options.*.mcq_question_text' => 'required_if:type,mcq|string',
+                'mcq_options.*.mcq_option_serial' => 'nullable|string',
                 'mcq_options.*.mcq_images' => 'nullable|array',
                 'mcq_options.*.mcq_images.*' => 'string|url',
                 'mcq_options.*.is_correct' => 'required_if:type,mcq|boolean',
@@ -74,10 +75,12 @@ class ManageQuestionController extends Controller
 
             // Handle MCQ options
             if ($validated['type'] === 'mcq' && isset($validated['mcq_options'])) {
+                $i=1;
                 foreach ($validated['mcq_options'] as $option) {
                     McqQuestion::create([
                         'question_id' => $question->id,
                         'mcq_question_text' => $option['mcq_question_text'],
+                        'mcq_question_serial' => $option['mcq_question_serial'] ?? (string)$i++ ,
                         'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
                         'is_correct' => $option['is_correct'],
                         'description' => $option['description'] ?? null,
@@ -146,6 +149,7 @@ class ManageQuestionController extends Controller
                 'mcq_options' => 'nullable|array',
                 'mcq_options.*.id' => 'sometimes|exists:mcq_questions,id',
                 'mcq_options.*.mcq_question_text' => 'required_if:type,mcq|string',
+                'mcq_options.*.mcq_option_serial' => 'nullable|string',
                 'mcq_options.*.mcq_images' => 'nullable|array',
                 'mcq_options.*.mcq_images.*' => 'string|url',
                 'mcq_options.*.is_correct' => 'required_if:type,mcq|boolean',
@@ -191,11 +195,13 @@ class ManageQuestionController extends Controller
 
             // Update MCQ options if type is mcq
             if ($validated['type'] === 'mcq' && isset($validated['mcq_options'])) {
+                $i=1;
                 foreach ($validated['mcq_options'] as $option) {
                     if (isset($option['id'])) {
                         // Update existing MCQ option
                         McqQuestion::where('id', $option['id'])->update([
                             'mcq_question_text' => $option['mcq_question_text'],
+                            'mcq_option_serial' => $option['mcq_option_serial'] ?? $i++,
                             'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
                             'is_correct' => $option['is_correct'],
                             'description' => $option['description'] ?? null,
@@ -205,6 +211,7 @@ class ManageQuestionController extends Controller
                         McqQuestion::create([
                             'question_id' => $question->id,
                             'mcq_question_text' => $option['mcq_question_text'],
+                            'mcq_option_serial' => $option['mcq_option_serial'] ?? $i++,
                             'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
                             'is_correct' => $option['is_correct'],
                             'description' => $option['description'] ?? null,

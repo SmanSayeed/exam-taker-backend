@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('mcq_questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
+            $table->string('mcq_option_serial')->nullable();
             $table->text('mcq_question_text');
             $table->string('mcq_images')->nullable();
             $table->boolean('is_correct');

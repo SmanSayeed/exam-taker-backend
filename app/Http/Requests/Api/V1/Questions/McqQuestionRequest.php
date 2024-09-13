@@ -18,7 +18,7 @@ class McqQuestionRequest extends FormRequest
     {
         return [
             'question_id' => ['required', 'exists:questions,id', new ValidateQuestionType('mcq')],
-            'mcq_question_text' => 'required|string',
+            '' => 'required|string',
             'is_correct' => 'required|boolean',
             'description' => 'nullable|string',
         ];
