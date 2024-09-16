@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('created_by');
             $table->enum('created_by_role', ['admin', 'student']);
             $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->timestamp('end_time')->nullable();
             $table->timestamp('student_ended_at')->nullable();
             $table->float('time_limit', 8, 2)->nullable();
             $table->boolean('is_negative_mark_applicable')->default(false);
