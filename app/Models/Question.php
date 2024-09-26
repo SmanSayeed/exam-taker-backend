@@ -97,5 +97,10 @@ class Question extends Model
         return $this->hasOne(Questionable::class);
     }
 
+    public function answers()
+    {
+        return $this->hasMany(Answer::class, 'question_id');
+    }
+
     // Add any relationships or additional methods if necessary
 }

@@ -208,38 +208,41 @@ class ExaminationService
 
 
     // Process MCQ answers
-    public function processMcqAnswers($formattedQuestions, $mcqAnswers, $totalMarks, $correctCount)
+    public function processMcqAnswers($mcqAnswers, $totalMarks, $correctCount)
     {
         $processedMcqAnswers = [];
 
-        foreach ($formattedQuestions as $question) {
+        foreach ($mcqAnswers as $ans) {
             try {
-                $mcqQuestion = $question->mcqQuestions->first(); // Get the first related MCQ question
-                if (!$mcqQuestion) {
-                    throw new \Exception('MCQ question not found for question ID: ' . $question->id);
+                $question = Question::find($ans['question_id']); // Get the first related MCQ question
+                $correct_option_serial = null;
+                $correct_option_id = null;
+                // ---------------
+                $allMcq = $question->mcqQuestions->all();
+                foreach ($allMcq as $mcq) {
+                    if ($mcq->is_correct == 1) {
+                        $correct_option_serial = $mcq->mcq_option_serial;
+                        $correct_option_id = $mcq->id;
+                    }
                 }
 
                 $mcqAnswer = [
                     'question_id' => $question->id,
-                    'mcq_question_id' => $mcqQuestion->id ?? null,
-                    'submitted_mcq_option' => null,
-                    'is_correct' => false,
+                    'mcq_question_id' => $ans['mcq_question_id'],
+                    'submitted_mcq_option' => $ans['submitted_mcq_option'],
+                    'is_submitted_correct' => false,
+                    'correct_option_serial' => $correct_option_serial,
+                    'correct_option_id' => $correct_option_id,
                     'description' => $question->description,
                     'mcq_question_text' => $mcqQuestion->mcq_question_text ?? null,
                     'mcq_option_serial' => $mcqQuestion->mcq_option_serial ?? null,
                     'mcq_images' => $mcqQuestion->mcq_images ?? null,
                 ];
 
-                foreach ($mcqAnswers ?? [] as $submittedAnswer) {
-                    if ($submittedAnswer['mcq_question_id'] == $mcqQuestion->id) {
-                        $mcqAnswer['submitted_mcq_option'] = $submittedAnswer['submitted_mcq_option'];
-                        $mcqAnswer['is_correct'] = $submittedAnswer['submitted_mcq_option'] == $mcqQuestion->is_correct;
-                        if ($mcqAnswer['is_correct']) {
-                            $correctCount++;
-                            $totalMarks += $question->mark;
-                        }
-                        break;
-                    }
+                if ($ans['mcq_question_id'] == $correct_option_id) {
+                    $mcqAnswer['is_submitted_correct'] = true;
+                    $correctCount++;
+                    $totalMarks += $question->mark;
                 }
 
                 $processedMcqAnswers[] = $mcqAnswer;
@@ -248,29 +251,29 @@ class ExaminationService
                 return []; // Return empty array on error
             }
         }
-
-        return [$processedMcqAnswers, $totalMarks, $correctCount];
+      return [$processedMcqAnswers, $totalMarks, $correctCount];
     }
 
 
 
     // Process Creative answers
-    public function processCreativeAnswers($formattedQuestions, $creativeAnswers)
+    public function processCreativeAnswers( $creativeAnswers)
     {
         $processedCreativeAnswers = [];
 
-        foreach ($formattedQuestions as $question) {
+        foreach ($creativeAnswers as $ans) {
+            $question = Question::find($ans['question_id']);
             try {
-                $creativeQuestion = $question->creativeQuestions->first(); // Get the first related creative question
-                if (!$creativeQuestion) {
+                $allCreative = $question->creativeQuestions->all();
+                if (!$allCreative) {
                     throw new \Exception('Creative question not found for question ID: ' . $question->id);
                 }
 
                 $processedCreativeAnswer = [
                     'question_id' => $question->id,
                     'creative_question_id' => $creativeQuestion->id ?? null,
-                    'creative_question_option' => $creativeAnswers->firstWhere('creative_question_id', $creativeQuestion->id)['creative_question_option'] ?? null,
-                    'creative_question_text' => $creativeQuestion->creative_question_text ?? null,
+                    // 'creative_question_option' => $creativeAnswers->firstWhere('creative_question_id', $creativeQuestion->id)['creative_question_option'] ?? null,
+                    // 'creative_question_text' => $creativeQuestion->creative_question_text ?? null,
                 ];
 
                 $processedCreativeAnswers[] = $processedCreativeAnswer;
@@ -285,11 +288,12 @@ class ExaminationService
 
 
     // Process Normal answers
-    public function processNormalAnswers($formattedQuestions, $normalAnswers)
+    public function processNormalAnswers( $normalAnswers)
     {
         $processedNormalAnswers = [];
 
-        foreach ($formattedQuestions as $question) {
+        foreach ($normalAnswers as $ans) {
+            $question = Question::find($ans['question_id']);
             try {
                 $processedNormalAnswers[] = [
                     'question_id' => $question->id,
@@ -305,7 +309,7 @@ class ExaminationService
     }
 
     // Update the answer record in the database
-    public function updateAnswerRecord($answer, $mcqAnswers, $creativeAnswers, $normalAnswers, $totalMarks, $correctCount, $totalQuestionsCount)
+    public function updateAnswerRecord($answer, $mcqAnswers, $creativeAnswers, $normalAnswers, $totalMarks, $correctCount)
     {
         $answer->mcq_answers = $mcqAnswers;
         $answer->creative_answers = $creativeAnswers;
@@ -314,7 +318,6 @@ class ExaminationService
         $answer->is_answer_submitted = true;
         $answer->total_marks = $totalMarks;
         $answer->correct_count = $correctCount;
-        $answer->total_questions_count = $totalQuestionsCount;
         $answer->save();
     }
 

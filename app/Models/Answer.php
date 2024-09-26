@@ -37,4 +37,9 @@ class Answer extends Model
     {
         return $this->belongsTo(Examination::class, 'examination_id');
     }
+
+    public function question()
+    {
+        return $this->belongsTo(Question::class, 'question_id');
+    }
 }

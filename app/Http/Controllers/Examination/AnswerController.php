@@ -46,35 +46,37 @@ class AnswerController extends Controller
             // Process answers based on question type
             $totalMarks = 0;
             $correctCount = 0;
-            $formattedQuestions = $this->examService->formatQuestionData(explode(',', $examination->questions), $examination->type);
-            $totalQuestionsCount = count($formattedQuestions);
+
+            // Get questions with comma separated id if needed
+            // $formattedQuestions = $this->examService->formatQuestionData(explode(',', $examination->questions), $examination->type);
+            // $totalQuestionsCount = count($formattedQuestions);
 
             // Handle different types of answers
             $mcqAnswers = $creativeAnswers = $normalAnswers = [];
 
             if ($examination->type == 'mcq') {
-                [$mcqAnswers, $totalMarks, $correctCount] = $this->examService->processMcqAnswers($formattedQuestions, $request->mcq_answers, $totalMarks, $correctCount);
+                [$mcqAnswers, $totalMarks, $correctCount] = $this->examService->processMcqAnswers($request->mcq_answers, $totalMarks, $correctCount);
                 if (empty($mcqAnswers)) {
                     return response()->json(['error' => 'Error processing MCQ answers.'], 400);
                 }
             }
 
             if ($examination->type == 'creative') {
-                $creativeAnswers = $this->examService->processCreativeAnswers($formattedQuestions, $request->creative_answers);
+                $creativeAnswers = $this->examService->processCreativeAnswers($request->creative_answers);
                 if (empty($creativeAnswers)) {
                     return response()->json(['error' => 'Error processing creative answers.'], 400);
                 }
             }
 
             if ($examination->type == 'normal') {
-                $normalAnswers = $this->examService->processNormalAnswers($formattedQuestions, $request->normal_answers);
+                $normalAnswers = $this->examService->processNormalAnswers($request->normal_answers);
                 if (empty($normalAnswers)) {
                     return response()->json(['error' => 'Error processing normal answers.'], 400);
                 }
             }
 
             // Update the answer record
-            $this->examService->updateAnswerRecord($answer, $mcqAnswers, $creativeAnswers, $normalAnswers, $totalMarks, $correctCount, $totalQuestionsCount);
+            $this->examService->updateAnswerRecord($answer, $mcqAnswers, $creativeAnswers, $normalAnswers, $totalMarks, $correctCount);
 
             // Return response
             return response()->json($this->examService->prepareResponse($examination, $mcqAnswers, $creativeAnswers, $normalAnswers));
