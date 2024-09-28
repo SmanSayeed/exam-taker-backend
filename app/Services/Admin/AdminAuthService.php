@@ -48,7 +48,7 @@ class AdminAuthService
             $credentials = $adminLoginData->toArray();
             $admin = Auth::guard('admin-api')->getProvider()->retrieveByCredentials($credentials);
 
-             if (!$admin || !Hash::check($credentials['password'], $admin->password)) {
+            if (!$admin || !Hash::check($credentials['password'], $admin->password)) {
                 return ApiResponseHelper::error('Invalid credentials', 401);
             }
             $token = $admin->createToken('API Token')->plainTextToken;
