@@ -58,12 +58,12 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     /**
- * Map the public API routes.
+     * Map the public API routes.
      */
     protected function mapPublicRoutes()
     {
-        Route::group([], base_path(self::ADMIN_ROUTE_PATH.'/admin_public_routes.php'));
-        Route::group([], base_path(self::STUDENT_ROUTE_PATH.'/student_public_routes.php'));
+        Route::group([], base_path(self::ADMIN_ROUTE_PATH . '/admin_public_routes.php'));
+        Route::group([], base_path(self::STUDENT_ROUTE_PATH . '/student_public_routes.php'));
     }
 
     /**
@@ -71,7 +71,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapProtectedRoutes()
     {
-        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH.'/admin_protected_routes/admin_profile_routes.php'));
+        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/admin_profile_routes.php'));
+
+        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/admin_manage_students_routes.php'));
 
         Route::prefix('admin/questions')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/questions/questions_category_routes.php'));
 

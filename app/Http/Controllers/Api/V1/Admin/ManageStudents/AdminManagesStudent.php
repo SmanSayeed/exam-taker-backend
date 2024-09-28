@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api\V1\Admin\ManageStudents;
 
 use App\DTOs\StudentDTO\StudentRegistrationData;
+use App\DTOs\StudentDTO\StudentStatusChangeData;
 use App\DTOs\StudentDTO\StudentUpdateData;
 use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\AdminStudentCRUDRequest\ChangeStudentStatusRequest;
 use App\Http\Requests\Admin\AdminStudentCRUDRequest\StudentRegistrationRequest;
 use App\Http\Requests\Admin\AdminStudentCRUDRequest\StudentUpdateRequest;
 use App\Http\Resources\StudentResource\StudentResource;
@@ -13,6 +15,7 @@ use App\Models\Student;
 use App\Services\Student\StudentCRUDService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class AdminManagesStudent extends Controller
 {
@@ -54,12 +57,13 @@ class AdminManagesStudent extends Controller
         }
     }
 
+
     public function update(StudentUpdateRequest $request, Student $student): JsonResponse
     {
         try {
             $studentData = StudentUpdateData::from($request->validated())->getData();
 
-            $result = $this->studentService->update($student,$studentData);
+            $result = $this->studentService->update($student, $studentData);
             return ApiResponseHelper::success(new StudentResource($result), 'Student updated successfully');
         } catch (\Exception $e) {
             return ApiResponseHelper::error('Failed to update student: ' . $e->getMessage(), 500);
@@ -73,6 +77,17 @@ class AdminManagesStudent extends Controller
             return ApiResponseHelper::success(null, 'Student deleted successfully');
         } catch (\Exception $e) {
             return ApiResponseHelper::error('Failed to delete student: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function changeStatus(ChangeStudentStatusRequest $request, Student $student): JsonResponse
+    {
+        try {
+            $studentData = StudentStatusChangeData::from($request->validated())->getData();
+            $result = $this->studentService->changeStatus($student, $studentData);
+            return ApiResponseHelper::success(new StudentResource($result), 'Student status changed successfully');
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('Failed to change student status: ' . $e->getMessage(), 500);
         }
     }
 }
