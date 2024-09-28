@@ -55,7 +55,7 @@ class QuestionService
     {
         return $this->normalTextQuestionRepository->create($normalTextQuestionDTO->toArray());
     }
-
+    
     public function createCreativeQuestion(CreativeQuestionData $creativeQuestionDTO)
     {
         return $this->creativeQuestionRepository->create($creativeQuestionDTO->toArray());

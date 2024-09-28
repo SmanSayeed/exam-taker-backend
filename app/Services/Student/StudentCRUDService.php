@@ -59,4 +59,14 @@ class StudentCRUDService
             return ApiResponseHelper::error('Failed to delete student: ' . $e->getMessage(), 500);
         }
     }
+
+    public function changeStatus(Student $student, array $data)
+    {
+        try {
+            $student->update($data);
+            return $student;
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to change student status: ' . $e->getMessage(), 500);
+        }
+    }
 }
