@@ -9,7 +9,7 @@ Route::post('manage/students', [AdminManagesStudent::class, 'store']);
 
 Route::get('manage/students/{student}', [AdminManagesStudent::class, 'show']);
 
-Route::patch('manage/students/{student}', [AdminManagesStudent::class, 'update']);
+Route::put('manage/students/{student}', [AdminManagesStudent::class, 'update']);
 
 Route::delete('manage/students/{student}', [AdminManagesStudent::class, 'destroy']);
 

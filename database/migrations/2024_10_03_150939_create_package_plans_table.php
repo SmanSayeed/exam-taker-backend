@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('packages', function (Blueprint $table) {
+        Schema::create('package_plans', function (Blueprint $table) {
             $table->id(); // Primary key (id)
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->foreignId('package_id')->constrained()->onDelete('cascade'); // Foreign key to packages table
+            $table->integer('duration_days'); // Duration of the package in days
+            $table->decimal('price', 8, 2); // Price of the package
             $table->boolean('is_active')->default(true); // Whether the package is active or not
             $table->timestamps(); // Automatically adds created_at and updated_at columns
         });
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('packages');
+        Schema::dropIfExists('package_plans');
     }
 };

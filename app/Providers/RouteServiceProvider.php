@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\ModelTest;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -73,7 +74,13 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/admin_profile_routes.php'));
 
+        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/package_plans_routes.php'));
+
+        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/model_tests_routes.php'));
+
         Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/admin_manage_students_routes.php'));
+
+        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/model_tests_routes.php'));
 
         Route::prefix('admin/questions')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/questions/questions_category_routes.php'));
 
