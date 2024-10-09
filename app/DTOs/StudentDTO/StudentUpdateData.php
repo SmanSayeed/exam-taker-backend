@@ -16,8 +16,12 @@ class StudentUpdateData extends Data
         public ?string $country,
         public ?string $country_code,
         public ?string $address,
+        public ?string $ip_address,
+        public string $password,
+        public string $password_confirmation,
         public bool $active_status
-    ) {}
+    ) {
+    }
 
     /**
      * Custom method to convert DTO to array
