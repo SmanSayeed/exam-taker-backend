@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ModelTest extends Model
 {
-
     protected $fillable = [
         'package_id',    // Foreign key to the package
         'title',         // Title of the model test
@@ -18,6 +17,11 @@ class ModelTest extends Model
     ];
 
     use HasFactory;
+
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class)->withTimestamps();
+    }
 
     public function modelTestCategory()
     {

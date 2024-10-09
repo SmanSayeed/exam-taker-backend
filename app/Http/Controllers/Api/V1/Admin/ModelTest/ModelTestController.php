@@ -7,7 +7,11 @@ use App\Http\Requests\Admin\ModelTest\UpdateModelTestRequest;
 use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ModelTest\UpdateModelTestStatusRequest;
+use App\Http\Requests\AttachQuestionsRequest;
+use App\Http\Requests\DetachQuestionsRequest;
+use App\Http\Resources\ModelTestQuestionResource;
 use App\Http\Resources\ModelTestResource;
+use App\Http\Resources\ModelTestWithQuestionsResource;
 use App\Models\ModelTest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +22,7 @@ class ModelTestController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = $request->get('per_page', 15);
-        $modelTests = ModelTest::with('category')
+        $modelTests = ModelTest::with('modelTestCategory')
             ->paginate($perPage);
 
         return ApiResponseHelper::success(
@@ -32,24 +36,10 @@ class ModelTestController extends Controller
         DB::beginTransaction();
         try {
             $modelTest = ModelTest::create($request->validated());
-            if ($request->has('category')) {
-                $modelTest->modelTestCategory()->create($request->category);
-            }
+
+            $modelTest->modelTestCategory()->create($request->category);
 
             DB::commit();
-
-            $modelTest->load([
-                'package',
-                'modelTestCategory.section',
-                'modelTestCategory.examType',
-                'modelTestCategory.examSubType',
-                'modelTestCategory.group',
-                'modelTestCategory.level',
-                'modelTestCategory.subject',
-                'modelTestCategory.lesson',
-                'modelTestCategory.topic',
-                'modelTestCategory.subTopic'
-            ]);
 
             return ApiResponseHelper::success(
                 new ModelTestResource($modelTest),
@@ -80,20 +70,6 @@ class ModelTestController extends Controller
                 }
             }
 
-            // Reload the related relationships
-            $modelTest->load([
-                'package',
-                'modelTestCategory.section',
-                'modelTestCategory.examType',
-                'modelTestCategory.examSubType',
-                'modelTestCategory.group',
-                'modelTestCategory.level',
-                'modelTestCategory.subject',
-                'modelTestCategory.lesson',
-                'modelTestCategory.topic',
-                'modelTestCategory.subTopic'
-            ]);
-
             DB::commit();
 
             return ApiResponseHelper::success(
@@ -123,7 +99,7 @@ class ModelTestController extends Controller
     public function show(ModelTest $modelTest): JsonResponse
     {
         return ApiResponseHelper::success(
-            new ModelTestResource($modelTest->load('category')),
+            new ModelTestResource($modelTest),
             'Model test retrieved successfully'
         );
     }
@@ -138,6 +114,51 @@ class ModelTestController extends Controller
             );
         } catch (\Exception $e) {
             return ApiResponseHelper::error('Failed to change model test status', 500, $e->getMessage());
+        }
+    }
+
+    public function attachQuestions(AttachQuestionsRequest $request, ModelTest $modelTest): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            // Get the single question ID from the request
+            $questionId = $request->input('question_id');
+
+            // Attach the question to the model test
+            $modelTest->questions()->attach($questionId);
+
+            DB::commit();
+
+            return ApiResponseHelper::success(
+                new ModelTestWithQuestionsResource($modelTest),
+                'Question attached successfully'
+            );
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponseHelper::error('Failed to attach question', 500, $e->getMessage());
+        }
+    }
+
+
+    public function detachQuestions(DetachQuestionsRequest $request, ModelTest $modelTest): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            // Get the single question ID from the request
+            $questionId = $request->input('question_id');
+
+            // Detach the question from the model test
+            $modelTest->questions()->detach($questionId);
+
+            DB::commit();
+
+            return ApiResponseHelper::success(
+                new ModelTestWithQuestionsResource($modelTest),
+                'Question detached successfully'
+            );
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponseHelper::error('Failed to detach question', 500, $e->getMessage());
         }
     }
 }

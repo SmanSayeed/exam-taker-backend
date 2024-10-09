@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Package;
 
+use App\Helpers\ApiResponseHelper;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 
 class ChangePackageStatusRequest extends FormRequest
@@ -25,5 +28,13 @@ class ChangePackageStatusRequest extends FormRequest
         return [
             'is_active' => 'required|boolean',
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors();
+
+        // Use ApiResponseHelper for JSON response
+        throw new HttpResponseException(ApiResponseHelper::error('Validation errors occurred', 422, $errors->messages()));
     }
 }

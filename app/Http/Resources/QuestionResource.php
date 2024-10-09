@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PackagePlanResource extends JsonResource
+class QuestionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,10 +16,14 @@ class PackagePlanResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'package' => new PackageResource($this->whenLoaded('package')),
-            'duration_days' => $this->duration_days,
-            'price' => $this->price,
-            'is_active' => $this->is_active,
+            'title' => $this->title,
+            'description' => $this->description,
+            'images' => $this->images,
+            'is_paid' => $this->is_paid,
+            'is_featured' => $this->is_featured,
+            'type' => $this->type,
+            'mark' => $this->mark,
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

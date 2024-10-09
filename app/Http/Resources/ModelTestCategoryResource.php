@@ -16,14 +16,14 @@ class ModelTestCategoryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'section' => $this->whenLoaded('section'),  // Loads related section
-            'exam_type' => $this->whenLoaded('examType'), // Loads related exam type
-            'group' => $this->whenLoaded('group'), // Loads related group
-            'level' => $this->whenLoaded('level'), // Loads related level
-            'subject' => $this->whenLoaded('subject'), // Loads related subject
-            'lesson' => $this->whenLoaded('lesson'), // Loads related lesson
-            'topic' => $this->whenLoaded('topic'), // Loads related topic
-            'sub_topic' => $this->whenLoaded('subTopic'), // Loads related sub topic
+            'section' => $this->section,  // Loads related section
+            'exam_type' => $this->examType, // Loads related exam type
+            'group' => $this->group, // Loads related group
+            'level' => $this->level, // Loads related level
+            'subject' => $this->subject, // Loads related subject
+            'lesson' => $this->lesson, // Loads related lesson
+            'topic' => $this->topic, // Loads related topic
+            'sub_topic' => $this->subTopic, // Loads related sub topic
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];

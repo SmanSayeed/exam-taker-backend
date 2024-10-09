@@ -14,9 +14,8 @@ class Package extends Model
         'description',
         'is_active',
     ];
-
-    public function plans()
+    public function packageCategory()
     {
-        return $this->hasMany(PackagePlan::class);
+        return $this->hasOne(PackageCategory::class);
     }
 }

@@ -20,6 +20,11 @@ class Question extends Model
         'status'
     ];
 
+    public function modelTests()
+    {
+        return $this->belongsToMany(ModelTest::class);
+    }
+
     public function mcqQuestions()
     {
         return $this->hasMany(McqQuestion::class, 'question_id');

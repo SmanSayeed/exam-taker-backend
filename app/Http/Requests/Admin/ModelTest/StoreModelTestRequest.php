@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Admin\ModelTest;
 
+use App\Helpers\ApiResponseHelper;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -34,29 +37,42 @@ class StoreModelTestRequest extends FormRequest
             'category.group_id' => [
                 'nullable',
                 'exists:groups,id',
-                Rule::requiredIf(fn() => $this->hasAnyCategory()),
+                Rule::requiredIf(fn () => $this->hasAnyCategory()),
             ],
             'category.level_id' => [
                 'nullable',
-                'exists:levels,id',
-                Rule::requiredIf(fn() => $this->input('category.subject_id') !== null),
+                Rule::exists('levels', 'id')->where(function ($query) {
+                    $query->where('group_id', $this->input('category.group_id'));
+                }),
+                Rule::requiredIf(fn () => $this->input('category.subject_id') !== null),
             ],
             'category.subject_id' => [
                 'nullable',
-                'exists:subjects,id',
-                Rule::requiredIf(fn() => $this->input('category.lesson_id') !== null),
+                Rule::exists('subjects', 'id')->where(function ($query) {
+                    $query->where('level_id', $this->input('category.level_id'));
+                }),
+                Rule::requiredIf(fn () => $this->input('category.lesson_id') !== null),
             ],
             'category.lesson_id' => [
                 'nullable',
-                'exists:lessons,id',
-                Rule::requiredIf(fn() => $this->input('category.topic_id') !== null),
+                Rule::exists('lessons', 'id')->where(function ($query) {
+                    $query->where('subject_id', $this->input('category.subject_id'));
+                }),
+                Rule::requiredIf(fn () => $this->input('category.topic_id') !== null),
             ],
             'category.topic_id' => [
                 'nullable',
-                'exists:topics,id',
-                Rule::requiredIf(fn() => $this->input('category.sub_topic_id') !== null),
+                Rule::exists('topics', 'id')->where(function ($query) {
+                    $query->where('lesson_id', $this->input('category.lesson_id'));
+                }),
+                Rule::requiredIf(fn () => $this->input('category.sub_topic_id') !== null),
             ],
-            'category.sub_topic_id' => 'nullable|exists:sub_topics,id',
+            'category.sub_topic_id' => [
+                'nullable',
+                Rule::exists('sub_topics', 'id')->where(function ($query) {
+                    $query->where('topic_id', $this->input('category.topic_id'));
+                }),
+            ],
         ];
     }
 
@@ -73,7 +89,7 @@ class StoreModelTestRequest extends FormRequest
             'category.subject_id.required' => 'The subject field is required when lesson or any field after it is filled.',
             'category.lesson_id.required' => 'The lesson field is required when topic or sub-topic is filled.',
             'category.topic_id.required' => 'The topic field is required when sub-topic is filled.',
-            'category.*.exists' => 'The selected :attribute is invalid.',
+            'category.*.exists' => 'The selected :attribute is invalid or does not belong to the selected parent category.',
         ];
     }
 
@@ -106,5 +122,13 @@ class StoreModelTestRequest extends FormRequest
             || $this->input('category.lesson_id') !== null
             || $this->input('category.topic_id') !== null
             || $this->input('category.sub_topic_id') !== null;
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors();
+
+        // Use ApiResponseHelper for JSON response
+        throw new HttpResponseException(ApiResponseHelper::error('Validation errors occurred', 422, $errors->messages()));
     }
 }

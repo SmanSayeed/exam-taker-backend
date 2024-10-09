@@ -20,7 +20,8 @@ class PackageController extends Controller
     {
         $perPage = $request->get('per_page', 15);
 
-        $packages = Package::with('plans')->paginate($perPage);
+        $packages = Package::paginate($perPage);
+
         return ApiResponseHelper::success(
             PackageResource::collection($packages),
             'Packages retrieved successfully'
@@ -29,7 +30,6 @@ class PackageController extends Controller
 
     public function show(Package $package): JsonResponse
     {
-        $package->load('plans');
         return ApiResponseHelper::success(
             new PackageResource($package),
             'Package retrieved successfully'
@@ -41,7 +41,11 @@ class PackageController extends Controller
         DB::beginTransaction();
         try {
             $package = Package::create($request->validated());
+
+            $package->packageCategory()->create($request->category);
+
             DB::commit();
+
             return ApiResponseHelper::success(
                 new PackageResource($package),
                 'Package created successfully',
@@ -57,7 +61,20 @@ class PackageController extends Controller
     {
         DB::beginTransaction();
         try {
-            $package->update($request->all());
+            // Update the package details
+            $package->update($request->validated());
+
+            // If category data is provided in the request, update the related category
+            if ($request->has('category')) {
+                if ($package->packageCategory) {
+                    // Update the existing category
+                    $package->packageCategory()->update($request->category);
+                } else {
+                    // Create a new category if none exists
+                    $package->packageCategory()->create($request->category);
+                }
+            }
+
             DB::commit();
             return ApiResponseHelper::success(
                 new PackageResource($package),
@@ -68,6 +85,8 @@ class PackageController extends Controller
             return ApiResponseHelper::error('Failed to update package', 500, $e->getMessage());
         }
     }
+
+
 
     public function destroy(Package $package): JsonResponse
     {

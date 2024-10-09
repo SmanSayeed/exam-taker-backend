@@ -16,13 +16,13 @@ class ModelTestResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'package' => new PackageResource($this->whenLoaded('package')),
-            'category' => new ModelTestCategoryResource($this->whenLoaded('modelTestCategory')),
+
             'title' => $this->title,
             'description' => $this->description,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
             'is_active' => $this->is_active,
+            'package' => $this->package,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
