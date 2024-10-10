@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        //need duration and price
         Schema::create('packages', function (Blueprint $table) {
             $table->id(); // Primary key (id)
             $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true); // Whether the package is active or not
+            $table->integer('duration_days')->nullable(); // Duration of the package
+            $table->float('price')->nullable(); // Price of the package
             $table->timestamps(); // Automatically adds created_at and updated_at columns
         });
     }
