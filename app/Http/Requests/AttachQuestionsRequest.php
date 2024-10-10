@@ -31,9 +31,9 @@ class AttachQuestionsRequest extends FormRequest
             'question_id' => [
                 'required',
                 'exists:questions,id',
-                Rule::exists('questions', 'id')->where(function ($query) {
-                    $query->where('is_paid', true);
-                }), 
+                    Rule::exists('questions', 'id')->where(function ($query) {
+                        $query->where('is_paid', true);
+                }),
             ],
         ];
     }
