@@ -30,6 +30,8 @@ class UpdatePackageRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'is_active' => 'required|boolean',
+            'price' => 'required|numeric',
+            'duration_days' => 'required|numeric',
             'category' => 'required|array',
             'category.section_id' => [
                 'nullable',
