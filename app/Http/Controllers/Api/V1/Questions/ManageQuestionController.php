@@ -84,7 +84,7 @@ class ManageQuestionController extends Controller
                         'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
                         'is_correct' => $option['is_correct'],
                         'description' => $option['description'] ?? null,
-                    ]);,
+                    ]);
                 }
             }
 
