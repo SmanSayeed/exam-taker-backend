@@ -3,6 +3,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminRegistrationController;
 use App\Http\Controllers\Api\V1\Admin\Maintenance\AdminMaintenanceController;
+use App\Http\Controllers\Api\V1\Questions\QuestionCategoryController;
 use App\Http\Controllers\Examination\AnswerController;
 use App\Http\Controllers\Examination\ExaminationController;
 use App\Http\Controllers\StudentController;
@@ -30,6 +31,11 @@ Route::post('/exam-start-with-button-click', [AnswerController::class, 'startExa
 Route::post('/exam/finish', [AnswerController::class, 'finishExam']);
 
 });
+
+
+/* get category publicly */
+Route::get('/category/{resourceType}', [QuestionCategoryController::class, 'getData']);
+Route::get('/category/{resourceType}/{id}', [QuestionCategoryController::class, 'show']);
 
 
 
