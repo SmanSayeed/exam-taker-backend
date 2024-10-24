@@ -5,32 +5,41 @@ namespace App\Services\ExaminationService;
 use App\Models\Answer;
 use App\Models\Examination;
 use App\Models\Question;
+use App\Models\Questionable;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 class ExaminationService
 {
-    // Logic to start an exam
+
     public function startExam($validatedData, $request)
     {
-        $questionsLimit = $validatedData['questions_limit'] ?? 20; // Default to 20 questions if not provided
+        // Set default question limit
+        $questionsLimit = $validatedData['questions_limit'] ?? 20;
 
-        // Parse category-related IDs from request and store them as comma-separated strings
+        // Get categories from the request payload (categories are optional)
         $categories = $this->parseCategories($validatedData);
 
-        // Get the list of questions based on filtering
-        $query = Question::where('type', $validatedData['type']);
-        $query = $this->filterQuestionsByCategories($query, $categories);
+        // Fetch the question IDs using the updated filterQuestionsByCategories method
+        $questionIds = $this->filterQuestionsByCategories($categories, $validatedData['type']);
 
-        // Randomly select the specified number of questions
-        $questions = $query->inRandomOrder()->limit($questionsLimit)->pluck('id')->toArray();
+        // If there are no matching questions, return an error
+        if (empty($questionIds)) {
+            return ['error' => 'No questions found for the given categories.', 'status' => 404];
+        }
 
-        // Fetch the detailed question data
-        $questionsList = $this->formatQuestionData($questions, $validatedData['type']); // Fetch question details
+        $questionsList = Question::whereIn('id', $questionIds)
+        ->where('type', $validatedData['type'])
+        ->inRandomOrder() // Randomize the questions
+        ->take($questionsLimit) // Limit the number of questions
+        ->get(); // Get the result collection
+        // Extract the question IDs from the list
+        $questions = $questionsList->pluck('id')->toArray();
 
+        // Start database transaction
         DB::beginTransaction();
 
         try {
-            // Create the exam
+            // Create the exam in the examinations table
             $exam = Examination::create([
                 'title' => $validatedData['title'],
                 'description' => $request->input('description', null),
@@ -42,23 +51,16 @@ class ExaminationService
                 'end_time' => Carbon::now()->addMinutes($validatedData['time_limit']),
                 'time_limit' => $validatedData['time_limit'],
                 'is_negative_mark_applicable' => $request->input('is_negative_mark_applicable', false),
-                'section_id' => $categories['section'],
-                'exam_type_id' => $categories['exam_type'],
-                'exam_sub_type_id' => $categories['exam_sub_type'],
-                'group_id' => $categories['group'],
-                'level_id' => $categories['level'],
-                'lesson_id' => $categories['lesson'],
-                'topic_id' => $categories['topic'],
-                'sub_topic_id' => $categories['sub_topic'],
-                'questions' => implode(',', $questions), // Store question IDs as a comma-separated string
+                'questions' => implode(',', $questions), // Storing question IDs as a comma-separated string
             ]);
 
+            // Handle any failure during exam creation
             if (!$exam) {
                 DB::rollBack();
                 return ['error' => 'Failed to create exam.', 'status' => 500];
             }
 
-            // Create initial answer record
+            // Create an entry for the student's answer sheet
             Answer::create([
                 'examination_id' => $exam->id,
                 'student_id' => $validatedData['created_by'],
@@ -67,14 +69,192 @@ class ExaminationService
                 'is_second_timer' => $request->is_second_timer ?? false,
             ]);
 
+            // Commit the transaction
             DB::commit();
 
-            return ['exam' => $exam, 'questions_list' => $questionsList]; // Return the exam and the detailed questions list
+            // Return the created exam and the list of questions
+            return ['exam' => $exam, 'questions_list' => $questionsList];
         } catch (\Exception $e) {
+            // Handle any exception during the process
+            \Log::error('Error creating exam: ' . $e);
             DB::rollBack();
             return ['error' => 'An error occurred while creating the exam.', 'status' => 500];
         }
     }
+
+
+
+    protected function filterQuestionsByCategories($categories, $type)
+    {
+        // If no categories are provided, skip filtering by categories and fetch questions by type
+        if ($categories === null) {
+            return DB::table('questions')
+                ->where('type', $type)
+                ->pluck('id')
+                ->toArray();
+        }
+
+        // Start building a query to get question IDs from the questionable table if categories exist
+        $query = Questionable::query();
+
+        // Apply filters based on the provided categories
+        if (!empty($categories['section'])) {
+            $query->whereIn('section_id', $categories['section']);
+        }
+        if (!empty($categories['exam_type'])) {
+            $query->whereIn('exam_type_id', $categories['exam_type']);
+        }
+        if (!empty($categories['exam_sub_type'])) {
+            $query->whereIn('exam_sub_type_id', $categories['exam_sub_type']);
+        }
+        if (!empty($categories['group'])) {
+            $query->whereIn('group_id', $categories['group']);
+        }
+        if (!empty($categories['level'])) {
+            $query->whereIn('level_id', $categories['level']);
+        }
+        if (!empty($categories['subject'])) {
+            $query->whereIn('subject_id', $categories['subject']);
+        }
+        if (!empty($categories['lesson'])) {
+            $query->whereIn('lesson_id', $categories['lesson']);
+        }
+        if (!empty($categories['topic'])) {
+            $query->whereIn('topic_id', $categories['topic']);
+        }
+        if (!empty($categories['sub_topic'])) {
+            $query->whereIn('sub_topic_id', $categories['sub_topic']);
+        }
+
+        // Get the question IDs from the questionable table
+        $questionIds = $query->pluck('question_id')->toArray();
+
+        // If no questions match the categories, return an empty array
+        if (empty($questionIds)) {
+            return [];
+        }
+
+        // Now filter questions by the required type from the questions table
+        return DB::table('questions')
+            ->whereIn('id', $questionIds)
+            ->where('type', $type)
+            ->pluck('id')
+            ->toArray();
+    }
+
+
+    // Logic to start an exam
+    // public function startExam($validatedData, $request)
+    // {
+    //     $questionsLimit = $validatedData['questions_limit'] ?? 20; // Default to 20 questions if not provided
+
+    //     // Parse category-related IDs from request and store them as comma-separated strings
+    //     $categories = $this->parseCategories($validatedData);
+    //     // dd($categories);
+
+    //     // Get the list of questions based on filtering
+    //     $questions = Question::where('type', $validatedData['type'])->get()->pluck('id')->toArray();
+
+    //     $query = new Questionable();
+
+    //     $categoryQuestions = $this->filterQuestionsByCategories($query,$categories);
+
+
+    //     // Randomly select the specified number of questions
+    //     $questions = $query->inRandomOrder()->limit($questionsLimit)->pluck('question_id')->toArray();
+
+    //     // Fetch the detailed question data
+    //     $questionsList = $this->formatQuestionData($questions, $validatedData['type']); // Fetch question details
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         // Create the exam
+    //         $exam = Examination::create([
+    //             'title' => $validatedData['title'],
+    //             'description' => $request->input('description', null),
+    //             'type' => $validatedData['type'],
+    //             'is_paid' => $request->input('is_paid', false),
+    //             'created_by' => $validatedData['created_by'],
+    //             'created_by_role' => $validatedData['created_by_role'],
+    //             'start_time' => Carbon::now(),
+    //             'end_time' => Carbon::now()->addMinutes($validatedData['time_limit']),
+    //             'time_limit' => $validatedData['time_limit'],
+    //             'is_negative_mark_applicable' => $request->input('is_negative_mark_applicable', false),
+    //             'section_id' => $categories['section'],
+    //             'exam_type_id' => $categories['exam_type'],
+    //             'exam_sub_type_id' => $categories['exam_sub_type'],
+    //             'group_id' => $categories['group'],
+    //             'subject_id' => $categories['subject'],
+    //             'level_id' => $categories['level'],
+    //             'lesson_id' => $categories['lesson'],
+    //             'topic_id' => $categories['topic'],
+    //             'sub_topic_id' => $categories['sub_topic'],
+    //             'questions' => implode(',', $questions), // Store question IDs as a comma-separated string
+    //         ]);
+
+    //         if (!$exam) {
+    //             DB::rollBack();
+    //             return ['error' => 'Failed to create exam.', 'status' => 500];
+    //         }
+
+    //         // Create initial answer record
+    //         Answer::create([
+    //             'examination_id' => $exam->id,
+    //             'student_id' => $validatedData['created_by'],
+    //             'type' => $validatedData['type'],
+    //             'exam_start_time' => $exam->start_time,
+    //             'is_second_timer' => $request->is_second_timer ?? false,
+    //         ]);
+
+    //         DB::commit();
+
+    //         return ['exam' => $exam, 'questions_list' => $questionsList]; // Return the exam and the detailed questions list
+    //     } catch (\Exception $e) {
+    //         \Log::error('Error creating exam: ' . $e);
+    //         DB::rollBack();
+    //         return ['error' => 'An error occurred while creating the exam.', 'status' => 500];
+    //     }
+    // }
+
+    //  // Helper methods (e.g., filterQuestionsByCategories, formatQuestionData, parseCategories)
+    //  private function filterQuestionsByCategories($query, $categories)
+    //  {
+    //      // Add filtering logic here based on the categories array
+    //      if (!empty($categories['section'])) {
+    //          $query->where('section_id', $categories['section']);
+    //      }
+    //      if (!empty($categories['exam_type'])) {
+    //          $query->where('exam_type_id', $categories['exam_type']);
+    //      }
+    //      if (!empty($categories['group'])) {
+    //          $query->where('group_id', $categories['group']);
+    //      }
+    //      if (!empty($categories['level'])) {
+    //          $query->where('level_id', $categories['level']);
+    //      }
+    //      if (!empty($categories['group'])) {
+    //          $query->where('group_id', $categories['group']);
+    //      }
+    //      if (!empty($categories['subject'])) {
+    //          $query->where('subject_id', $categories['subject']);
+    //      }
+    //      if (!empty($categories['level'])) {
+    //          $query->where('level_id', $categories['level']);
+    //      }
+    //      if (!empty($categories['lesson'])) {
+    //          $query->where('lesson_id', $categories['lesson']);
+    //      }
+    //      if (!empty($categories['topic'])) {
+    //          $query->where('topic_id', $categories['topic']);
+    //      }
+    //      if (!empty($categories['sub_topic'])) {
+    //          $query->where('sub_topic_id', $categories['sub_topic']);
+    //      }
+    //      // Add other filters as needed
+
+    //      return $query;
+    //  }
 
     // Fetch exam details by ID
     public function getExamById($examId)
@@ -131,26 +311,7 @@ class ExaminationService
         return $exams;
     }
 
-    // Helper methods (e.g., filterQuestionsByCategories, formatQuestionData, parseCategories)
-    private function filterQuestionsByCategories($query, $categories)
-    {
-        // Add filtering logic here based on the categories array
-        if (!empty($categories['section'])) {
-            $query->where('section_id', $categories['section']);
-        }
-        if (!empty($categories['exam_type'])) {
-            $query->where('exam_type_id', $categories['exam_type']);
-        }
-        if (!empty($categories['group'])) {
-            $query->where('group_id', $categories['group']);
-        }
-        if (!empty($categories['level'])) {
-            $query->where('level_id', $categories['level']);
-        }
-        // Add other filters as needed
 
-        return $query;
-    }
 
     public function formatQuestionData($questions, $type = null)
     {
@@ -183,19 +344,28 @@ class ExaminationService
     }
 
     private function parseCategories($validatedData)
-    {
-        // Parse and return the category-related IDs from the validated data
-        return [
-            'section' => $validatedData['section_id'] ?? null,
-            'exam_type' => $validatedData['exam_type_id'] ?? null,
-            'exam_sub_type' => $validatedData['exam_sub_type_id'] ?? null,
-            'group' => $validatedData['group_id'] ?? null,
-            'level' => $validatedData['level_id'] ?? null,
-            'lesson' => $validatedData['lesson_id'] ?? null,
-            'topic' => $validatedData['topic_id'] ?? null,
-            'sub_topic' => $validatedData['sub_topic_id'] ?? null,
-        ];
+{
+    // Parse and return the category-related IDs from the validated data
+    $categories = [
+        'section' => $validatedData['section_categories'] ?? null,
+        'exam_type' => $validatedData['exam_type_categories'] ?? null,
+        'exam_sub_type' => $validatedData['exam_sub_type_categories'] ?? null,
+        'group' => $validatedData['group_categories'] ?? null,
+        'subject' => $validatedData['subject_categories'] ?? null,
+        'level' => $validatedData['level_categories'] ?? null,
+        'lesson' => $validatedData['lesson_categories'] ?? null,
+        'topic' => $validatedData['topic_categories'] ?? null,
+        'sub_topic' => $validatedData['sub_topic_categories'] ?? null,
+    ];
+
+    // Check if all values are null
+    if (count(array_filter($categories)) === 0) {
+        return null; // If all are null, return null
     }
+
+    return $categories;
+}
+
     // Get the student's exam attempt
     public function getStudentExam($examinationId, $studentId)
     {
@@ -251,13 +421,13 @@ class ExaminationService
                 return []; // Return empty array on error
             }
         }
-      return [$processedMcqAnswers, $totalMarks, $correctCount];
+        return [$processedMcqAnswers, $totalMarks, $correctCount];
     }
 
 
 
     // Process Creative answers
-    public function processCreativeAnswers( $creativeAnswers)
+    public function processCreativeAnswers($creativeAnswers)
     {
         $processedCreativeAnswers = [];
 
@@ -288,7 +458,7 @@ class ExaminationService
 
 
     // Process Normal answers
-    public function processNormalAnswers( $normalAnswers)
+    public function processNormalAnswers($normalAnswers)
     {
         $processedNormalAnswers = [];
 
@@ -322,7 +492,7 @@ class ExaminationService
     }
 
     // Prepare the response
-    public function prepareResponse($examination, $mcqAnswers, $creativeAnswers, $normalAnswers)
+    public function prepareResponse($examination, $mcqAnswers, $creativeAnswers, $normalAnswers,$totalMarks,$correctCount)
     {
         return [
             'examination' => $examination,
@@ -330,6 +500,8 @@ class ExaminationService
             'mcq_answers' => $mcqAnswers,
             'creative_answers' => $creativeAnswers,
             'normal_answers' => $normalAnswers,
+            'total_marks' => $totalMarks,
+            'correct_count' => $correctCount
         ];
     }
 }

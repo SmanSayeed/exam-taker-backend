@@ -21,8 +21,15 @@ class Examination extends Model
         'student_ended_at',
         'time_limit',
         'is_negative_mark_applicable',
-        'section_categories',
-        'subject_categories',
+        'section_id',
+        'exam_type_id',
+        'exam_sub_type_id',
+        'group_id',
+        'level_id',
+        'subject_id',
+        'lesson_id',
+        'topic_id',
+        'sub_topic_id',
         'questions',
     ];
 

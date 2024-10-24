@@ -67,19 +67,17 @@ class AnswerController extends Controller
                     return response()->json(['error' => 'Error processing creative answers.'], 400);
                 }
             }
-
             if ($examination->type == 'normal') {
                 $normalAnswers = $this->examService->processNormalAnswers($request->normal_answers);
                 if (empty($normalAnswers)) {
                     return response()->json(['error' => 'Error processing normal answers.'], 400);
                 }
             }
-
             // Update the answer record
             $this->examService->updateAnswerRecord($answer, $mcqAnswers, $creativeAnswers, $normalAnswers, $totalMarks, $correctCount);
 
             // Return response
-            return response()->json($this->examService->prepareResponse($examination, $mcqAnswers, $creativeAnswers, $normalAnswers));
+            return response()->json($this->examService->prepareResponse($examination, $mcqAnswers, $creativeAnswers, $normalAnswers,$totalMarks, $correctCount));
 
         } catch (Exception $e) {
             Log::error('Error finishing exam: ' . $e->getMessage());

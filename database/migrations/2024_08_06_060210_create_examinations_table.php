@@ -28,6 +28,7 @@ return new class extends Migration
             $table->json('exam_type_id')->nullable();
             $table->json('exam_sub_type_id')->nullable();
             $table->json('group_id')->nullable();
+            $table->json('subject_id')->nullable();
             $table->json('level_id')->nullable();
             $table->json('lesson_id')->nullable();
             $table->json('topic_id')->nullable();

@@ -42,6 +42,7 @@ class CreateQuestionablesTable extends Migration
         });
     }
 
+
     public function down()
     {
         Schema::dropIfExists('questionables');
