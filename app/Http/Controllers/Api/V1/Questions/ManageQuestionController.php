@@ -75,12 +75,13 @@ class ManageQuestionController extends Controller
 
             // Handle MCQ options
             if ($validated['type'] === 'mcq' && isset($validated['mcq_options'])) {
-                $i=1;
+                $i=0;
                 foreach ($validated['mcq_options'] as $option) {
+                    $i++;
                     McqQuestion::create([
                         'question_id' => $question->id,
                         'mcq_question_text' => $option['mcq_question_text'],
-                        'mcq_question_serial' => $option['mcq_question_serial'] ?? (string)$i++ ,
+                        'mcq_option_serial' =>(string)$i,
                         'mcq_images' => isset($option['mcq_images']) ? json_encode($option['mcq_images']) : null,
                         'is_correct' => $option['is_correct'],
                         'description' => $option['description'] ?? null,
