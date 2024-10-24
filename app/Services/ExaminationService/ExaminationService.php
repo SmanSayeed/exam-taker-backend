@@ -27,11 +27,10 @@ class ExaminationService
             return ['error' => 'No questions found for the given categories.', 'status' => 404];
         }
 
-        $questionsList = Question::whereIn('id', $questionIds)
-        ->where('type', $validatedData['type'])
-        ->inRandomOrder() // Randomize the questions
-        ->take($questionsLimit) // Limit the number of questions
-        ->get(); // Get the result collection
+           // Get randomized and formatted questions
+    $questionsList = $this->formatQuestionData($questionIds, $validatedData['type'])
+    ->random($questionsLimit);
+        // Get the result collection
         // Extract the question IDs from the list
         $questions = $questionsList->pluck('id')->toArray();
 

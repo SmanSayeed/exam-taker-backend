@@ -34,8 +34,8 @@ Route::post('/exam/finish', [AnswerController::class, 'finishExam']);
 
 
 /* get category publicly */
-Route::get('/category/{resourceType}', [QuestionCategoryController::class, 'getData']);
-Route::get('/category/{resourceType}/{id}', [QuestionCategoryController::class, 'show']);
+Route::get('/student/category/{resourceType}', [QuestionCategoryController::class, 'getData']);
+Route::get('/student/category/{resourceType}/{id}', [QuestionCategoryController::class, 'show']);
 
 
 
