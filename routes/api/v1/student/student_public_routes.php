@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\Api\V1\Student\Package\PackageController;
 use App\Http\Controllers\Api\V1\Student\StudentAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,7 +12,9 @@ Route::prefix('student')->group(function () {
     Route::post('/reset-password', [StudentAuthController::class, 'resetPassword']);
     Route::post('/verify-email', [StudentAuthController::class, 'verifyEmail']);
     Route::post('/resend-email-verification', [StudentAuthController::class, 'resendEmailVerification']);
-
+    // Package routes
+    Route::get('/packages', [PackageController::class, 'index']);
+    Route::get('/packages/{package}', [PackageController::class, 'show']);
 });
 // protected routes
 Route::post('/logout', [StudentAuthController::class, 'logout']);

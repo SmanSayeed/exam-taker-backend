@@ -12,15 +12,30 @@ use App\Http\Resources\PackageResource;
 use App\Http\Requests\Package\UpdatePackageRequest;
 use App\Http\Requests\Package\ChangePackageStatusRequest;
 use App\Http\Requests\Package\StorePackageRequest;
-use Illuminate\Support\Facades\Log;
+use App\Http\Requests\PackageIndexRequest;
+use App\Http\Requests\SubscriberResource;
+use App\Http\Resources\StudentResource\StudentResource;
 
 class PackageController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(PackageIndexRequest $request): JsonResponse
     {
+        // Get per_page value from request or set default to 15
         $perPage = $request->get('per_page', 15);
 
-        $packages = Package::paginate($perPage);
+        // Initialize the query
+        $query = Package::query();
+
+        // Check for filtering parameters
+        if ($request->has('section_id')) {
+            $query->where('section_id', $request->input('section_id'));
+        }
+        if ($request->has('exam_type_id')) {
+            $query->where('exam_type_id', $request->input('exam_type_id'));
+        }
+
+        // Paginate the results
+        $packages = $query->paginate($perPage);
 
         return ApiResponseHelper::success(
             PackageResource::collection($packages),
@@ -108,6 +123,24 @@ class PackageController extends Controller
             );
         } catch (\Exception $e) {
             return ApiResponseHelper::error('Failed to change package status', 500, $e->getMessage());
+        }
+    }
+
+    public function getPackageSubscribers(Package $package, Request $request): JsonResponse
+    {
+        try {
+            // Get per_page value from request or set default to 15
+            $perPage = $request->get('per_page', 15);
+
+            // Paginate the subscribers
+            $subscribers = $package->subscribers()->paginate($perPage);
+
+            return ApiResponseHelper::success(
+                StudentResource::collection($subscribers),
+                'Subscribers retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('Failed to get subscribers', 500, $e->getMessage());
         }
     }
 }

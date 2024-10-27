@@ -15,7 +15,6 @@ class ModelTestWithQuestionsResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        Log::info($request);
         $data = parent::toArray($request);
         if ($request->has('question_id')) {
             $questionId = $request->input('question_id');
