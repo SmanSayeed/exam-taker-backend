@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Student;
 
 use App\DTOs\StudentDTO\StudentLoginData;
 use App\DTOs\StudentDTO\StudentRegistrationData;
+use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\StudentForgotPasswordRequest;
 use App\Http\Requests\Student\StudentLoginRequest;
@@ -12,6 +13,8 @@ use App\Http\Requests\Student\StudentResetPasswordRequest;
 use App\Services\Student\StudentAuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class StudentAuthController extends Controller
 {
@@ -58,7 +61,12 @@ class StudentAuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $student = $request->user(); // Get the authenticated student
-        return $this->studentAuthService->logout($student);
+        try {
+            $request->user()->currentAccessToken()->delete();
+            
+            return ApiResponseHelper::success([], 'Logout successful');
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('Failed to logout: ' . $e->getMessage(), 500);
+        }
     }
 }

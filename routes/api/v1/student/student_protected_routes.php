@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Student\StudentAuthController;
 use App\Http\Controllers\Api\V1\Student\Subscription\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
@@ -9,3 +10,4 @@ Route::post('packages/{package}/subscribe', [SubscriptionController::class, 'sub
     ->name('packages.subscribe');
 
 Route::get('/subscriptions', [SubscriptionController::class, 'getSubscriptions']);
+Route::post('/logout', [StudentAuthController::class, 'logout']);

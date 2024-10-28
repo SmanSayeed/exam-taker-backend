@@ -35,5 +35,5 @@ class SubscriptionResource extends JsonResource
         }
 
         return $data;
-    }
+    }   
 }
