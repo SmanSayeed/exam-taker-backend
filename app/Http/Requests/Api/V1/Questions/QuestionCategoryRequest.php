@@ -9,6 +9,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class QuestionCategoryRequest extends FormRequest
 {
+
     public function authorize(): bool
     {
         // Here you can add authorization logic based on the user's role or permissions

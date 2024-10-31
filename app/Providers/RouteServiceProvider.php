@@ -74,11 +74,11 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/admin_profile_routes.php'));
 
-        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/package_plans_routes.php'));
+        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/package_routes.php'));
 
         Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/model_tests_routes.php'));
 
-        Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/admin_manage_students_routes.php'));
+        Route::prefix('admin/manage')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/admin_manage_students_routes.php'));
 
         Route::prefix('admin')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/model_tests_routes.php'));
 
@@ -86,9 +86,9 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::prefix('admin/que')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/questions/que_routes.php'));
 
+        Route::prefix('admin/manage')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/admin_manage_subscription.php'));
+
         Route::prefix('student')->group(base_path(self::STUDENT_ROUTE_PATH . '/student_protected_routes.php'));
-
-
 
         // You can add more route groups for different user roles or sections.
     }

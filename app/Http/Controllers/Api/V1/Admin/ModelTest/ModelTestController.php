@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ModelTest\UpdateModelTestStatusRequest;
 use App\Http\Requests\AttachQuestionsRequest;
 use App\Http\Requests\DetachQuestionsRequest;
+use App\Http\Requests\ModelTestIndexRequest;
 use App\Http\Resources\ModelTestQuestionResource;
 use App\Http\Resources\ModelTestResource;
 use App\Http\Resources\ModelTestWithQuestionsResource;
@@ -19,17 +20,61 @@ use Illuminate\Support\Facades\DB;
 
 class ModelTestController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(ModelTestIndexRequest $request): JsonResponse
     {
+        // Get the 'per_page' parameter from the request, defaulting to 15 if not provided
         $perPage = $request->get('per_page', 15);
-        $modelTests = ModelTest::with('modelTestCategory')
-            ->paginate($perPage);
 
+        // Start the query for ModelTest, eager loading the related modelTestCategory
+        $query = ModelTest::with('modelTestCategory');
+
+        // Apply filters based on request parameters if they are present
+        if ($request->has('group_id')) {
+            $query->whereHas('modelTestCategory', function ($q) use ($request) {
+                $q->where('group_id', $request->input('group_id'));
+            });
+        }
+
+        if ($request->has('level_id')) {
+            $query->whereHas('modelTestCategory', function ($q) use ($request) {
+                $q->where('level_id', $request->input('level_id'));
+            });
+        }
+
+        if ($request->has('subject_id')) {
+            $query->whereHas('modelTestCategory', function ($q) use ($request) {
+                $q->where('subject_id', $request->input('subject_id'));
+            });
+        }
+
+        if ($request->has('lesson_id')) {
+            $query->whereHas('modelTestCategory', function ($q) use ($request) {
+                $q->where('lesson_id', $request->input('lesson_id'));
+            });
+        }
+
+        if ($request->has('topic_id')) {
+            $query->whereHas('modelTestCategory', function ($q) use ($request) {
+                $q->where('topic_id', $request->input('topic_id'));
+            });
+        }
+
+        if ($request->has('sub_topic_id')) {
+            $query->whereHas('modelTestCategory', function ($q) use ($request) {
+                $q->where('sub_topic_id', $request->input('sub_topic_id'));
+            });
+        }
+
+        // Execute the query with pagination
+        $modelTests = $query->paginate($perPage);
+
+        // Return a successful response with the paginated results
         return ApiResponseHelper::success(
             ModelTestResource::collection($modelTests),
             'Model tests retrieved successfully'
         );
     }
+
 
     public function store(StoreModelTestRequest $request): JsonResponse
     {

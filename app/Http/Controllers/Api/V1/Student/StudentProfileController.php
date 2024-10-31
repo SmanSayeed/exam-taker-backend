@@ -6,9 +6,10 @@ namespace App\Http\Controllers\Api\V1\Student;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StudentResource\StudentResource;
 use App\Models\Student;
-use App\Services\Student\StudentAuthService;
+
 use Illuminate\Http\JsonResponse;
 use App\Helpers\ApiResponseHelper;
+use App\Services\Student\StudentAuthService;
 use Exception;
 
 class StudentProfileController extends Controller
@@ -16,10 +17,10 @@ class StudentProfileController extends Controller
 
     protected StudentAuthService $studentAuthService;
 
-    public function __construct(StudentAuthService $studentAuthService)
-    {
-        $this->adminAuthService = $studentAuthService;
-    }
+   public function __construct(StudentAuthService $studentAuthService)
+   {
+       $this->studentAuthService = $studentAuthService;
+   }
 
     /**
    * @OA\Get(path="/users", description="Get all users",       operationId="",
