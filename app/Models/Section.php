@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Facades\DB;
 class Section extends Model
 {
     use HasFactory;
@@ -15,14 +15,17 @@ class Section extends Model
         return $this->hasMany(ExamType::class);
     }
 
-    //  public function examTypesIfQuestionExists()
-    // {
-    //     // Modify this function to ensure it filters based on the existence of related Questionable entries
-    //     return $this->hasMany(ExamType::class)->whereHas('questionable', function ($query) {
-    //         $query->whereNotNull('question_id');
-    //     });
-    // }
+    public function examTypesOnlyIfQuestionsExist()
+    {
+        // Fetch distinct examType IDs from the questionables table where question_id is not null
+        $examTypeIdsWithQuestions = DB::table('questionables')
+            ->whereNotNull('question_id')
+            ->distinct()
+            ->pluck('exam_type_id'); // Assuming 'exam_type_id' is the foreign key in 'questionables'
 
+        // Return the examTypes that exist in the fetched IDs
+        return $this->examTypes()->whereIn('id', $examTypeIdsWithQuestions);
+    }
     public function questions()
     {
         return $this->hasMany(Question::class);

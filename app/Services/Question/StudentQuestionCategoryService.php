@@ -17,22 +17,22 @@ class StudentQuestionCategoryService
         $this->model = $model;
     }
 
-    public function getAll(array $relations = [], int $perPage = 9999999999): LengthAwarePaginator
+    public function getAll(string $categoryType, array $relations = [], int $perPage = 9999999999): LengthAwarePaginator
     {
         if (!$this->model) {
             throw new \Exception('Model not set.');
         }
 
-        // Fetch the IDs of sections that have associated questions
-        $sectionIdsWithQuestions = DB::table('questionables')
+        // Fetch the IDs of categories that have associated questions dynamically
+        $categoryIdsWithQuestions = DB::table('questionables')
             ->whereNotNull('question_id')
             ->distinct()
-            ->pluck('section_id'); // Adjust as needed for other category IDs
+            ->pluck($categoryType); // Use the dynamic category type
 
         // Query the sections table for those IDs
         return $this->model
             ->with($relations)
-            ->whereIn('id', $sectionIdsWithQuestions) // Adjust this to the correct field in your main model
+            ->whereIn('id', $categoryIdsWithQuestions) // Adjust this to the correct field in your main model
             ->paginate($perPage);
     }
 
