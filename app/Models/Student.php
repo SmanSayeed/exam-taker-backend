@@ -10,7 +10,9 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Student extends  Authenticatable
 {
-    use HasFactory,HasApiTokens, Notifiable;
+    use HasFactory, HasApiTokens, Notifiable;
+
+    // protected $guard_name = 'student-api';
 
     protected $fillable = [
         'name', 'email', 'phone', 'password', 'profile_image',
@@ -32,5 +34,9 @@ class Student extends  Authenticatable
     public function examinations()
     {
         return $this->hasMany(Examination::class, 'created_by');
+    }
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
     }
 }

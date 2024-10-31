@@ -20,4 +20,14 @@ class Package extends Model
     {
         return $this->hasOne(PackageCategory::class);
     }
+
+    public function student_payment()
+    {
+        return $this->hasMany(StudentPayment::class);
+    }
+
+    public function subscribers()
+    {
+        return $this->hasManyThrough(Student::class, Subscription::class , 'package_id', 'id', 'id', 'student_id');
+    }
 }
