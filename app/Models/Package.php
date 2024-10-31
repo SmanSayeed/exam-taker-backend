@@ -13,6 +13,8 @@ class Package extends Model
         'name',
         'description',
         'is_active',
+        'price',
+        'duration_days',
     ];
     public function packageCategory()
     {
