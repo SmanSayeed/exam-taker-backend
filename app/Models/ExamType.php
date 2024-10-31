@@ -9,7 +9,7 @@ class ExamType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['section_id', 'title', 'details', 'image', 'status','year'];
+    protected $fillable = ['section_id', 'title', 'details', 'image', 'status', 'year'];
 
     public function section()
     {
@@ -24,5 +24,10 @@ class ExamType extends Model
     public function questions()
     {
         return $this->hasMany(Question::class);
+    }
+
+    public function questionable()
+    {
+        return $this->hasMany(Questionable::class, 'exam_type_id');
     }
 }

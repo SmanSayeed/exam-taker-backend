@@ -63,7 +63,7 @@ class StudentAuthController extends Controller
     {
         try {
             $request->user()->currentAccessToken()->delete();
-            
+
             return ApiResponseHelper::success([], 'Logout successful');
         } catch (\Exception $e) {
             return ApiResponseHelper::error('Failed to logout: ' . $e->getMessage(), 500);

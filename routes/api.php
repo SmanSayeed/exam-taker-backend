@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Api\V1\Admin\Auth\AdminRegistrationController;
 use App\Http\Controllers\Api\V1\Admin\Maintenance\AdminMaintenanceController;
 use App\Http\Controllers\Api\V1\Questions\QuestionCategoryController;
+use App\Http\Controllers\Api\V1\Questions\StudentQuestionCategoryController;
 use App\Http\Controllers\Api\V1\Student\ModelTest\ModelTestController;
 use App\Http\Controllers\Api\V1\Student\Package\PackageController;
 use App\Http\Controllers\Examination\AnswerController;
@@ -43,8 +44,8 @@ Route::prefix('student')->group(function () {
 
 
 /* get category publicly */
-Route::get('/student/category/{resourceType}', [QuestionCategoryController::class, 'getData']);
-Route::get('/student/category/{resourceType}/{id}', [QuestionCategoryController::class, 'show']);
+Route::get('/student/category/{resourceType}', [StudentQuestionCategoryController::class, 'getData']);
+Route::get('/student/category/{resourceType}/{id}', [StudentQuestionCategoryController::class, 'show']);
 
 
 
