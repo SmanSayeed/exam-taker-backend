@@ -37,10 +37,22 @@ class AttachQuestionsRequest extends FormRequest
             ],
         ];
     }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'question_id.exists' => 'The selected question is not available or is not a paid question.',
+        ];
+    }
+
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();
-
         // Use ApiResponseHelper for JSON response
         throw new HttpResponseException(ApiResponseHelper::error('Update validation errors occurred', 422, $errors->messages()));
     }
