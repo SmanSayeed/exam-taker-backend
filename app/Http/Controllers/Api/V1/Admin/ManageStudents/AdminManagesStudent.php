@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Api\V1\Admin\ManageStudents;
 use App\DTOs\StudentDTO\StudentRegistrationData;
 use App\DTOs\StudentDTO\StudentStatusChangeData;
 use App\DTOs\StudentDTO\StudentUpdateData;
-    use App\Helpers\ApiResponseHelper;
+use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminStudentCRUDRequest\ChangeStudentStatusRequest;
 use App\Http\Requests\Admin\AdminStudentCRUDRequest\StudentRegistrationRequest;
 use App\Http\Requests\Admin\AdminStudentCRUDRequest\StudentUpdateRequest;
+use App\Http\Requests\Student\StudentProfileUpdateRequest;
 use App\Http\Resources\StudentResource\StudentResource;
 use App\Models\Student;
 use App\Services\Student\StudentCRUDService;
@@ -88,6 +89,22 @@ class AdminManagesStudent extends Controller
             return ApiResponseHelper::success(new StudentResource($result), 'Student status changed successfully');
         } catch (\Exception $e) {
             return ApiResponseHelper::error('Failed to change student status: ' . $e->getMessage(), 500);
+        }
+    }
+    public function updateProfile(StudentProfileUpdateRequest $request, Student $student): JsonResponse
+    {
+
+        //incomplete...........incomplete.............incomplete............
+        try {
+            // Update the student profile with validated data
+            $student->update($request->validated());
+
+            // Return a successful response with the updated student data
+            return ApiResponseHelper::success(new StudentResource($student), 'Student profile updated successfully');
+        } catch (\Exception $e) {
+            // Log error and return an error response
+            Log::error('Failed to update student profile: ' . $e->getMessage());
+            return ApiResponseHelper::error('Failed to update student profile', 500);
         }
     }
 }

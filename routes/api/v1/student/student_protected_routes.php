@@ -8,6 +8,6 @@ Route::get('subscriptions', [SubscriptionController::class, 'index']);
 Route::get('subscription/{subscription}', [SubscriptionController::class, 'show']);
 Route::post('packages/{package}/subscribe', [SubscriptionController::class, 'subscribe'])
     ->name('packages.subscribe');
-
+Route::post('/verify-email', [StudentAuthController::class, 'verifyEmail']);
 Route::get('/subscriptions', [SubscriptionController::class, 'getSubscriptions']);
-Route::post('/logout', [StudentAuthController::class, 'logout']);
+Route::put('/profile', [StudentAuthController::class, 'updateProfile'])->name('profile.update');
