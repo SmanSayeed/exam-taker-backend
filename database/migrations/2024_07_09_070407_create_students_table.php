@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('profile_image')->nullable();
             $table->string('ip_address')->nullable(); // IP Address field
             $table->string('country')->nullable(); // Country field
-            $table->string('country_code', 2)->nullable(); // Country Code field (2 characters)
+            $table->string('country_code')->nullable(); // Country Code field (2 characters)
             $table->string('address')->nullable(); // Address field
             $table->boolean('active_status')->default(false); // Active Status field
             $table->timestamps();

@@ -25,7 +25,7 @@ class StudentRegistrationRequest extends FormRequest
             'profile_image' => 'nullable|image|max:2048',
             'ip_address' => 'nullable|string',
             'country' => 'nullable|string|max:255',
-            'country_code' => 'nullable|string|size:2',
+            'country_code' => 'nullable|string',
             'address' => 'nullable|string|max:255',
             'active_status' => 'boolean'
         ];
