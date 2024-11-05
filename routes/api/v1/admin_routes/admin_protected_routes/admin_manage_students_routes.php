@@ -14,3 +14,5 @@ Route::put('students/{student}', [AdminManagesStudent::class, 'update']);
 Route::delete('students/{student}', [AdminManagesStudent::class, 'destroy']);
 
 Route::patch('students/{student}/status', [AdminManagesStudent::class, 'changeStatus']);
+
+// Route::post('students/{student}/profile', [AdminManagesStudent::class, 'updateProfile']);
