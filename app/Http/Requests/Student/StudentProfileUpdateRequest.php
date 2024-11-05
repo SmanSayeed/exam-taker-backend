@@ -6,6 +6,7 @@ use App\Helpers\ApiResponseHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
 class StudentProfileUpdateRequest extends FormRequest
 {
@@ -33,6 +34,18 @@ class StudentProfileUpdateRequest extends FormRequest
             'address' => 'nullable|string|max:255',
         ];
     }
+
+    protected function prepareForValidation()
+    {
+        // Log the request body
+        Log::info('Student registration request body:', $this->all());
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     * @param \Illuminate\Contracts\Validation\Validator $validator
+     */
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();

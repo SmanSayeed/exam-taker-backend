@@ -10,4 +10,5 @@ Route::post('packages/{package}/subscribe', [SubscriptionController::class, 'sub
     ->name('packages.subscribe');
 Route::post('/verify-email', [StudentAuthController::class, 'verifyEmail']);
 Route::get('/subscriptions', [SubscriptionController::class, 'getSubscriptions']);
-Route::put('/profile', [StudentAuthController::class, 'updateProfile'])->name('profile.update');
+Route::get('/profile', [StudentAuthController::class, 'getProfile'])->name('profile');
+Route::post('/profile', [StudentAuthController::class, 'updateProfile'])->name('profile.update');

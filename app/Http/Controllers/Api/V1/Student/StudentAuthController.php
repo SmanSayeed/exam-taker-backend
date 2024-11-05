@@ -74,6 +74,12 @@ class StudentAuthController extends Controller
         }
     }
 
+    public function getProfile(Request $request): JsonResponse
+    {
+        $student = $request->user();
+        return ApiResponseHelper::success(new StudentResource($student), 'Student retrieved successfully');
+    }
+
     public function updateProfile(StudentProfileUpdateRequest $request): JsonResponse
     {
         try {
