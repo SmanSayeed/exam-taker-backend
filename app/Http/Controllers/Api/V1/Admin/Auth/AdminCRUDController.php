@@ -1,60 +1,112 @@
 <?php
-// app/Http/Controllers/Api/V1/Admin/Auth/AdminProfileController.php
-
 namespace App\Http\Controllers\Api\V1\Admin\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use App\Services\Admin\AdminAuthService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use App\Helpers\ApiResponseHelper;
 use App\Http\Resources\Admin\AdminResource;
 use Exception;
 
-/**
- * @OA\Swagger(
- * schemes={"https"},
- * host="mywebsite.com",
- * basePath="http://localhost:8000/api/v1",
- * @OA\Info(
- * version="1.0.0",
- * title="My Website",
- * description="Put Markdown Here [a Link](https://www.google.com)",
- * @OA\Contact(
- * email="my@email"
- *      ),
- *   ),
- * )
- */
-
 class AdminCRUDController extends Controller
 {
-
-    protected AdminAuthService $adminAuthService;
-
-    public function __construct(AdminAuthService $adminAuthService)
+    /**
+     * Get Admin by ID
+     */
+    public function getAdminByID($id): JsonResponse
     {
-        $this->adminAuthService = $adminAuthService;
+        try {
+            $admin = Admin::findOrFail($id);
+            return ApiResponseHelper::success(new AdminResource($admin), 'Admin retrieved successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Admin not found: ' . $e->getMessage(), 404);
+        }
     }
 
     /**
-   * @OA\Get(path="/users", description="Get all users",       operationId="",
-   *   @OA\Response(response=200, description="OK",
-   *     @OA\JsonContent(type="string")
-   *   ),
-   *   @OA\Response(response=401, description="Unauthorized"),
-   *   @OA\Response(response=404, description="Not Found")
-   * )
-   */
-
-    public function getAdmins(): JsonResponse
+     * Get All Admins
+     */
+    public function getAllAdmins(): JsonResponse
     {
         try {
-            $admin = auth()->guard('sanctum')->user();
-
-            return ApiResponseHelper::success(new AdminResource($admin), 'Admin profile retrieved successfully');
+            $admins = Admin::all();
+            return ApiResponseHelper::success(AdminResource::collection($admins), 'All admins retrieved successfully');
         } catch (Exception $e) {
-            return ApiResponseHelper::error('Failed to get admin profile: ' . $e->getMessage(), 500);
+            return ApiResponseHelper::error('Failed to retrieve admins: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Edit Admin
+     */
+    public function editAdmin(Request $request, $id): JsonResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:admins,email,' . $id,
+            'password' => 'nullable|string|min:8',
+            'email_verified_at' => 'nullable|date',
+            'active_status' => 'boolean',
+            'role' => 'required|string',  // Validate role
+        ]);
+
+        try {
+            $admin = Admin::findOrFail($id);
+
+            // Update fields
+            $admin->name = $request->name;
+            $admin->email = $request->email;
+
+            // Only hash and update the password if provided
+            if ($request->filled('password')) {
+                $admin->password = bcrypt($request->password);
+            }
+
+            $admin->email_verified_at = $request->email_verified_at;
+            $admin->active_status = $request->active_status;
+
+            // Update role
+            $admin->syncRoles([$request->role]);
+
+            $admin->save();
+
+            return ApiResponseHelper::success(new AdminResource($admin), 'Admin updated successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to update admin: ' . $e->getMessage(), 500);
+        }
+    }
+
+
+
+    /**
+     * Delete Admin
+     */
+    public function deleteAdmin($id): JsonResponse
+    {
+        try {
+            $admin = Admin::findOrFail($id);
+            $admin->delete();
+            return ApiResponseHelper::success(null, 'Admin deleted successfully');
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to delete admin: ' . $e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Enable or Disable Admin by active_status
+     */
+    public function toggleAdminStatus($id): JsonResponse
+    {
+        try {
+            $admin = Admin::findOrFail($id);
+            $admin->active_status = !$admin->active_status;
+            $admin->save();
+
+            $status = $admin->active_status ? 'enabled' : 'disabled';
+            return ApiResponseHelper::success(new AdminResource($admin), "Admin $status successfully");
+        } catch (Exception $e) {
+            return ApiResponseHelper::error('Failed to update admin status: ' . $e->getMessage(), 500);
         }
     }
 }
