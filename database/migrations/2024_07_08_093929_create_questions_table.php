@@ -21,6 +21,8 @@ return new class extends Migration
             $table->enum('type', ['mcq', 'creative', 'normal']);
             $table->integer('mark');
             $table->boolean('status')->default(true);
+            $table->string('created_by')->nullable();
+            $table->string('edited_by')->nullable();
             $table->timestamps();
         });
     }

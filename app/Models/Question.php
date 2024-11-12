@@ -17,7 +17,9 @@ class Question extends Model
         'is_featured',
         'type',
         'mark',
-        'status'
+        'status',
+        'created_by',
+        'edited_by',
     ];
 
     public function modelTests()

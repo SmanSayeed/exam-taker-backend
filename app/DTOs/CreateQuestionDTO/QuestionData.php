@@ -14,6 +14,8 @@ class QuestionData extends Data
         public bool $is_featured,
         public bool $status,
         public string $type,
-        public int $mark
+        public int $mark,
+        public string $created_by,
+        public string $edited_by,
     ) {}
 }

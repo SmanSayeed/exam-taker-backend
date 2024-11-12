@@ -23,6 +23,8 @@ class QuestionRequest extends FormRequest
             'type' => 'required|in:mcq,creative,normal',
             'status'=>'required|boolean',
             'mark' => 'required|integer',
+            'created_by'=>'nullable|string',
+            'edited_by'=>'nullable|string',
         ];
     }
     protected function failedValidation(Validator $validator)
