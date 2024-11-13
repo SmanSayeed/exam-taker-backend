@@ -15,22 +15,22 @@
 
           <li>
             <a href="elements.html">
-                <i class="fa-solid fa-video"></i>
-              {{-- <span>Elements</span> --}}
+                <i class="fa-solid fa-list-check"></i>
+              <span>Question Bank</span>
             </a>
           </li>
 
           <li>
             <a href="#">
           <i class="fa-regular fa-pen-to-square"></i>
-              {{-- <span>Pages</span> --}}
+              <span>Practice</span>
             </a>
           </li>
 
           <li>
             <a href="#">
-              <i class="bi bi-chat-dots"></i>
-              <span>Chat</span>
+                <i class="fa-solid fa-person-chalkboard"></i>
+              <span>Course</span>
             </a>
           </li>
 
