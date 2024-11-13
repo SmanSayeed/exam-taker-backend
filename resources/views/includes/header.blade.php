@@ -13,12 +13,6 @@
     <div class="container">
       <!-- Header Content -->
       <div class="header-content header-style-five position-relative d-flex align-items-center justify-content-between">
-        <!-- Logo Wrapper -->
-        <div class="logo-wrapper">
-          <a href="home.html">
-            <img src="img/core-img/logo.png" alt="">
-          </a>
-        </div>
 
         <!-- Navbar Toggler -->
         <div class="navbar--toggler" id="affanNavbarToggler" data-bs-toggle="offcanvas" data-bs-target="#affanOffcanvas"
@@ -27,6 +21,22 @@
           <span class="d-block"></span>
           <span class="d-block"></span>
         </div>
+
+        <!-- Logo Wrapper -->
+        <div class="logo-wrapper">
+            <a href="home.html">
+              <img src="img/core-img/logo.png" alt="">
+            </a>
+          </div>
+
+
+         <!-- Profile -->
+         <div class="logo-wrapper ">
+            <a href="https://app.loopsexam.xyz" class="profile d-flex align-items-center justify-content-center" target="_blank" >
+              <i class="fa-solid fa-user"></i>
+            </a>
+          </div>
+         </div>
       </div>
     </div>
   </div>
@@ -122,10 +132,10 @@
 
         <!-- Copyright Info -->
         <div class="copyright-info">
-          <p>
+          {{-- <p>
             <span id="copyrightYear"></span>
             &copy; Made by <a href="#"> Designing World</a>
-          </p>
+          </p> --}}
         </div>
       </div>
     </div>
