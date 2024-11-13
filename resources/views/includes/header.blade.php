@@ -51,17 +51,17 @@
 
           <!-- User Info -->
           <div class="user-info">
-            <h6 class="user-name mb-0">Affan Islam</h6>
-            <span>CEO, Designing World</span>
+            <h6 class="user-name mb-0">Loopsacademy</h6>
+            <span>Exam preparation platform</span>
           </div>
         </div>
 
         <!-- Sidenav Nav -->
         <ul class="sidenav-nav ps-0">
           <li>
-            <a href="home.html"><i class="bi bi-house-door"></i> Home</a>
+            <a href={{route("home")}}><i class="bi bi-house-door"></i> Home</a>
           </li>
-          <li>
+          {{-- <li>
             <a href="elements.html"><i class="bi bi-heart"></i> Elements
               <span class="badge bg-danger rounded-pill ms-2">220+</span>
             </a>
@@ -104,7 +104,7 @@
           </li>
           <li>
             <a href="login.html"><i class="bi bi-box-arrow-right"></i> Logout</a>
-          </li>
+          </li> --}}
         </ul>
 
         <!-- Social Info -->
