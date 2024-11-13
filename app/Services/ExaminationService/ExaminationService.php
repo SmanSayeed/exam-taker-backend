@@ -408,7 +408,7 @@ class ExaminationService
                     'mcq_images' => $mcqQuestion->mcq_images ?? null,
                 ];
 
-                if ($ans['mcq_question_id'] == $correct_option_id) {
+                if (isset($ans['submitted_mcq_option']) && $ans['submitted_mcq_option'] && ($ans['submitted_mcq_option'] == $correct_option_serial)) {
                     $mcqAnswer['is_submitted_correct'] = true;
                     $correctCount++;
                     $totalMarks += $question->mark;
