@@ -55,13 +55,13 @@
           <div class="sidenav-style1"></div>
 
           <!-- User Thumbnail -->
-          <div class="user-profile">
-            <img src="img/bg-img/2.jpg" alt="">
+          <div>
+            <img  class="sidebar-logo" src="img/core-img/logo.png" alt="">
           </div>
 
           <!-- User Info -->
           <div class="user-info">
-            <h6 class="user-name mb-0">Loopsacademy</h6>
+            {{-- <h6 class="user-name mb-0">Loopsacademy</h6> --}}
             <span>Exam preparation platform</span>
           </div>
         </div>

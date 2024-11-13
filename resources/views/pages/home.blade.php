@@ -16,14 +16,14 @@
 
      @include('pages.pageComponents.cards')
 
-     @include('pages.pageComponents.fullcard-blue')
+     {{-- @include('pages.pageComponents.fullcard-blue') --}}
 
 
 
      @include('pages.pageComponents.cards')
-     @include('pages.pageComponents.review')
+     {{-- @include('pages.pageComponents.review') --}}
 
-      
+
 
       <div class="pb-3"></div>
 @endsection

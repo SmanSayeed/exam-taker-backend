@@ -3,6 +3,12 @@
     font-size: 2rem;
     color:goldenrod
 }
+.card-icon-golden{
+    color:goldenrod
+}
+.card-icon-disable{
+    color:gray;
+}
 .profile{
     border-radius: 50%;
     padding: 2px;
@@ -14,4 +20,7 @@
 .profile:hover{
     cursor: pointer;
     border:1px solid darkblue;
+}
+.sidebar-logo{
+    height: 40px;
 }
