@@ -34,7 +34,7 @@ Route::delete('/delete-question/{id}', [ManageQuestionController::class, 'delete
 Route::patch('/{id}/status', [QuestionController::class, 'changeQuestionStatus']);
 
 // Retrieve all questions
-Route::get('/all', [QuestionController::class, 'getAllQuestions']);
+Route::get('/all', [QuestionController::class, 'searchAndFilterQuestions']);
 
 // Retrieve a specific question by ID
 Route::get('/single/{id}', [QuestionController::class, 'getQuestion']);
