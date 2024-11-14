@@ -4400,12 +4400,13 @@ a.affan-element-item:hover, a.affan-element-item:focus {
   z-index: 1;
 }
 .tiny-slider-one-wrapper .single-hero-slide {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 220px;
-  background-position: center center;
-  background-size: cover;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 450px;
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 @media only screen and (min-width:480px) and (max-width:767px) {
   .tiny-slider-one-wrapper .single-hero-slide {
