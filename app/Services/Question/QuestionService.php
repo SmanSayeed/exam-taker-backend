@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Question;
 
 use App\DTOs\CreateQuestionDTO\QuestionData;
@@ -14,6 +15,7 @@ use App\Repositories\QuestionRepository\QuestionRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+
 class QuestionService
 {
     protected $questionRepository;
@@ -170,7 +172,7 @@ class QuestionService
         if ($keyword) {
             $query->where(function ($q) use ($keyword) {
                 $q->where('title', 'like', '%' . $keyword . '%')
-                  ->orWhere('description', 'like', '%' . $keyword . '%');
+                    ->orWhere('description', 'like', '%' . $keyword . '%');
             });
         }
 
@@ -203,31 +205,31 @@ class QuestionService
         ) {
             $query->whereHas('attachable', function ($q) use ($filters) {
                 if (isset($filters['section_id'])) {
-                    $q->where('section_id', $filters['section_id']);
+                    $q->whereIn('section_id', (array)$filters['section_id']);
                 }
                 if (isset($filters['exam_type_id'])) {
-                    $q->where('exam_type_id', $filters['exam_type_id']);
+                    $q->whereIn('exam_type_id', (array)$filters['exam_type_id']);
                 }
                 if (isset($filters['exam_sub_type_id'])) {
-                    $q->where('exam_sub_type_id', $filters['exam_sub_type_id']);
+                    $q->whereIn('exam_sub_type_id', (array)$filters['exam_sub_type_id']);
                 }
                 if (isset($filters['group_id'])) {
-                    $q->where('group_id', $filters['group_id']);
+                    $q->whereIn('group_id', (array)$filters['group_id']);
                 }
                 if (isset($filters['level_id'])) {
-                    $q->where('level_id', $filters['level_id']);
+                    $q->whereIn('level_id', (array)$filters['level_id']);
                 }
                 if (isset($filters['subject_id'])) {
-                    $q->where('subject_id', $filters['subject_id']);
+                    $q->whereIn('subject_id', (array)$filters['subject_id']);
                 }
                 if (isset($filters['lesson_id'])) {
-                    $q->where('lesson_id', $filters['lesson_id']);
+                    $q->whereIn('lesson_id', (array)$filters['lesson_id']);
                 }
                 if (isset($filters['topic_id'])) {
-                    $q->where('topic_id', $filters['topic_id']);
+                    $q->whereIn('topic_id', (array)$filters['topic_id']);
                 }
                 if (isset($filters['sub_topic_id'])) {
-                    $q->where('sub_topic_id', $filters['sub_topic_id']);
+                    $q->whereIn('sub_topic_id', (array)$filters['sub_topic_id']);
                 }
             });
         }
@@ -241,28 +243,51 @@ class QuestionService
         }
 
         // Apply type-specific relationships if provided
-        $type = $filters['type'] ?? null;
-        switch ($type) {
-            case 'mcq':
+        if (isset($filters['type']) && !empty($filters['type'])) {
+            $types = (array)$filters['type'];
+
+            $query->where(function ($q) use ($types) {
+                foreach ($types as $index => $type) {
+                    $method = $index === 0 ? 'where' : 'orWhere';
+
+                    switch ($type) {
+                        case 'mcq':
+                            $q->$method(function ($subQ) {
+                                $subQ->has('mcqQuestions');
+                            });
+                            break;
+                        case 'creative':
+                            $q->$method(function ($subQ) {
+                                $subQ->has('creativeQuestions');
+                            });
+                            break;
+                        case 'normal':
+                            $q->$method(function ($subQ) {
+                                $subQ->doesntHave('mcqQuestions')
+                                    ->doesntHave('creativeQuestions');
+                            });
+                            break;
+                    }
+                }
+            });
+
+            // Eager load relationships based on selected types
+            if (in_array('mcq', $types)) {
                 $query->with('mcqQuestions');
-                break;
-            case 'creative':
+            }
+            if (in_array('creative', $types)) {
                 $query->with('creativeQuestions');
-                break;
-            case 'normal':
-                // No additional relationships to include
-                break;
-            default:
-                $query->with(['creativeQuestions', 'mcqQuestions']);
-                break;
+            }
+        } else {
+            // If no type filter, load all relationships
+            $query->with(['creativeQuestions', 'mcqQuestions']);
         }
 
         // Load the attachable relationship and paginate the results
         $query->with('attachable')->orderBy('created_at', 'desc');
-        $results = $query->paginate($perPage);
-
-        return $results;
+        return $query->paginate($perPage);
     }
+
 
 
     // public function searchAndFilterQuestions(array $filters, string $keyword, int $perPage = 10)
