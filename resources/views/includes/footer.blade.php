@@ -25,8 +25,8 @@
                     </a>
                 </li>
 
-                <li class="{{ request()->is('course*') ? 'active' : '' }}">
-                    <a href="#">
+                <li class="{{ request()->is('courses*') ? 'active' : '' }}">
+                    <a href={{route('courses')}}>
                         <i class="fa-solid fa-person-chalkboard"></i>
                         <span>Course</span>
                     </a>
