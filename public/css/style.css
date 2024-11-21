@@ -8754,3 +8754,27 @@ form .btn-lg {
 [data-theme=dark] .single-plan-check {
   border-color: rgba(255, 255, 255, 0.1);
 }
+
+.footer-nav ul li.active a {
+    color: #007bff; /* Active link color */
+    font-weight: bold;
+}
+
+.footer-nav ul li.active a span {
+    color: #007bff; /* Active text color */
+}
+
+.footer-nav ul li a {
+    color: #6c757d; /* Default link color */
+    transition: color 0.3s;
+}
+
+.footer-nav ul li a span {
+    color: #6c757d; /* Default text color */
+    transition: color 0.3s;
+}
+
+.footer-nav ul li a:hover,
+.footer-nav ul li a:hover span {
+    color: #0056b3; /* Hover effect color */
+}
