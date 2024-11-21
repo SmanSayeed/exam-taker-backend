@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Student\Questions\QuestionController;
 use App\Http\Controllers\Api\V1\Student\StudentAuthController;
 use App\Http\Controllers\Api\V1\Student\Subscription\SubscriptionController;
 use Illuminate\Support\Facades\Route;
@@ -12,3 +13,4 @@ Route::post('/verify-email', [StudentAuthController::class, 'verifyEmail']);
 Route::get('/subscriptions', [SubscriptionController::class, 'getSubscriptions']);
 Route::get('/profile', [StudentAuthController::class, 'getProfile'])->name('profile');
 Route::post('/profile', [StudentAuthController::class, 'updateProfile'])->name('profile.update');
+Route::get('que/all', [QuestionController::class, 'searchAndFilterQuestions']);
