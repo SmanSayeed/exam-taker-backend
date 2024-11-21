@@ -41,6 +41,8 @@
 
 @include('includes.footer')
 
+@yield('scripts')
+
   <!-- All JavaScript Files -->
   <script src="{{ asset('js/bootstrap.bundle.min.js') }}" type="text/javascript"></script>
   <script src="{{ asset('js/slideToggle.min.js') }}"></script>
