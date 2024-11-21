@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Api\V1\Questions;
 
 use App\DTOs\CreateQuestionDTO\CreativeQuestionData;
@@ -233,55 +234,13 @@ class QuestionController extends Controller
     }
 
     public function searchByKeywordAndType(Request $request): JsonResponse
-{
-    // Validate the request
-    $validator = Validator::make($request->all(), [
-        'keyword' => 'nullable|string',
-        'types' => 'nullable|array',
-        'types.*' => 'in:mcq,creative,normal', // Validate that each type is one of the allowed values
-        'perPage' => 'nullable|integer|min:1', // Optional pagination parameter
-    ]);
-
-    if ($validator->fails()) {
-        return ApiResponseHelper::error('Validation failed', 422, $validator->errors());
-    }
-
-    try {
-        // Get the validated data
-        $filters = $validator->validated();
-        $keyword = $filters['keyword'] ?? ''; // Default to an empty string if keyword is not provided
-        $types = $filters['types'] ?? []; // Default to an empty array if types are not provided
-        $perPage = $filters['perPage'] ?? 10; // Default to 10 if perPage is not provided
-
-        // Call the service method
-        $questions = $this->questionService->searchByKeywordAndType($types, $keyword, $perPage);
-
-        // Return a successful response
-        return ApiResponseHelper::success($questions, 'Questions retrieved successfully');
-    } catch (Exception $e) {
-        // Return an error response in case of an exception
-        return ApiResponseHelper::error('Failed to retrieve questions', 500, ['error' => $e->getMessage()]);
-    }
-}
-
-
-
-    public function searchAndFilterQuestions(Request $request): JsonResponse
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
             'keyword' => 'nullable|string',
-            'type' => 'nullable|string|in:mcq,creative,normal',
-            'section_id' => 'nullable|integer|exists:sections,id',
-            'exam_type_id' => 'nullable|integer|exists:exam_types,id',
-            'exam_sub_type_id' => 'nullable|integer|exists:exam_sub_types,id',
-            'group_id' => 'nullable|integer|exists:groups,id',
-            'level_id' => 'nullable|integer|exists:levels,id',
-            'subject_id' => 'nullable|integer|exists:subjects,id',
-            'lesson_id' => 'nullable|integer|exists:lessons,id',
-            'topic_id' => 'nullable|integer|exists:topics,id',
-            'sub_topic_id' => 'nullable|integer|exists:sub_topics,id',
-            'perPage' => 'nullable|integer|min:1',
+            'types' => 'nullable|array',
+            'types.*' => 'in:mcq,creative,normal', // Validate that each type is one of the allowed values
+            'perPage' => 'nullable|integer|min:1', // Optional pagination parameter
         ]);
 
         if ($validator->fails()) {
@@ -292,10 +251,11 @@ class QuestionController extends Controller
             // Get the validated data
             $filters = $validator->validated();
             $keyword = $filters['keyword'] ?? ''; // Default to an empty string if keyword is not provided
+            $types = $filters['types'] ?? []; // Default to an empty array if types are not provided
             $perPage = $filters['perPage'] ?? 10; // Default to 10 if perPage is not provided
 
             // Call the service method
-            $questions = $this->questionService->searchAndFilterQuestions($filters, $keyword, $perPage);
+            $questions = $this->questionService->searchByKeywordAndType($types, $keyword, $perPage);
 
             // Return a successful response
             return ApiResponseHelper::success($questions, 'Questions retrieved successfully');
@@ -307,4 +267,52 @@ class QuestionController extends Controller
 
 
 
+    public function searchAndFilterQuestions(Request $request): JsonResponse
+    {
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'keyword' => 'nullable|string',
+            'type' => 'nullable|array', // Allow an array of types
+            'type.*' => 'string|in:mcq,creative,normal', // Validate each type in the array
+            'section_id' => 'nullable|array',
+            'section_id.*' => 'integer|exists:sections,id',
+            'exam_type_id' => 'nullable|array',
+            'exam_type_id.*' => 'integer|exists:exam_types,id',
+            'exam_sub_type_id' => 'nullable|array',
+            'exam_sub_type_id.*' => 'integer|exists:exam_sub_types,id',
+            'group_id' => 'nullable|array',
+            'group_id.*' => 'integer|exists:groups,id',
+            'level_id' => 'nullable|array',
+            'level_id.*' => 'integer|exists:levels,id',
+            'subject_id' => 'nullable|array',
+            'subject_id.*' => 'integer|exists:subjects,id',
+            'lesson_id' => 'nullable|array',
+            'lesson_id.*' => 'integer|exists:lessons,id',
+            'topic_id' => 'nullable|array',
+            'topic_id.*' => 'integer|exists:topics,id',
+            'sub_topic_id' => 'nullable|array',
+            'sub_topic_id.*' => 'integer|exists:sub_topics,id',
+            'perPage' => 'nullable|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponseHelper::error('Validation failed', 422, $validator->errors());
+        }
+
+        try {
+            // Get the validated data
+            $filters = $validator->validated();
+            $keyword = $filters['keyword'] ?? '';
+            $perPage = $filters['perPage'] ?? 10;
+
+            // Call the service method
+            $questions = $this->questionService->searchAndFilterQuestions($filters, $keyword, $perPage);
+
+            // Return a successful response
+            return ApiResponseHelper::success($questions, 'Questions retrieved successfully');
+        } catch (Exception $e) {
+            // Return an error response in case of an exception
+            return ApiResponseHelper::error('Failed to retrieve questions', 500, ['error' => $e->getMessage()]);
+        }
+    }
 }
