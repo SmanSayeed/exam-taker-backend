@@ -4403,36 +4403,44 @@ a.affan-element-item:hover, a.affan-element-item:focus {
     position: relative;
     z-index: 1;
     width: 100%;
-    height: 450px;
+    height: 320px; /* Further reduced height */
     background-position: center center;
     background-size: contain;
     background-repeat: no-repeat;
 }
+
+@media only screen and (max-width:479px) {
+    .tiny-slider-one-wrapper .single-hero-slide {
+      height: 120px; /* Further reduced height for screens below 480px */
+    }
+  }
+
 @media only screen and (min-width:480px) and (max-width:767px) {
   .tiny-slider-one-wrapper .single-hero-slide {
-    height: 220px;
+    height: 140px; /* Further reduced height */
   }
 }
 @media only screen and (min-width:576px) and (max-width:767px) {
   .tiny-slider-one-wrapper .single-hero-slide {
-    height: 240px;
+    height: 160px; /* Further reduced height */
   }
 }
 @media only screen and (min-width:768px) and (max-width:991px) {
   .tiny-slider-one-wrapper .single-hero-slide {
-    height: 300px;
+    height: 220px; /* Further reduced height */
   }
 }
 @media only screen and (min-width:992px) and (max-width:1199px) {
   .tiny-slider-one-wrapper .single-hero-slide {
-    height: 320px;
+    height: 240px; /* Further reduced height */
   }
 }
 @media only screen and (min-width:1200px) and (max-width:1399px) {
   .tiny-slider-one-wrapper .single-hero-slide {
-    height: 450px;
+    height: 300px; /* Further reduced height */
   }
 }
+
 .tiny-slider-one-wrapper .single-hero-slide .slide-content {
   position: absolute;
   width: 100%;
@@ -8745,4 +8753,28 @@ form .btn-lg {
 }
 [data-theme=dark] .single-plan-check {
   border-color: rgba(255, 255, 255, 0.1);
+}
+
+.footer-nav ul li.active a {
+    color: #007bff; /* Active link color */
+    font-weight: bold;
+}
+
+.footer-nav ul li.active a span {
+    color: #007bff; /* Active text color */
+}
+
+.footer-nav ul li a {
+    color: #6c757d; /* Default link color */
+    transition: color 0.3s;
+}
+
+.footer-nav ul li a span {
+    color: #6c757d; /* Default text color */
+    transition: color 0.3s;
+}
+
+.footer-nav ul li a:hover,
+.footer-nav ul li a:hover span {
+    color: #0056b3; /* Hover effect color */
 }

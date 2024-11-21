@@ -24,7 +24,7 @@
 
         <!-- Logo Wrapper -->
         <div class="logo-wrapper">
-            <a href="home.html">
+            <a href="https://app.loopsexam.xyz">
               <img src="img/core-img/logo.png" alt="">
             </a>
           </div>

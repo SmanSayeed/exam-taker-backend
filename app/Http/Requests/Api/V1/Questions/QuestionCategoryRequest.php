@@ -33,7 +33,7 @@ class QuestionCategoryRequest extends FormRequest
                 $rules['exam_type_id'] = 'required|exists:exam_types,id';
                 break;
             case 'levels':
-                    $rules['group_id'] = 'required|exists:subjects,id';
+                    $rules['group_id'] = 'required|exists:groups,id';
                     break;
             case 'subjects':
                 $rules['level_id'] = 'required|exists:levels,id';
