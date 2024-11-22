@@ -1,6 +1,6 @@
 <div class="container direction-rtl">
     <div class="card">
-        <div class="card-body">
+        <div class="card-body" style="padding-top: 0 ; padding-bottom : 0">
             <div class="tiny-slider-one-wrapper">
                 <div class="tiny-slider-one">
                     <!-- Single Hero Slide -->
