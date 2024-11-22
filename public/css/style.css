@@ -1403,7 +1403,7 @@ textarea:invalid {
 
 /* :: Miscellaneous */
 .page-content-wrapper {
-  margin-top: 50px;
+  margin-top: 70px;
   margin-bottom: 62px;
 }
 
@@ -4407,6 +4407,8 @@ a.affan-element-item:hover, a.affan-element-item:focus {
     background-position: center center;
     background-size: contain;
     background-repeat: no-repeat;
+    background-color: #ffffff;
+
 }
 
 @media only screen and (max-width:479px) {

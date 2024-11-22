@@ -1,5 +1,5 @@
 <div class="container direction-rtl">
-    <div class="card mb-3">
+    <div class="card mb-3 ">
       <div class="card-body">
         <div class="row g-3">
           <div class="col-4">
