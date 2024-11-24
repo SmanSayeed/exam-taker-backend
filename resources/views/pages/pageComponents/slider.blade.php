@@ -18,11 +18,6 @@
             <!-- Single Hero Slide -->
             <div>
                 <div class="single-hero-slide " style="background-image: url('{{ asset('img/slider-img/3.png') }}')">
-                    <div class="h-100 d-flex align-items-center text-center">
-                        <div class="container">
-                            <a class="btn btn-creative btn-warning" href="#">Buy Now</a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
