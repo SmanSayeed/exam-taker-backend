@@ -1,11 +1,11 @@
-<div class="container">
+<div class="container " style="margin-bottom: -35px;margin-top: 35px;">
     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
           <button class="nav-link active" id="pills-medical-tab" data-bs-toggle="pill" data-bs-target="#pills-medical" type="button" role="tab" aria-controls="pills-medical" aria-selected="true">Medical</button>
         </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="pills-varsity-tab" data-bs-toggle="pill" data-bs-target="#pills-varsity" type="button" role="tab" aria-controls="pills-varsity" aria-selected="false">Varsity</button>
-        </li>
+        <!--<li class="nav-item" role="presentation">-->
+        <!--  <button class="nav-link" id="pills-varsity-tab" data-bs-toggle="pill" data-bs-target="#pills-varsity" type="button" role="tab" aria-controls="pills-varsity" aria-selected="false">Varsity</button>-->
+        <!--</li>-->
       </ul>
  </div>
 
