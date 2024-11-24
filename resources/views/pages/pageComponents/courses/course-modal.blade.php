@@ -14,6 +14,7 @@
                     <p id="modalProductDetails"></p>
                 </div>
                 <div class="modal-footer">
+                    <a class="btn btn-primary" href="https://www.facebook.com/looopsacademy?mibextid=ZbWKwL">Send Message</a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>

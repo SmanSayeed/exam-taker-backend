@@ -11,12 +11,14 @@
       <div class="pt-3"></div>
 
    @include('pages.pageComponents.cards')
+   
+   @include('pages.pageComponents.fullcard-blue')
 
      @include('pages.pageComponents.fullcard')
 
      {{-- @include('pages.pageComponents.cards') --}}
 
-     @include('pages.pageComponents.fullcard-blue')
+     
 
 
 

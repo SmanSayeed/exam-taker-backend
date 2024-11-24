@@ -12,21 +12,21 @@
                 </li>
 
                 <li class="{{ request()->is('question-bank*') ? 'active' : '' }}">
-                    <a href="elements.html">
+                    <a href="https://app.loopsexam.xyz/questions">
                         <i class="fa-solid fa-list-check"></i>
                         <span>Question Bank</span>
                     </a>
                 </li>
 
                 <li class="{{ request()->is('practice*') ? 'active' : '' }}">
-                    <a href="#">
+                    <a href="https://app.loopsexam.xyz/exams-starting">
                         <i class="fa-regular fa-pen-to-square"></i>
                         <span>Practice</span>
                     </a>
                 </li>
 
                 <li class="{{ request()->is('courses*') ? 'active' : '' }}">
-                    <a href={{route('courses')}}>
+                    <a href={{ route('courses') }}>
                         <i class="fa-solid fa-person-chalkboard"></i>
                         <span>Course</span>
                     </a>
