@@ -4500,44 +4500,37 @@ a.affan-element-item:focus {
     position: relative;
     z-index: 1;
     width: 100%;
-    height: 320px; /* Further reduced height */
+    height: 0; /* Reset height */
+    padding-top: 33.33%; /* 3:1 aspect ratio (height is 1/3 of the width) */
     background-position: center center;
     background-size: contain;
     background-repeat: no-repeat;
     background-color: #ffffff;
 }
 
-@media only screen and (max-width: 479px) {
+/* @media only screen and (max-width: 479px) {
     .tiny-slider-one-wrapper .single-hero-slide {
-        height: 120px; /* Further reduced height for screens below 480px */
+        padding-top: 40%;
     }
 }
 
 @media only screen and (min-width: 480px) and (max-width: 767px) {
     .tiny-slider-one-wrapper .single-hero-slide {
-        height: 140px; /* Further reduced height */
+        padding-top: 35%;
     }
 }
-@media only screen and (min-width: 576px) and (max-width: 767px) {
-    .tiny-slider-one-wrapper .single-hero-slide {
-        height: 160px; /* Further reduced height */
-    }
-}
+
 @media only screen and (min-width: 768px) and (max-width: 991px) {
     .tiny-slider-one-wrapper .single-hero-slide {
-        height: 220px; /* Further reduced height */
+        padding-top: 33.33%;
     }
 }
-@media only screen and (min-width: 992px) and (max-width: 1199px) {
+
+@media only screen and (min-width: 992px) {
     .tiny-slider-one-wrapper .single-hero-slide {
-        height: 240px; /* Further reduced height */
+        padding-top: 33.33%;
     }
-}
-@media only screen and (min-width: 1200px) and (max-width: 1399px) {
-    .tiny-slider-one-wrapper .single-hero-slide {
-        height: 300px; /* Further reduced height */
-    }
-}
+} */
 
 .tiny-slider-one-wrapper .single-hero-slide .slide-content {
     position: absolute;
@@ -4699,13 +4692,11 @@ a.affan-element-item:focus {
     z-index: 1;
 }
 .tiny-slider-three-wrapper .single-hero-slide {
-    position: relative;
-    z-index: 1;
-    -webkit-transition-duration: 400ms;
-    transition-duration: 400ms;
-    width: 100%;
-    padding: 2rem;
-    border-radius: 1rem;
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: auto;
+    min-height: 100vh;
 }
 .tiny-slider-three-wrapper .single-hero-slide.bg-overlay::after {
     border-radius: 1rem;
@@ -8997,26 +8988,26 @@ form .btn-lg {
     color: #0056b3; /* Hover effect color */
 }
 
-.sidenav-nav  li.active a {
+.sidenav-nav li.active a {
     color: #007bff; /* Active link color */
     font-weight: bold;
 }
 
-.sidenav-nav  li.active a span {
+.sidenav-nav li.active a span {
     color: #007bff; /* Active text color */
 }
 
-.sidenav-nav  li a {
+.sidenav-nav li a {
     color: #6c757d; /* Default link color */
     transition: color 0.3s;
 }
 
-.sidenav-nav  li a span {
+.sidenav-nav li a span {
     color: #6c757d; /* Default text color */
     transition: color 0.3s;
 }
 
-.sidenav-nav  li a:hover,
-.sidenav-nav     li a:hover span {
+.sidenav-nav li a:hover,
+.sidenav-nav li a:hover span {
     color: #0056b3; /* Hover effect color */
 }
