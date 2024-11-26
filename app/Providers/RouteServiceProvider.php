@@ -33,7 +33,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->routes(function () {
 
             Route::middleware('web')
-            ->group(base_path('routes/web.php'));  // This line is crucial
+                ->group(base_path('routes/web.php'));  // This line is crucial
 
             Route::middleware('api')
                 ->prefix('api/v1')
@@ -94,6 +94,6 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::prefix('student')->group(base_path(self::STUDENT_ROUTE_PATH . '/student_protected_routes.php'));
 
-        // You can add more route groups for different user roles or sections.
+        Route::prefix('admin/que')->group(base_path(self::ADMIN_ROUTE_PATH . '/admin_protected_routes/que_tag_routes.php'));
     }
 }
