@@ -21,14 +21,14 @@ class QuestionCategoryService
         $this->repository->setModel($model);
     }
 
-    public function getAll(array $relations = [], int $perPage = 9999999999): LengthAwarePaginator
+    public function getAll(array $relations = [], int $perPage = 9): LengthAwarePaginator
     {
-        return $this->repository->getAll($relations,$perPage);
+        return $this->repository->getAll($relations, $perPage);
     }
 
-    public function findById(int $id,array $relations = []): ?Model
+    public function findById(int $id, array $relations = []): ?Model
     {
-        $query= $this->repository->findById($id);
+        $query = $this->repository->findById($id);
         return $query->with($relations)->first();
     }
 

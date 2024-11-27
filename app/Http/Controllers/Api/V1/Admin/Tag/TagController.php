@@ -7,17 +7,22 @@ use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
 use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TagResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        $tags = Tag::all();
-        return ApiResponseHelper::success($tags, 'Tags retrieved successfully');
+
+        $perPage = $request->input('per_page', 99999999);
+
+        $tags = Tag::paginate($perPage);
+
+        return ApiResponseHelper::success($tags);
     }
+
 
     /**
      * Store a newly created resource in storage.
