@@ -26,7 +26,7 @@ class UpdateTagRequest extends FormRequest
         $tagId = $this->route('tag')->id;
 
         return [
-            'name' => 'required|string|max:255|unique:tags,name,' . $tagId,
+            'title' => 'required|string|max:255|unique:tags,title,' . $tagId,
             'status' => 'boolean',
             'details' => 'nullable|string',
         ];
