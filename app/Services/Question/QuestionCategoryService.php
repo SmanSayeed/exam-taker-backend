@@ -21,7 +21,7 @@ class QuestionCategoryService
         $this->repository->setModel($model);
     }
 
-    public function getAll(array $relations = [], int $perPage = 9): LengthAwarePaginator
+    public function getAll(array $relations = [], int $perPage = 9999999999): LengthAwarePaginator
     {
         return $this->repository->getAll($relations, $perPage);
     }
