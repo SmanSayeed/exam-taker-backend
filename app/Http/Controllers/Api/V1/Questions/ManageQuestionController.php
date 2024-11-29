@@ -64,6 +64,7 @@ class ManageQuestionController extends Controller
             DB::beginTransaction();
             $tags=null;
             if($request->tags){ // tags ids are in array which should be converted into comma separated id string format to store in questions table
+
                 $tags=implode(',', $request->tags);
             }
 
@@ -176,11 +177,15 @@ class ManageQuestionController extends Controller
                 'categories.lesson_id' => 'nullable|integer|exists:lessons,id',
                 'categories.topic_id' => 'nullable|integer|exists:topics,id',
                 'categories.sub_topic_id' => 'nullable|integer|exists:sub_topics,id',
+                'tags' => 'nullable|array',
             ]);
 
             // Find the question by ID
             $question = Question::findOrFail($id);
-
+            $tags=null;
+            if(isset($request->tags)){
+                $tags=implode(',', $request->tags);
+            }
             if($question->type !== $validated['type']) {
                 throw new \Exception('Question type cannot be changed');
             }
@@ -198,6 +203,7 @@ class ManageQuestionController extends Controller
                 'type' => $validated['type'],
                 'mark' => $validated['mark'],
                 'status' => $validated['status'] ?? true,
+                'tags'=>$tags
             ]);
 
             // Update MCQ options if type is mcq

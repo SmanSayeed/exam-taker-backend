@@ -17,5 +17,6 @@ class QuestionData extends Data
         public int $mark,
         public string $created_by,
         public string $edited_by,
+        public string $tags,
     ) {}
 }
