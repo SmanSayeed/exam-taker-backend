@@ -63,7 +63,7 @@ class ManageQuestionController extends Controller
             // Create the question inside a transaction
             DB::beginTransaction();
             $tags=null;
-            if($request->tags){ // tags ids are in array which should be converted into comma seperated id string format to store in questions table
+            if($request->tags){ // tags ids are in array which should be converted into comma separated id string format to store in questions table
                 $tags=implode(',', $request->tags);
             }
 
