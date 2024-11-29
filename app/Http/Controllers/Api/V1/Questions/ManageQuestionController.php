@@ -54,6 +54,7 @@ class ManageQuestionController extends Controller
                 'categories.lesson_id' => 'nullable|integer|exists:lessons,id',
                 'categories.topic_id' => 'nullable|integer|exists:topics,id',
                 'categories.sub_topic_id' => 'nullable|integer|exists:sub_topics,id',
+                'tags' => 'nullable|array',
             ]);
 
             // Enforce hierarchical rules on categories
@@ -61,6 +62,10 @@ class ManageQuestionController extends Controller
 
             // Create the question inside a transaction
             DB::beginTransaction();
+            $tags=null;
+            if($request->tags){ // tags ids are in array which should be converted into comma seperated id string format to store in questions table
+                $tags=implode(',', $request->tags);
+            }
 
             $question = Question::create([
                 'title' => $validated['title'],
@@ -71,6 +76,7 @@ class ManageQuestionController extends Controller
                 'type' => $validated['type'],
                 'mark' => $validated['mark'],
                 'status' => $validated['status'] ?? true,
+                'tags'=>$tags
             ]);
 
             // Handle MCQ options
