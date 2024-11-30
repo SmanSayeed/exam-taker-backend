@@ -69,6 +69,7 @@ class SubscriptionController extends Controller
                 'mobile_number'   => $request->mobile_number,  // Mobile banking number
                 'transaction_id'  => $request->transaction_id, // Transaction ID
                 'amount'          => $request->amount,
+                'package_id'      => $package->id,
             ]);
 
             DB::commit();

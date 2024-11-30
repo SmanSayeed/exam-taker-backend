@@ -16,6 +16,17 @@ class StudentPayment extends Model
         'amount',
         'transaction_id',
         'verified',
-        'verified_at'
+        'verified_at',
+        'package_id'
     ];
+
+    public function subscription()
+    {
+        return $this->belongsTo(Subscription::class);
+    }
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class);
+    }
 }

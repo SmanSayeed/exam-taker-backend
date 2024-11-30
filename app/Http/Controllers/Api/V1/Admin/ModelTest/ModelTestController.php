@@ -10,12 +10,10 @@ use App\Http\Requests\Admin\ModelTest\UpdateModelTestStatusRequest;
 use App\Http\Requests\AttachQuestionsRequest;
 use App\Http\Requests\DetachQuestionsRequest;
 use App\Http\Requests\ModelTestIndexRequest;
-use App\Http\Resources\ModelTestQuestionResource;
 use App\Http\Resources\ModelTestResource;
 use App\Http\Resources\ModelTestWithQuestionsResource;
 use App\Models\ModelTest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ModelTestController extends Controller
@@ -170,7 +168,7 @@ class ModelTestController extends Controller
             $questionId = $request->input('question_id');
 
             // Attach the question to the model test
-            $modelTest->questions()->attach($questionId);
+            $modelTest->attachQuestion($questionId);
 
             DB::commit();
 
@@ -193,7 +191,7 @@ class ModelTestController extends Controller
             $questionId = $request->input('question_id');
 
             // Detach the question from the model test
-            $modelTest->questions()->detach($questionId);
+            $modelTest->detachQuestion($questionId);
 
             DB::commit();
 

@@ -7,68 +7,62 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ModelTestIndexRequest;
 use App\Http\Resources\ModelTestResource;
 use App\Models\ModelTest;
+use App\Models\Package;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ModelTestController extends Controller
 {
-    public function index(ModelTestIndexRequest $request): JsonResponse
+    public function index(Package $package): JsonResponse
     {
-        // Get the 'per_page' parameter from the request, defaulting to 15 if not provided
-        $perPage = $request->get('per_page', 15);
+        $student = Auth::guard('student-api')->user();
 
-        // Start the query for ModelTest, eager loading the related modelTestCategory
-        $query = ModelTest::with('modelTestCategory');
+        // Check if the student is subscribed to the package
+        $isSubscribed = $student->subscriptions()->where('package_id', $package->id)->exists();
 
-        // Apply filters based on request parameters if they are present
-        if ($request->has('group_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('group_id', $request->input('group_id'));
-            });
+        if (!$isSubscribed) {
+            return ApiResponseHelper::error('You are not subscribed to this package.', 403);
         }
 
-        if ($request->has('level_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('level_id', $request->input('level_id'));
-            });
+        // Check if the package is active
+        if (!$package->is_active) {
+            return ApiResponseHelper::error('Package is not active.', 404);
         }
 
-        if ($request->has('subject_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('subject_id', $request->input('subject_id'));
-            });
-        }
+        // Fetch only active model tests associated with the active package
+        $modelTests = $package->modelTests()->active()->get();
 
-        if ($request->has('lesson_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('lesson_id', $request->input('lesson_id'));
-            });
-        }
-
-        if ($request->has('topic_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('topic_id', $request->input('topic_id'));
-            });
-        }
-
-        if ($request->has('sub_topic_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('sub_topic_id', $request->input('sub_topic_id'));
-            });
-        }
-
-        // Execute the query with pagination
-        $modelTests = $query->paginate($perPage);
-
-        // Return a successful response with the paginated results
+        // Return the filtered model tests
         return ApiResponseHelper::success(
             ModelTestResource::collection($modelTests),
-            'Model tests retrieved successfully'
+            'Active model tests for subscribed package retrieved successfully'
         );
     }
 
+    // Show a specific model test by ID
     public function show(ModelTest $modelTest): JsonResponse
     {
+        $student = Auth::guard('student-api')->user();
+
+        if (!$modelTest->is_active) {
+            return ApiResponseHelper::error('Model test is not active.', 404);
+        }
+
+        $package = $modelTest->package;
+
+        if (!$package->is_active) {
+            return ApiResponseHelper::error('Package is not active.', 404);
+        }
+
+        $isSubscribed = $student->subscriptions()->where('package_id', $package->id)->exists();
+
+        if (!$isSubscribed) {
+            return ApiResponseHelper::error('You are not subscribed to this package.', 403);
+        }
+
+        // Return the model test resource
         return ApiResponseHelper::success(
             new ModelTestResource($modelTest),
             'Model test retrieved successfully'

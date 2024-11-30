@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Admin\Package\PackageController;
-use App\Http\Controllers\Api\V1\Admin\Package\PackagePlanController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('packages')->group(function () {
