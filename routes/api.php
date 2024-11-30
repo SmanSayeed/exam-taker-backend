@@ -38,8 +38,6 @@ Route::prefix('student')->group(function () {
     Route::get('/packages', [PackageController::class, 'index']);
     Route::get('/packages/{package}', [PackageController::class, 'show']);
 
-    Route::get('/model-tests', [ModelTestController::class, 'index']);
-    Route::get('/model-tests/{modelTest}', [ModelTestController::class, 'show']);
 });
 
 

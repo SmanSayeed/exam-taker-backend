@@ -30,6 +30,12 @@ class StudentPaymentController extends Controller
 
     public function destroy(StudentPayment $student_payment): JsonResponse
     {
+        // Check if the payment is verified
+        if ($student_payment->verified) {
+            return ApiResponseHelper::error('Verified payments cannot be deleted', 400);
+        }
+
+        // Proceed with deletion if not verified
         $student_payment->delete();
         return ApiResponseHelper::success(null, 'Transaction deleted successfully');
     }

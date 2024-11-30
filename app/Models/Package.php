@@ -16,6 +16,8 @@ class Package extends Model
         'price',
         'duration_days',
     ];
+
+    // Relationships
     public function packageCategory()
     {
         return $this->hasOne(PackageCategory::class);
@@ -28,6 +30,17 @@ class Package extends Model
 
     public function subscribers()
     {
-        return $this->hasManyThrough(Student::class, Subscription::class , 'package_id', 'id', 'id', 'student_id');
+        return $this->hasManyThrough(Student::class, Subscription::class, 'package_id', 'id', 'id', 'student_id');
+    }
+
+    public function modelTests()
+    {
+        return $this->hasMany(ModelTest::class);
+    }
+
+    // Local scope for active packages
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

@@ -20,8 +20,24 @@ class ModelTest extends Model
 
     public function questions()
     {
-        return $this->belongsToMany(Question::class)->withTimestamps();
+        return $this->hasManyThrough(ModelTestQuestion::class, ModelTestCategory::class, 'model_test_id', 'id', 'id', 'question_id');
     }
+
+    public function attachQuestion($questionId)
+    {
+        ModelTestQuestion::firstOrCreate([
+            'model_test_id' => $this->id,
+            'question_id' => $questionId,
+        ]);
+    }
+
+    public function detachQuestion($questionId)
+    {
+        ModelTestQuestion::where('model_test_id', $this->id)
+            ->where('question_id', $questionId)
+            ->delete();
+    }
+
 
     public function modelTestCategory()
     {
@@ -77,5 +93,10 @@ class ModelTest extends Model
     public function subTopic()
     {
         return $this->hasOneThrough(SubTopic::class, ModelTestCategory::class, 'model_test_id', 'id', 'id', 'sub_topic_id');
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
     }
 }

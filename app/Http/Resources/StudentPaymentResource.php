@@ -16,7 +16,6 @@ class StudentPaymentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'subscription_id' => $this->subscription_id,
             'payment_method' => $this->payment_method,
             'mobile_number' => $this->mobile_number,
             'transaction_id' => $this->transaction_id,
@@ -25,6 +24,7 @@ class StudentPaymentResource extends JsonResource
             'verified_at' => $this->verified_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'subscription' => new SubscriptionResource($this->subscription),
         ];
     }
 }

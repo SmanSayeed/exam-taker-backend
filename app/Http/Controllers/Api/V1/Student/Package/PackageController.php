@@ -28,7 +28,7 @@ class PackageController extends Controller
         }
 
         // Paginate the results
-        $packages = $query->paginate($perPage);
+        $packages = $query->active()->paginate($perPage);
 
         return ApiResponseHelper::success(
             PackageResource::collection($packages),

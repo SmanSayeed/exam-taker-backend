@@ -16,7 +16,6 @@ class ModelTestResource extends JsonResource
     {
         return [
             'id' => $this->id,
-
             'title' => $this->title,
             'description' => $this->description,
             'start_time' => $this->start_time,
