@@ -20,6 +20,7 @@ class Question extends Model
         'status',
         'created_by',
         'edited_by',
+        'tags',
     ];
 
     public function modelTests()

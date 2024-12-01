@@ -23,6 +23,7 @@ class QuestionResource extends JsonResource
             'is_featured' => $this->is_featured,
             'type' => $this->type,
             'mark' => $this->mark,
+            'tags'=>$this->tags,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
