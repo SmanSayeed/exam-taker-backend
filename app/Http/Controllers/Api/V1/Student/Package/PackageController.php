@@ -8,6 +8,7 @@ use App\Http\Requests\PackageIndexRequest;
 use App\Http\Resources\PackageResource;
 use App\Models\Package;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class PackageController extends Controller
 {
@@ -30,6 +31,25 @@ class PackageController extends Controller
         // Paginate the results
         $packages = $query->active()->paginate($perPage);
 
+        // Get the authenticated student, or null for public users
+        $student = Auth::guard('student-api')->user();
+
+        // Attach subscription status only for authenticated students
+        if ($student) {
+            $packages->transform(function ($package) use ($student) {
+                $isSubscribed = $student->subscriptions()
+                    ->where('package_id', $package->id)
+                    ->where('is_active', true)
+                    ->exists();
+
+                if ($isSubscribed) {
+                    $package->is_subscribed = true;
+                }
+
+                return $package;
+            });
+        }
+
         return ApiResponseHelper::success(
             PackageResource::collection($packages),
             'Packages retrieved successfully'
@@ -38,6 +58,19 @@ class PackageController extends Controller
 
     public function show(Package $package): JsonResponse
     {
+        // Get the authenticated student, or null for public users
+        $student = Auth::guard('student-api')->user();
+
+        // Attach subscription status only if the user is authenticated and subscribed
+        if (
+            $student && $student->subscriptions()
+            ->where('package_id', $package->id)
+            ->where('is_active', true)
+            ->exists()
+        ) {
+            $package->is_subscribed = true;
+        }
+
         return ApiResponseHelper::success(
             new PackageResource($package),
             'Package retrieved successfully'
