@@ -22,6 +22,9 @@ class PackageResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'duration_days' => $this->duration_days,
+            'img' => $this->img ? asset('storage/' . $this->img) : null,
+            'discount' => $this->discount,
+            'discount_type' => $this->discount_type,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];

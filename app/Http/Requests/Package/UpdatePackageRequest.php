@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class UpdatePackageRequest extends FormRequest
@@ -27,28 +28,26 @@ class UpdatePackageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'is_active' => 'required|boolean',
-            'price' => 'required|numeric',
-            'duration_days' => 'required|numeric',
-            'category' => 'required|array',
-            'category.section_id' => [
-                'nullable',
-                'exists:sections,id',
-                Rule::requiredIf(fn () => $this->hasAnyCategoryFields()),
-            ],
-            'category.exam_type_id' => [
+            'is_active' => 'nullable|boolean',
+            'price' => 'nullable|numeric',
+            'duration_days' => 'nullable|numeric',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'discount' => 'nullable|numeric',
+            'discount_type' => 'nullable|string|in:percentage,amount',
+            'section_id' => 'nullable|exists:sections,id', // section_id is now optional for update
+            'exam_type_id' => [
                 'nullable',
                 Rule::exists('exam_types', 'id')->where(function ($query) {
-                    $query->where('section_id', $this->input('category.section_id'));
+                    $query->where('section_id', $this->input('section_id'));
                 }),
-                Rule::requiredIf(fn () => $this->input('category.exam_sub_type_id') !== null),
+                Rule::requiredIf(fn() => $this->input('exam_sub_type_id') !== null),
             ],
-            'category.exam_sub_type_id' => [
+            'exam_sub_type_id' => [
                 'nullable',
                 Rule::exists('exam_sub_types', 'id')->where(function ($query) {
-                    $query->where('exam_type_id', $this->input('category.exam_type_id'));
+                    $query->where('exam_type_id', $this->input('exam_type_id'));
                 })
             ],
         ];
@@ -66,38 +65,38 @@ class UpdatePackageRequest extends FormRequest
     {
         $errors = $validator->errors();
 
-        // Use ApiResponseHelper for JSON response
-        throw new HttpResponseException(ApiResponseHelper::error('Validation errors occurred', 422, $errors->messages()));
+        Log::error('Validation Errors:', $errors->messages());
+
+        throw new HttpResponseException(
+            ApiResponseHelper::error('Validation errors occurred', 422, $errors->messages())
+        );
+    }
+
+    /**
+     * Log request data before validation.
+     */
+    protected function prepareForValidation()
+    {
+        Log::info('Incoming request data:', $this->all());
     }
 
     public function messages()
     {
-
         return [
-            'category.section_id.required' => ' The section field is required when any other category field is filled.',
-            'category.exam_type_id.required' => 'The exam type field is required when any other category field is filled.',
-            'category.exam_sub_type_id.required' => 'The exam sub type field is required when any other category field is filled.',
-            'category.*.exists' => 'The selected :attribute is invalid or does not belong to the selected parent category.',
+            'section_id.exists' => 'The selected section is invalid.',
+            'exam_type_id.exists' => 'The selected exam type is invalid or does not belong to the selected section.',
+            'exam_sub_type_id.exists' => 'The selected exam sub type is invalid or does not belong to the selected exam type.',
+            'exam_type_id.required' => 'The exam type field is required when exam sub type is filled.',
+            'exam_sub_type_id.required' => 'The exam sub type field is required when exam type is filled.',
         ];
     }
 
     public function attributes()
     {
         return [
-            'category.section_id' => 'section',
-            'category.exam_type_id' => 'exam type',
-            'category.exam_sub_type_id' => 'exam sub type',
+            'section_id' => 'section',
+            'exam_type_id' => 'exam type',
+            'exam_sub_type_id' => 'exam sub type',
         ];
-    }
-
-    /**
-     * Check if any category-related fields are filled.
-     *
-     * @return bool
-     */
-    private function hasAnyCategoryFields(): bool
-    {
-        return $this->input('category.exam_type_id') !== null
-            || $this->input('category.exam_sub_type_id') !== null;
     }
 }
