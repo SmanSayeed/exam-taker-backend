@@ -14,6 +14,9 @@ class Package extends Model
         'description',
         'is_active',
         'price',
+        'img',
+        'discount',
+        'discount_type',
         'duration_days',
     ];
 

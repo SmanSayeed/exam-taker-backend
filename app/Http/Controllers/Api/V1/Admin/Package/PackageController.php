@@ -13,8 +13,9 @@ use App\Http\Requests\Package\UpdatePackageRequest;
 use App\Http\Requests\Package\ChangePackageStatusRequest;
 use App\Http\Requests\Package\StorePackageRequest;
 use App\Http\Requests\PackageIndexRequest;
-use App\Http\Requests\SubscriberResource;
 use App\Http\Resources\StudentResource\StudentResource;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class PackageController extends Controller
 {
@@ -55,9 +56,25 @@ class PackageController extends Controller
     {
         DB::beginTransaction();
         try {
-            $package = Package::create($request->validated());
+            $data = $request->validated();
 
-            $package->packageCategory()->create($request->category);
+            // Store the image if provided
+            if ($request->hasFile('img')) {
+                $data['img'] = $request->file('img')->store('packages', 'public');
+            }
+
+            // Create the package
+            $package = Package::create($data);
+
+            // Create or update the related package category (now as separate fields)
+            if ($request->has('section_id') || $request->has('exam_type_id') || $request->has('exam_sub_type_id')) {
+                $categoryData = [
+                    'section_id' => $request->input('section_id'),
+                    'exam_type_id' => $request->input('exam_type_id'),
+                    'exam_sub_type_id' => $request->input('exam_sub_type_id')
+                ];
+                $package->packageCategory()->create($categoryData);
+            }
 
             DB::commit();
 
@@ -76,21 +93,37 @@ class PackageController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Update the package details
-            $package->update($request->validated());
+            $data = $request->validated();
 
-            // If category data is provided in the request, update the related category
-            if ($request->has('category')) {
+            // Update the image if provided
+            if ($request->hasFile('img')) {
+                // Delete old image if exists
+                if ($package->img) {
+                    Storage::disk('public')->delete($package->img);
+                }
+                $data['img'] = $request->file('img')->store('packages', 'public');
+            }
+            Log::info($request->all());
+            // Update package
+            $package->update($data);
+
+            // Update or create the related package category (now as separate fields)
+            if ($request->has('section_id') || $request->has('exam_type_id') || $request->has('exam_sub_type_id')) {
+                $categoryData = [
+                    'section_id' => $request->input('section_id'),
+                    'exam_type_id' => $request->input('exam_type_id'),
+                    'exam_sub_type_id' => $request->input('exam_sub_type_id')
+                ];
+
                 if ($package->packageCategory) {
-                    // Update the existing category
-                    $package->packageCategory()->update($request->category);
+                    $package->packageCategory()->update($categoryData);
                 } else {
-                    // Create a new category if none exists
-                    $package->packageCategory()->create($request->category);
+                    $package->packageCategory()->create($categoryData);
                 }
             }
 
             DB::commit();
+
             return ApiResponseHelper::success(
                 new PackageResource($package),
                 'Package updated successfully'
@@ -101,11 +134,10 @@ class PackageController extends Controller
         }
     }
 
-
-
     public function destroy(Package $package): JsonResponse
     {
         try {
+            // Delete the package
             $package->delete();
             return ApiResponseHelper::success('Package deleted successfully');
         } catch (\Exception $e) {
@@ -116,6 +148,7 @@ class PackageController extends Controller
     public function changeStatus(ChangePackageStatusRequest $request, Package $package): JsonResponse
     {
         try {
+            // Update package status
             $package->update($request->all());
             return ApiResponseHelper::success(
                 new PackageResource($package),
