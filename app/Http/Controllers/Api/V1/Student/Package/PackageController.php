@@ -42,9 +42,8 @@ class PackageController extends Controller
                     ->where('is_active', true)
                     ->exists();
 
-                if ($isSubscribed) {
-                    $package->is_subscribed = true;
-                }
+                // Set is_subscribed to true if subscribed, otherwise false
+                $package->is_subscribed = $isSubscribed;
 
                 return $package;
             });
@@ -61,14 +60,15 @@ class PackageController extends Controller
         // Get the authenticated student, or null for public users
         $student = Auth::guard('student-api')->user();
 
-        // Attach subscription status only if the user is authenticated and subscribed
-        if (
-            $student && $student->subscriptions()
-            ->where('package_id', $package->id)
-            ->where('is_active', true)
-            ->exists()
-        ) {
-            $package->is_subscribed = true;
+        // Attach subscription status only if the user is authenticated
+        if ($student) {
+            $isSubscribed = $student->subscriptions()
+                ->where('package_id', $package->id)
+                ->where('is_active', true)
+                ->exists();
+
+            // Dynamically add the is_subscribed property
+            $package->is_subscribed = $isSubscribed;
         }
 
         return ApiResponseHelper::success(
