@@ -13,7 +13,6 @@ use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class SubscriptionController extends Controller
 {
@@ -70,6 +69,7 @@ class SubscriptionController extends Controller
                 'transaction_id'  => $request->transaction_id, // Transaction ID
                 'amount'          => $request->amount,
                 'package_id'      => $package->id,
+                'coupon'          => $request->coupon,
             ]);
 
             DB::commit();
@@ -81,6 +81,7 @@ class SubscriptionController extends Controller
                     'mobile_number'   => $transaction->mobile_number,
                     'transaction_id'  => $transaction->transaction_id,
                     'amount'          => $transaction->amount,
+                    'coupon'          => $transaction->coupon,
                 ],
             ];
 

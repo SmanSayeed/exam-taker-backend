@@ -13,6 +13,7 @@ class Subscription extends Model
         'student_id',
         'package_id',
         'subscribed_at',
+        'coupon',
         'expires_at',
         'is_active',
         'expired_at'
@@ -22,7 +23,7 @@ class Subscription extends Model
     {
         return $this->belongsTo(Student::class);
     }
-    
+
     public function package()
     {
         return $this->belongsTo(Package::class);

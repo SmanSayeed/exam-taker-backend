@@ -30,6 +30,7 @@ class SubscriptionRequest extends FormRequest
             'payment_method' => 'required|string|in:bkash,nagad',
             'mobile_number' => 'required|string',
             'amount' => 'required|numeric',
+            'coupon' => 'nullable|string',
             'transaction_id' => 'required|string|unique:student_payments,transaction_id',
         ];
     }

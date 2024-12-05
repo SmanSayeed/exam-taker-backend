@@ -17,10 +17,12 @@ class StudentPaymentsTableSeeder extends Seeder
         foreach (range(1, 10) as $index) {
             DB::table('student_payments')->insert([
                 'subscription_id' => rand(1, 10),  // Random subscription ID (make sure you have subscriptions with IDs 1-10)
+                'package_id' => 1,
                 'payment_method' => collect(['bkash', 'nagad', 'rocket'])->random(), // Random payment method
                 'mobile_number' => '01' . rand(10000000, 99999999),
                 'transaction_id' => 'TXN' . rand(100000000, 999999999),
                 'amount' => rand(100, 1000),  // Random amount between 100 and 1000
+                'coupon' => collect(['COUPON1', 'COUPON2', 'COUPON3'])->random(),
                 'verified' => rand(0, 1) == 1,
                 'verified_at' => rand(0, 1) == 1 ? Carbon::now() : null,
                 'created_at' => now(),
