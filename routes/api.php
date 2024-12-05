@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Student\ModelTest\ModelTestController;
 use App\Http\Controllers\Api\V1\Student\Package\PackageController;
 use App\Http\Controllers\Examination\AnswerController;
 use App\Http\Controllers\Examination\ExaminationController;
+use App\Http\Controllers\Examination\MTExaminationController;
 use App\Http\Controllers\StudentController;
 use App\Models\Package;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,10 @@ Route::get('/swagger.json', function () {
 Route::prefix('admin')->group(function () {
     Route::post('/maintenance/clear-cache', [AdminMaintenanceController::class, 'clearCache']);
     Route::post('/maintenance/optimize', [AdminMaintenanceController::class, 'optimize']);
+});
+
+Route::prefix('admin')->group(function () {
+    Route::post('/exam/create/{model_test_id}', [MTExaminationController::class, 'createExam']);
 });
 
 Route::prefix('student')->group(function () {
