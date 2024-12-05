@@ -25,7 +25,13 @@ class DatabaseSeeder extends Seeder
             LessonSeeder::class,
             TopicSeeder::class,
             SubTopicSeeder::class,
-            QuestionSeeder::class
+            QuestionSeeder::class,
+            PackagesTableSeeder::class,
+            ModelTestsTableSeeder::class,
+            StudentsTableSeeder::class,
+            SubscriptionsTableSeeder::class,
+            StudentPaymentsTableSeeder::class,
+            TagsTableSeeder::class,
         ]);
     }
 }

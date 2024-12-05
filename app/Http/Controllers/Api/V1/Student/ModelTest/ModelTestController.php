@@ -60,7 +60,7 @@ class ModelTestController extends Controller
 
         if (!$isSubscribed) {
             return ApiResponseHelper::error('You are not subscribed to this package.', 403);
-        }
+        }   
 
         // Return the model test resource
         return ApiResponseHelper::success(

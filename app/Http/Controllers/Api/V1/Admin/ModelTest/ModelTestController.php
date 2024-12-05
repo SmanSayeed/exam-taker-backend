@@ -7,9 +7,10 @@ use App\Http\Requests\Admin\ModelTest\UpdateModelTestRequest;
 use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ModelTest\UpdateModelTestStatusRequest;
-use App\Http\Requests\AttachQuestionsRequest;
-use App\Http\Requests\DetachQuestionsRequest;
+use App\Http\Requests\AttachExaminationsRequest;
+use App\Http\Requests\DetachExaminationsRequest;
 use App\Http\Requests\ModelTestIndexRequest;
+use App\Http\Resources\ExaminationResource;
 use App\Http\Resources\ModelTestResource;
 use App\Http\Resources\ModelTestWithQuestionsResource;
 use App\Models\ModelTest;
@@ -160,48 +161,59 @@ class ModelTestController extends Controller
         }
     }
 
-    public function attachQuestions(AttachQuestionsRequest $request, ModelTest $modelTest): JsonResponse
+    public function attachExamination(AttachExaminationsRequest $request, ModelTest $modelTest): JsonResponse
     {
         DB::beginTransaction();
         try {
-            // Get the single question ID from the request
-            $questionId = $request->input('question_id');
+            // Get the list of examination IDs from the request
+            $examinationIds = $request->input('examination_ids'); // Assume this is an array of examination IDs
 
-            // Attach the question to the model test
-            $modelTest->attachQuestion($questionId);
+            // Attach the examinations to the model test using the pivot table
+            $modelTest->examinations()->attach($examinationIds);
 
             DB::commit();
 
-            return ApiResponseHelper::success(
-                new ModelTestWithQuestionsResource($modelTest),
-                'Question attached successfully'
-            );
+            return ApiResponseHelper::success(null, 'Examinations added successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return ApiResponseHelper::error('Failed to attach question', 500, $e->getMessage());
+            return ApiResponseHelper::error('Failed to attach examinations', 500, $e->getMessage());
         }
     }
 
-
-    public function detachQuestions(DetachQuestionsRequest $request, ModelTest $modelTest): JsonResponse
+    public function detachExamination(DetachExaminationsRequest $request, ModelTest $modelTest): JsonResponse
     {
         DB::beginTransaction();
         try {
-            // Get the single question ID from the request
-            $questionId = $request->input('question_id');
+            // Get the list of examination IDs from the request
+            $examinationIds = $request->input('examination_ids'); // Assume this is an array of examination IDs
 
-            // Detach the question from the model test
-            $modelTest->detachQuestion($questionId);
+            // Detach the examinations from the model test
+            $modelTest->examinations()->detach($examinationIds);
 
             DB::commit();
 
-            return ApiResponseHelper::success(
-                new ModelTestWithQuestionsResource($modelTest),
-                'Question detached successfully'
-            );
+            return ApiResponseHelper::success(null, 'Examinations detached successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            return ApiResponseHelper::error('Failed to detach question', 500, $e->getMessage());
+            return ApiResponseHelper::error('Failed to detach examinations', 500, $e->getMessage());
+        }
+    }
+
+    public function getExaminations(ModelTest $modelTest): JsonResponse
+    {
+        try {
+            // Get all examinations associated with the model test
+            $examinations = $modelTest->examinations;
+
+            // Check if there are no examinations
+            if ($examinations->isEmpty()) {
+                return ApiResponseHelper::success(null, 'No examinations found for this model test');
+            }
+
+            // Return the examinations using the ExaminationResource
+            return ApiResponseHelper::success(ExaminationResource::collection($examinations), 'Examinations retrieved successfully');
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('Failed to retrieve examinations', 500, $e->getMessage());
         }
     }
 }

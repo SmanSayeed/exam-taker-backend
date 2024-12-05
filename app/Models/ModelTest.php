@@ -18,26 +18,6 @@ class ModelTest extends Model
 
     use HasFactory;
 
-    public function questions()
-    {
-        return $this->hasManyThrough(ModelTestQuestion::class, ModelTestCategory::class, 'model_test_id', 'id', 'id', 'question_id');
-    }
-
-    public function attachQuestion($questionId)
-    {
-        ModelTestQuestion::firstOrCreate([
-            'model_test_id' => $this->id,
-            'question_id' => $questionId,
-        ]);
-    }
-
-    public function detachQuestion($questionId)
-    {
-        ModelTestQuestion::where('model_test_id', $this->id)
-            ->where('question_id', $questionId)
-            ->delete();
-    }
-
 
     public function modelTestCategory()
     {
@@ -98,5 +78,9 @@ class ModelTest extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+    public function examinations()
+    {
+        return $this->belongsToMany(Examination::class, 'examination_model_test');
     }
 }
