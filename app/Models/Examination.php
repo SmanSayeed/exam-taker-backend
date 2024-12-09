@@ -31,6 +31,9 @@ class Examination extends Model
         'topic_id',
         'sub_topic_id',
         'questions',
+        'is_optional',
+        'is_active',
+        'model_test_id',
     ];
 
     protected $casts = [

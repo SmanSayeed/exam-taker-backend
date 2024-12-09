@@ -33,7 +33,9 @@ return new class extends Migration
             $table->json('lesson_id')->nullable();
             $table->json('topic_id')->nullable();
             $table->json('sub_topic_id')->nullable();
-
+            $table->boolean('is_optional')->default(false)->nullable();
+            $table->boolean('is_active')->default(false)->nullable();
+            $table->string('model_test_id')->nullable();
             $table->json('questions'); // JSON for storing question IDs
             $table->softDeletes(); // For soft delete
             $table->timestamps();
