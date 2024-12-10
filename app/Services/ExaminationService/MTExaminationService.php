@@ -4,6 +4,7 @@ namespace App\Services\ExaminationService;
 
 use App\Models\Answer;
 use App\Models\Examination;
+use App\Models\ModelTest;
 use App\Models\Question;
 use App\Models\Questionable;
 use Carbon\Carbon;
@@ -13,14 +14,17 @@ class MTExaminationService
 
     public function startExam($validatedData, $request)
     {
+
+        $modelTest = ModelTest::find($validatedData['model_test_id']);
         // Set default question limit
 
-        $questionsLimit = $validatedData['questions_limit'] ?? 20;
+        $questionsLimit = $validatedData['questions_limit'] ;
         $questionIds = $validatedData['question_ids'];
-        $start_time = Carbon::parse($validatedData['start_time']);
+        $start_time = $modelTest->start_time;
+        $end_time = $modelTest->end_time;
 
 
-        if($questionsLimit!=$questionIds){
+        if($questionsLimit!=count($questionIds)){
             return ['error' => 'Questions limit does not match the number of questions selected.', 'status' => 404];
         }
 
@@ -51,7 +55,8 @@ class MTExaminationService
                 'created_by' => $validatedData['created_by'],
                 'created_by_role' => $validatedData['created_by_role'],
                 'start_time' => $start_time,
-                'end_time' => Carbon::now()->addMinutes($validatedData['time_limit']),
+                // 'end_time' => Carbon::now()->addMinutes($validatedData['time_limit']),
+                'end_time' => $end_time,
                 'time_limit' => $validatedData['time_limit'],
                 'is_negative_mark_applicable' => $request->input('is_negative_mark_applicable', false),
                 'questions' => implode(',', $questions),

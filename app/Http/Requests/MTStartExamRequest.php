@@ -31,15 +31,14 @@ class MTStartExamRequest extends FormRequest
             'topic_categories.*' => 'integer',
             'sub_topic_categories' => 'nullable|array',
             'sub_topic_categories.*' => 'integer',
-            'time_limit' => 'required|numeric',
+            'time_limit' => 'nullable|numeric',
             'created_by' => 'required|integer',
             'created_by_role' => 'required|in:admin,student',
             'questions_limit' => 'nullable|integer|min:1',
             'question_ids'=>'required|array',
             'is_optional'=>'nullable|boolean',
             'is_active'=>'nullable|boolean',
-            'model_test_id' => 'required|string',
-            'start_time' => 'required|date',
+            'model_test_id' => 'required|exists:model_tests,id',
         ];
     }
 }

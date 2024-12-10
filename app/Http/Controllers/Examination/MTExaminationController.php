@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Examination;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MTStartExamRequest;
 use App\Models\Answer;
 use Illuminate\Http\Request;
 use App\Models\Examination;
@@ -22,7 +23,7 @@ class MTExaminationController extends Controller
     }
 
     // Start exam function
-    public function createExam(StartExamRequest $request,$model_test_id)
+    public function createExam(MTStartExamRequest $request,$model_test_id)
     {
         $validatedData = $request->validated();
 
