@@ -28,6 +28,7 @@ class StudentProfileUpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20|unique:students,phone,' . $this->user()->id,
+            'section_id' => 'nullable|exists:sections,id',
             'profile_image' => 'nullable|image|max:2048',
             'country' => 'nullable|string|max:255',
             'country_code' => 'nullable|string|max:5',

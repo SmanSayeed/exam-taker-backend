@@ -19,6 +19,7 @@ class StudentsTableSeeder extends Seeder
             'email' => 's1@gmail.com',
             'phone' => '0123456789', // You can set this as needed
             'email_verified_at' => Carbon::now(),
+            'section_id' => 1,
             'phone_verified_at' => Carbon::now(),
             'password' => bcrypt('11112222'), // The password is hashed using bcrypt
             'profile_image' => null, // No profile image for now

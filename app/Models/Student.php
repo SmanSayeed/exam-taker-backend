@@ -15,12 +15,22 @@ class Student extends  Authenticatable
     // protected $guard_name = 'student-api';
 
     protected $fillable = [
-        'name', 'email', 'phone', 'password', 'profile_image',
-        'ip_address', 'country', 'country_code', 'address', 'active_status'
+        'name',
+        'email',
+        'phone',
+        'password',
+        'profile_image',
+        'ip_address',
+        'country',
+        'country_code',
+        'section_id',
+        'address',
+        'active_status'
     ];
 
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
     protected $casts = [
         'email_verified_at' => 'datetime',
@@ -44,5 +54,4 @@ class Student extends  Authenticatable
     {
         return $this->hasMany(PdfSubscription::class);
     }
-
 }
