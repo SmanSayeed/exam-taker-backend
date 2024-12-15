@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ class PackageStudentResource extends JsonResource
             'img' => $this->img ? asset('storage/' . $this->img) : null,
             'discount' => $this->discount,
             'discount_type' => $this->discount_type,
+            'section_id' => $this->packageCategory ? $this->packageCategory->section_id : null,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
