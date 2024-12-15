@@ -15,6 +15,10 @@ use App\Http\Controllers\StudentController;
 use App\Models\Package;
 use Illuminate\Support\Facades\Route;
 use OpenApi\Generator;
+use App\Http\Controllers\StorageController;
+
+Route::get('link-storage', [StorageController::class, 'linkStorage']);
+
 
 Route::get('/swagger.json', function () {
     Generator::scan([app_path(),])->toJson();

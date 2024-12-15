@@ -15,6 +15,7 @@ class GalleryController extends Controller
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_name' => 'nullable|string|max:255', // Optional image name
         ]);
 
         if ($validator->fails()) {
@@ -24,7 +25,7 @@ class GalleryController extends Controller
         // Handle image upload
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $imageName = $request->input('image_name') ?? time() . '.' . $image->getClientOriginalExtension(); // Use provided name or generate one
             $imagePath = $image->storeAs('public/images', $imageName);
 
             $imageData = new Gallery();
@@ -49,9 +50,16 @@ class GalleryController extends Controller
             return ApiResponseHelper::error('Image not found', 404);
         }
 
+        // Log the received data
+        logger()->info('Request received for image update', [
+            'id' => $id,
+            'request' => $request->all(),
+        ]);
+
         // Validate the incoming request
         $validator = Validator::make($request->all(), [
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_name' => 'nullable|string|max:255', // Optional image name
         ]);
 
         if ($validator->fails()) {
@@ -60,15 +68,15 @@ class GalleryController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image
+            // Delete the old image
             Storage::delete($imageData->image_path);
 
             $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('public/images', $imageName);
+            $newImageName = $request->input('image_name') ?? $imageData->image_name; // Use provided name or keep the existing one
+            $imagePath = $image->storeAs('public/images', $newImageName);
 
             $imageData->image_path = $imagePath;
-            $imageData->image_name = $imageName;
+            $imageData->image_name = $newImageName;
             $imageData->image_size = $image->getSize();
             $imageData->image_format = $image->getClientOriginalExtension();
             $imageData->save();
@@ -78,6 +86,7 @@ class GalleryController extends Controller
 
         return ApiResponseHelper::error('No image uploaded', 400);
     }
+
 
     // Delete image
     public function deleteImage($id)
