@@ -20,7 +20,7 @@ class StudentRegistrationRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:students',
             'phone' => 'required|string|max:20|unique:students',
-            'section_id' => 'required|exists:sections,id,status,1',
+            'section_id' => 'nullable|exists:sections,id,status,1',
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required|string|min:8',
             'profile_image' => 'nullable|image|max:2048',
