@@ -18,7 +18,6 @@ class SubscriptionsTableSeeder extends Seeder
             DB::table('subscriptions')->insert([
                 'student_id' => 1,
                 'package_id' => 1,
-                'subscribed_at' => Carbon::now()->subDays(rand(1, 30))->toDateString(),
                 'expires_at' => Carbon::now()->addMonths(rand(1, 6))->toDateString(),
                 'is_active' => rand(0, 1) == 1,
                 'created_at' => now(),

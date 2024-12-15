@@ -46,4 +46,14 @@ class Package extends Model
     {
         return $query->where('is_active', true);
     }
+
+    public function pdfs()
+    {
+        return $this->morphMany(Pdf::class, 'pdfable');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 }

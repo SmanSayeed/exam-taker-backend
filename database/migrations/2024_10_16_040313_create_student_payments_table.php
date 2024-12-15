@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('student_payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subscription_id')->constrained()->onDelete('cascade'); // Relates to the subscription
+            $table->foreignId('student_id')->constrained()->onDelete('cascade');
             $table->foreignId('package_id')->constrained()->onDelete('cascade');
             $table->string('payment_method'); // Payment method (bkash, nagad, rocket)
             $table->string('mobile_number')->nullable(); // Mobile banking number, consider making it nullable if needed

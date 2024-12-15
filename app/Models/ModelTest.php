@@ -83,4 +83,9 @@ class ModelTest extends Model
     {
         return $this->belongsToMany(Examination::class, 'examination_model_test');
     }
+
+    public function pdfs()
+    {
+        return $this->morphMany(Pdf::class, 'pdfable');
+    }
 }

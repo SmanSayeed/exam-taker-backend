@@ -4,14 +4,18 @@ use App\Http\Controllers\Api\V1\Admin\StudentPayment\StudentPaymentController;
 use App\Http\Controllers\Api\V1\Admin\Subscription\SubscriptionController;
 
 use Illuminate\Support\Facades\Route;
+Route::get('subscriptions', [SubscriptionController::class, 'index']);  // GET list of subscriptions
 
-Route::get('subscriptions', [SubscriptionController::class, 'index']);
+Route::post('subscriptions', [SubscriptionController::class, 'store']);  // POST create a new subscription
 
-Route::get('subscriptions/{subscription}', [SubscriptionController::class, 'show']);
+Route::get('subscriptions/{subscription}', [SubscriptionController::class, 'show']);  // GET for retrieving a subscription
 
-Route::post('subscriptions/{subscription}/activate', [SubscriptionController::class, 'activateSubscription']);
+Route::put('subscriptions/{subscription}', [SubscriptionController::class, 'update']);  // PUT for updating a subscription
 
-Route::post('subscriptions/{subscription}/deactivate', [SubscriptionController::class, 'deactivateSubscription']);
+Route::delete('subscriptions/{subscription}', [SubscriptionController::class, 'destroy']);  // DELETE for removing a subscription
+
+
+
 
 Route::get('student-payments', [StudentPaymentController::class, 'index']);
 

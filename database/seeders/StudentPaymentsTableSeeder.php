@@ -16,7 +16,7 @@ class StudentPaymentsTableSeeder extends Seeder
     {
         foreach (range(1, 10) as $index) {
             DB::table('student_payments')->insert([
-                'subscription_id' => rand(1, 10),  // Random subscription ID (make sure you have subscriptions with IDs 1-10)
+                'student_id' => 1,
                 'package_id' => 1,
                 'payment_method' => collect(['bkash', 'nagad', 'rocket'])->random(), // Random payment method
                 'mobile_number' => '01' . rand(10000000, 99999999),

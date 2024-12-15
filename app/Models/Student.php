@@ -39,4 +39,10 @@ class Student extends  Authenticatable
     {
         return $this->hasMany(Subscription::class);
     }
+
+    public function pdfSubscriptions()
+    {
+        return $this->hasMany(PdfSubscription::class);
+    }
+
 }

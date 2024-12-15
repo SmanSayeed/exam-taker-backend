@@ -12,11 +12,8 @@ class Subscription extends Model
     protected $fillable = [
         'student_id',
         'package_id',
-        'subscribed_at',
-        'coupon',
         'expires_at',
         'is_active',
-        'expired_at'
     ];
 
     public function student()

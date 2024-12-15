@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PackageResource extends JsonResource
+class PackageAdminResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,9 +14,7 @@ class PackageResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $isAdminRoute = $request->is('admin/*');
-
-        $data = [
+        return [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
@@ -25,20 +23,10 @@ class PackageResource extends JsonResource
             'img' => $this->img ? asset('storage/' . $this->img) : null,
             'discount' => $this->discount,
             'discount_type' => $this->discount_type,
+            'is_active' => $this->is_active,
+            'category' => new PackageCategoryResource($this->categories),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
-
-        if ($isAdminRoute) {
-            $data['is_active'] = $this->is_active;
-            $data['category'] = new PackageCategoryResource($this->categories);
-        }
-
-        // Add is_subscribed if the student is authenticated
-        if (isset($this->is_subscribed)) {
-            $data['is_subscribed'] = $this->is_subscribed;
-        }
-
-        return $data;
     }
 }

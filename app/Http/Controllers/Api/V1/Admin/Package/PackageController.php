@@ -6,14 +6,21 @@ use App\Http\Controllers\Controller;
 use App\Models\Package;
 use Illuminate\Http\Request;
 use App\Helpers\ApiResponseHelper;
+use App\Http\Requests\AttachPackageTagRequest;
+use App\Http\Requests\AttachPdfRequest;
+use App\Http\Requests\DetachPackageTagRequest;
+use App\Http\Requests\DetachPdfRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
-use App\Http\Resources\PackageResource;
 use App\Http\Requests\Package\UpdatePackageRequest;
 use App\Http\Requests\Package\ChangePackageStatusRequest;
 use App\Http\Requests\Package\StorePackageRequest;
 use App\Http\Requests\PackageIndexRequest;
+use App\Http\Resources\PackageAdminResource;
 use App\Http\Resources\StudentResource\StudentResource;
+use App\Models\PackageTag;
+use App\Models\Pdf;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -39,7 +46,7 @@ class PackageController extends Controller
         $packages = $query->paginate($perPage);
 
         return ApiResponseHelper::success(
-            PackageResource::collection($packages),
+            PackageAdminResource::collection($packages),
             'Packages retrieved successfully'
         );
     }
@@ -47,7 +54,7 @@ class PackageController extends Controller
     public function show(Package $package): JsonResponse
     {
         return ApiResponseHelper::success(
-            new PackageResource($package),
+            new PackageAdminResource($package),
             'Package retrieved successfully'
         );
     }
@@ -79,7 +86,7 @@ class PackageController extends Controller
             DB::commit();
 
             return ApiResponseHelper::success(
-                new PackageResource($package),
+                new PackageAdminResource($package),
                 'Package created successfully',
                 201
             );
@@ -125,7 +132,7 @@ class PackageController extends Controller
             DB::commit();
 
             return ApiResponseHelper::success(
-                new PackageResource($package),
+                new PackageAdminResource($package),
                 'Package updated successfully'
             );
         } catch (\Exception $e) {
@@ -151,7 +158,7 @@ class PackageController extends Controller
             // Update package status
             $package->update($request->all());
             return ApiResponseHelper::success(
-                new PackageResource($package),
+                new PackageAdminResource($package),
                 'Package status changed successfully'
             );
         } catch (\Exception $e) {
@@ -174,6 +181,85 @@ class PackageController extends Controller
             );
         } catch (\Exception $e) {
             return ApiResponseHelper::error('Failed to get subscribers', 500, $e->getMessage());
+        }
+    }
+
+    public function attachPdf(AttachPdfRequest $request, Package $package): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            // Get the PDF ID from the request
+            $pdfId = $request->input('pdf_id');
+            $pdf = Pdf::findOrFail($pdfId);  // Find the PDF by ID
+
+            // Attach the PDF to the Package using the polymorphic relationship
+            $package->pdfs()->save($pdf);  // Assuming you have a 'pdfs' relationship defined on the Package model
+
+            DB::commit();
+
+            return ApiResponseHelper::success(null, 'PDF attached successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponseHelper::error('Failed to attach PDF', 500, $e->getMessage());
+        }
+    }
+
+    public function detachPdf(DetachPdfRequest $request, Package $package): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            // Get the PDF ID from the request
+            $pdfId = $request->input('pdf_id');
+            $pdf = Pdf::where('id', $pdfId)
+                ->where('pdfable_id', $package->id)
+                ->where('pdfable_type', Package::class)
+                ->firstOrFail();  // Find the PDF
+
+            // Detach the PDF from the Package
+            $pdf->pdfable()->dissociate();  // Use dissociate() to break the relationship
+            $pdf->save();
+
+            DB::commit();
+
+            return ApiResponseHelper::success(null, 'PDF detached successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponseHelper::error('Failed to detach PDF', 500, $e->getMessage());
+        }
+    }
+
+
+    public function attachTag(AttachPackageTagRequest $request, Package $package): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $tagId = $request->validated('tag_id');
+
+            // Attach the tag to the package
+            $package->tags()->attach($tagId);
+
+            DB::commit();
+            return ApiResponseHelper::success(null, 'Tag attached successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponseHelper::error('Failed to attach tag', 500, $e->getMessage());
+        }
+    }
+
+    public function detachTag(DetachPackageTagRequest $request, Package $package): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $tagId = $request->validated('tag_id');
+
+            // Detach the tag from the package
+            $package->tags()->detach($tagId);
+
+            DB::commit();
+            return ApiResponseHelper::success(null, 'Tag detached successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponseHelper::error('Failed to detach tag', 500, $e->getMessage());
         }
     }
 }

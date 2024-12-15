@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\ApiResponseHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -23,12 +24,8 @@ class SubscriptionIndexRequest extends FormRequest
     }
     protected function failedValidation(Validator $validator)
     {
-        $response = [
-            'status' => 'error',
-            'message' => 'Validation failed',
-            'errors' => $validator->errors(),
-        ];
-
-        throw new HttpResponseException(response()->json($response, 422));
+        $errors = $validator->errors();
+        // Use ApiResponseHelper for JSON response
+        throw new HttpResponseException(ApiResponseHelper::error(' validation errors occurred', 422, $errors->messages()));
     }
 }

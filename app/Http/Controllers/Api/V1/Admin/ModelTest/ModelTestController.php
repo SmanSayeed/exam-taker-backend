@@ -8,14 +8,18 @@ use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ModelTest\UpdateModelTestStatusRequest;
 use App\Http\Requests\AttachExaminationsRequest;
+use App\Http\Requests\AttachPdfRequest;
 use App\Http\Requests\DetachExaminationsRequest;
+use App\Http\Requests\DetachPdfRequest;
 use App\Http\Requests\ModelTestIndexRequest;
 use App\Http\Resources\ExaminationResource;
 use App\Http\Resources\ModelTestResource;
 use App\Http\Resources\ModelTestWithQuestionsResource;
 use App\Models\ModelTest;
+use App\Models\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 
 class ModelTestController extends Controller
 {
