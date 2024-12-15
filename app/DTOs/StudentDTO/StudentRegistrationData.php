@@ -12,6 +12,8 @@ class StudentRegistrationData extends Data
         public string $name,
         public string $email,
         public ?string $phone,
+        public int $section_id,
+        
         public string $password,
         public string $password_confirmation,
         public ?string $profile_image,
