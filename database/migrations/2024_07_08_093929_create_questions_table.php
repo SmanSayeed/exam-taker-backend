@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->longText('description')->nullable();
-            $table->json('images')->nullable();
+            $table->string('images')->nullable();
             $table->boolean('is_paid');
             $table->boolean('is_featured');
             $table->enum('type', ['mcq', 'creative', 'normal']);
