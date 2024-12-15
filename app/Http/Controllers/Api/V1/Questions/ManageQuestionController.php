@@ -27,8 +27,8 @@ class ManageQuestionController extends Controller
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'images' => 'nullable|array', // Accept multiple images
-                'images.*' => 'file|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'images' => 'nullable|file|image|mimes:jpeg,png,jpg,gif|max:2048',
+
                 'is_paid' => 'required|boolean',
                 'is_featured' => 'required|boolean',
                 'type' => 'required|in:mcq,creative,normal',
@@ -69,14 +69,12 @@ class ManageQuestionController extends Controller
             DB::beginTransaction();
 
 
-        // Handle image uploads
-        $imagePaths = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $imagePaths[] = $image->store('questions', 'public'); // Store in public/questions
-            }
-        }
-
+     // Handle image upload
+                $imagePath = null;
+                if ($request->hasFile('images')) {
+                    $image = $request->file('images'); // Get the uploaded image
+                    $imagePath = $image->store('questions', 'public'); // Store in the 'questions' folder
+                }
             $tags=null;
             if($request->tags){ // tags ids are in array which should be converted into comma separated id string format to store in questions table
 
@@ -86,7 +84,7 @@ class ManageQuestionController extends Controller
             $question = Question::create([
                 'title' => $validated['title'],
                 'description' => $validated['description'] ?? null,
-                'images' => json_encode($imagePaths), // Store images as JSON
+                'images' => $imagePath ? json_encode([$imagePath]) : null, // Store as JSON with one image
                 'is_paid' => $validated['is_paid'],
                 'is_featured' => $validated['is_featured'],
                 'type' => $validated['type'],
@@ -162,8 +160,8 @@ class ManageQuestionController extends Controller
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'images' => 'nullable|array', // Accept multiple images
-                'images.*' => 'file|image|mimes:jpeg,png,jpg,gif|max:2048', // Validate each file
+                'images' => 'nullable|file|image|mimes:jpeg,png,jpg,gif|max:2048', // Accept one image
+
                 'is_paid' => 'required|boolean',
                 'is_featured' => 'required|boolean',
                 'type' => 'required|in:mcq,creative,normal',
@@ -208,20 +206,23 @@ class ManageQuestionController extends Controller
             // Start the transaction
             DB::beginTransaction();
 
-               // Handle image uploads
-        $imagePaths = json_decode($question->images, true) ?? [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $imagePaths[] = $image->store('questions', 'public'); // Store new images
-            }
-        }
+        // Handle image upload for update
+                $imagePaths = json_decode($question->images, true) ?? [];
+                if ($request->hasFile('images')) {
+                    // Remove the old image if it exists
+                    if (count($imagePaths) > 0) {
+                        Storage::disk('public')->delete($imagePaths[0]); // Delete the old image
+                    }
+
+                    $image = $request->file('images');
+                    $imagePaths = [$image->store('questions', 'public')]; // Store only the new image
+                }
 
             // Update the question
             $question->update([
                 'title' => $validated['title'],
                 'description' => $validated['description'] ?? null,
-
-                'images' => json_encode($imagePaths), // Update images as JSON
+                'images' => json_encode($imagePaths), // Store as JSON with one image
                 'is_paid' => $validated['is_paid'],
                 'is_featured' => $validated['is_featured'],
                 'type' => $validated['type'],
@@ -340,18 +341,17 @@ class ManageQuestionController extends Controller
         }
     }
 
+
     public function deleteQuestionWithOptions($id)
 {
     try {
         $question = Question::findOrFail($id);
 
 
-        // Delete associated images
-        $images = json_decode($question->images, true);
-        if ($images) {
-            foreach ($images as $image) {
-                Storage::disk('public')->delete($image); // Delete each image
-            }
+        // Delete associated images (only one image now)
+        $imagePath = json_decode($question->images, true); // Decode JSON containing one image
+        if ($imagePath) {
+            Storage::disk('public')->delete($imagePath[0]); // Delete the single image
         }
 
 
