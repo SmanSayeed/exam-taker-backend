@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Helpers\ApiResponseHelper;
-use App\Http\Resources\StudentPaymentResource;
-use App\Http\Resources\TransactionResource;
+use App\Http\Resources\StudentPaymentAdminResource;
+use App\Models\Admin;
 use App\Models\StudentPayment;
 
 class StudentPaymentController extends Controller
@@ -17,13 +17,13 @@ class StudentPaymentController extends Controller
     {
         $perPage = $request->get('per_page', 15);
         $studentPayments = StudentPayment::paginate($perPage);
-        return ApiResponseHelper::success(StudentPaymentResource::collection($studentPayments), 'Transactions retrieved successfully');
+        return ApiResponseHelper::success(StudentPaymentAdminResource::collection($studentPayments), 'Transactions retrieved successfully');
     }
 
     public function show(StudentPayment $student_payment): JsonResponse
     {
         return ApiResponseHelper::success(
-            new StudentPaymentResource($student_payment),
+            new StudentPaymentAdminResource($student_payment),
             'Transaction retrieved successfully'
         );
     }

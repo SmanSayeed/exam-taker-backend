@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -32,6 +31,10 @@ class DatabaseSeeder extends Seeder
             SubscriptionsTableSeeder::class,
             StudentPaymentsTableSeeder::class,
             TagsTableSeeder::class,
+            PdfSeeder::class,
+            PackageTagSeeder::class,
+            // PdfSubscriptionSeeder::class,
+            // PdfSubscriptionPaymentSeeder::class,
         ]);
     }
 }

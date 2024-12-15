@@ -11,4 +11,9 @@ Route::prefix('packages')->group(function () {
     Route::put('/{package}', [PackageController::class, 'update']);
     Route::patch('/{package}/status', [PackageController::class, 'changeStatus']); // For changing status
     Route::delete('/{package}', [PackageController::class, 'destroy']);
+    Route::post('{package}/attach-pdf', [PackageController::class, 'attachPdf']);
+    Route::post('{package}/detach-pdf', [PackageController::class, 'detachPdf']);
+    //tag attaching detaching routes
+    Route::post('{package}/attach-tag', [PackageController::class, 'attachTag']);
+    Route::post('{package}/detach-tag', [PackageController::class, 'detachTag']);
 });

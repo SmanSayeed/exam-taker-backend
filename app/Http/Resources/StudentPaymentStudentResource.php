@@ -5,10 +5,10 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class StudentPaymentResource extends JsonResource
+class StudentPaymentStudentResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transform the resource into an array for student routes.
      *
      * @return array<string, mixed>
      */
@@ -20,11 +20,12 @@ class StudentPaymentResource extends JsonResource
             'mobile_number' => $this->mobile_number,
             'transaction_id' => $this->transaction_id,
             'amount' => $this->amount,
+            'coupon' => $this->coupon,
             'verified' => $this->verified,
             'verified_at' => $this->verified_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'subscription' => new SubscriptionResource($this->subscription),
+            'package_id' => $this->package_id,
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\ApiResponseHelper;
 use App\Models\Subscription;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class SubscriptionRequest extends FormRequest
+class PaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,8 +29,10 @@ class SubscriptionRequest extends FormRequest
     {
         return [
             'payment_method' => 'required|string|in:bkash,nagad',
+            'package_id' => 'required|exists:packages,id',
             'mobile_number' => 'required|string',
             'amount' => 'required|numeric',
+            'coupon' => 'nullable|string',
             'transaction_id' => 'required|string|unique:student_payments,transaction_id',
         ];
     }
@@ -40,9 +43,10 @@ class SubscriptionRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            // Get the package ID from the route parameter
-            $packageId = $this->route('package')->id;
-            // Check if user already has an active subscription for this package
+            // Get package ID from the route parameter directly
+            $packageId = $this->route('package'); // This will return '1' or the actual ID as string.
+
+            // Check if the user already has an active subscription for this package
             $existingSubscription = Subscription::where('student_id', Auth::id())
                 ->where('package_id', $packageId)
                 ->where('is_active', true)
@@ -57,14 +61,11 @@ class SubscriptionRequest extends FormRequest
         });
     }
 
+
     protected function failedValidation(Validator $validator)
     {
-        $response = [
-            'status' => 'error',
-            'message' => 'Validation failed',
-            'errors' => $validator->errors(),
-        ];
-
-        throw new HttpResponseException(response()->json($response, 422));
+        $errors = $validator->errors();
+        // Use ApiResponseHelper for JSON response
+        throw new HttpResponseException(ApiResponseHelper::error(' validation errors occurred', 422, $errors->messages()));
     }
 }

@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Helpers\ApiResponseHelper;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class PackageIndexRequest extends FormRequest
 {
@@ -25,5 +28,11 @@ class PackageIndexRequest extends FormRequest
             'section_id' => 'sometimes|integer|exists:sections,id',
             'exam_type_id' => 'sometimes|integer|exists:exam_types,id',
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        $errors = $validator->errors();
+        // Use ApiResponseHelper for JSON response
+        throw new HttpResponseException(ApiResponseHelper::error(' validation errors occurred', 422, $errors->messages()));
     }
 }
