@@ -17,9 +17,12 @@ class AdminPdfResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'file_path' => $this->file_path,
+            'storage_url' => $this->file_path ? asset('storage/' . $this->file_path) : null,
+            'file_link' => $this->file_link ?? null,
             'mime_type' => $this->mime_type,
+            'img' => $this->img ? asset('storage/' . $this->img) : null,
             'size' => $this->size,
+            'is_active' => $this->is_active,
             'description' => $this->description,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

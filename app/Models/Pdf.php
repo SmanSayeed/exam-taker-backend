@@ -12,6 +12,8 @@ class Pdf extends Model
         'title',
         'file_path',
         'file_link',
+        'img',
+        'is_active',
         'mime_type',
         'description',
         'uploaded_by',
