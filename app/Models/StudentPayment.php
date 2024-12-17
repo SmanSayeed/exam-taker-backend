@@ -11,8 +11,9 @@ class StudentPayment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'subscription_id',
         'student_id',
+        'resource_type',
+        'resource_id',
         'payment_method',
         'mobile_number',
         'amount',
@@ -20,7 +21,6 @@ class StudentPayment extends Model
         'transaction_id',
         'verified',
         'verified_at',
-        'package_id'
     ];
 
     public function subscription()

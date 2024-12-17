@@ -3,12 +3,11 @@
 namespace App\Http\Requests;
 
 use App\Helpers\ApiResponseHelper;
-use App\Models\Subscription;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class PaymentRequest extends FormRequest
 {
@@ -28,44 +27,45 @@ class PaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'payment_method' => 'required|string|in:bkash,nagad',
-            'package_id' => 'required|exists:packages,id',
-            'mobile_number' => 'required|string',
-            'amount' => 'required|numeric',
-            'coupon' => 'nullable|string',
-            'transaction_id' => 'required|string|unique:student_payments,transaction_id',
+            'payment_method' => 'required|string|in:bkash,nagad,rocket', // Validate payment method
+            'mobile_number' => 'nullable|string|size:11', // Validate mobile number (adjust as needed)
+            'transaction_id' => 'required|string|unique:student_payments,transaction_id', // Ensure unique transaction ID
+            'amount' => 'required|numeric|min:1', // Amount should be a positive number
+            'coupon' => 'nullable|string', // Optional coupon code
+            'verified' => 'nullable|boolean', // Boolean value for verification status
+            'verified_at' => 'nullable|date|after_or_equal:created_at', // Verified timestamp (if applicable)
+            'resource_type' => 'required|in:pdf,package', // Resource type validation
+            'resource_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $resourceType = $this->input('resource_type');
+                    if ($resourceType === 'pdf') {
+                        // Check if resource_id exists in the pdf table
+                        if (!\App\Models\Pdf::find($value)) {
+                            $fail('The selected resource_id is invalid for pdf.');
+                        }
+                    } elseif ($resourceType === 'package') {
+                        // Check if resource_id exists in the package table
+                        if (!\App\Models\Package::find($value)) {
+                            $fail('The selected resource_id is invalid for package.');
+                        }
+                    }
+                }
+            ]
         ];
     }
 
     /**
-     * Configure the validator instance.
+     * Handle a failed validation attempt.
+     *
+     * @param Validator $validator
+     * @return void
+     * @throws HttpResponseException
      */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            // Get package ID from the route parameter directly
-            $packageId = $this->route('package'); // This will return '1' or the actual ID as string.
-
-            // Check if the user already has an active subscription for this package
-            $existingSubscription = Subscription::where('student_id', Auth::id())
-                ->where('package_id', $packageId)
-                ->where('is_active', true)
-                ->first();
-
-            if ($existingSubscription) {
-                $validator->errors()->add(
-                    'subscription',
-                    'You already have an active subscription for this package.'
-                );
-            }
-        });
-    }
-
-
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();
         // Use ApiResponseHelper for JSON response
-        throw new HttpResponseException(ApiResponseHelper::error(' validation errors occurred', 422, $errors->messages()));
+        throw new HttpResponseException(ApiResponseHelper::error('Validation errors occurred', 422, $errors->messages()));
     }
 }

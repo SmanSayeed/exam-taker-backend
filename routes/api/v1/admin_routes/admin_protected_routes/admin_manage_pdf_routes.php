@@ -33,12 +33,3 @@ Route::prefix('pdf-subscriptions')->group(function () {
     Route::delete('/{pdf_subscription}', [PdfSubscriptionController::class, 'destroy']);
 });
 
-Route::prefix('pdf-subscription-payments')->group(function () {
-    Route::get('/', [PdfSubscriptionPaymentController::class, 'index']);
-
-    Route::get('/{pdf_subscription_payment}', [PdfSubscriptionPaymentController::class, 'show']);
-
-    Route::delete('/{pdf_subscription_payment}', [PdfSubscriptionPaymentController::class, 'destroy']);
-
-    Route::patch('/{pdf_subscription_payment}/status', [PdfSubscriptionPaymentController::class, 'changeStatus']);
-});

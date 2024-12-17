@@ -13,15 +13,13 @@ use Illuminate\Support\Facades\Route;
 //package
 Route::get('subscriptions', [SubscriptionController::class, 'index']);
 Route::get('subscription/{subscription}', [SubscriptionController::class, 'show']);
-
 Route::get('pdf-subscriptions', [PdfSubscriptionController::class, 'index']);
-Route::post('pdfs/{pdf}/pay', [PdfSubscriptionController::class, 'pay']);
 Route::get('pdf-subscription/{pdf_subscription}', [PdfSubscriptionController::class, 'show']);
 Route::get('/pdf-subscription-payments', [PdfSubscriptionPaymentController::class, 'index'])->name('student-payments');
 Route::get('/pdf-subscription-payments/{pdf_subscription_payment}', [PdfSubscriptionPaymentController::class, 'show']);
 
-Route::post('packages/{package}/pay', [SubscriptionController::class, 'pay'])
-    ->name('packages.subscribe');
+Route::post('pay', [StudentPaymentController::class, 'pay']);
+
 Route::post('/verify-email', [StudentAuthController::class, 'verifyEmail']);
 Route::get('/subscriptions', [SubscriptionController::class, 'getSubscriptions']);
 Route::get('/profile', [StudentAuthController::class, 'getProfile'])->name('profile');

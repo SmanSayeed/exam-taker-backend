@@ -37,41 +37,6 @@ class SubscriptionController extends Controller
         );
     }
 
-    public function pay(PaymentRequest $request, Package $package)
-    {
-        DB::beginTransaction();
-        try {
-            // Create a payment record, storing the package_id and amount explicitly
-            $payment = StudentPayment::create([
-                'student_id'       => Auth::id(),
-                'package_id'       => $package->id, // Store package ID
-                'payment_method'   => $request->payment_method,  // e.g., bkash, nagad
-                'mobile_number'    => $request->mobile_number,
-                'transaction_id'   => $request->transaction_id,
-                'amount'           => $request->amount,          // Payment amount
-                'coupon'           => $request->coupon,
-            ]);
-
-            DB::commit();
-
-            return ApiResponseHelper::success([
-                'payment' => [
-                    'package_id'      => $payment->package_id,
-                    'payment_method'  => $payment->payment_method,
-                    'mobile_number'   => $payment->mobile_number,
-                    'transaction_id'  => $payment->transaction_id,
-                    'amount'          => $payment->amount,
-                    'coupon'          => $payment->coupon,
-                ],
-            ], 'Payment processed successfully');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return ApiResponseHelper::error('Payment failed: ' . $e->getMessage(), 500);
-        }
-    }
-
-
-
     //get all subscribed packages
     // public function getSubscribedPackages()
     // {
