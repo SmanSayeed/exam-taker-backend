@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api\V1\Admin\PdfSubscription;
 
 use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreatePdfSubscriptionRequest;
 use App\Http\Requests\PdfSubscriptionIndexRequest;
+use App\Http\Requests\UpdatePdfSubscriptionRequest;
 use App\Http\Resources\PdfSubscriptionAdminResource;
 use App\Models\PdfSubscription;
 
@@ -44,30 +46,44 @@ class PdfSubscriptionController extends Controller
     /**
      * Activate a PDF subscription.
      */
-    public function activateSubscription(PdfSubscription $pdf_subscription)
+    public function store(CreatePdfSubscriptionRequest $request)
     {
-        $pdf_subscription->update([
-            'is_active' => true
-        ]);
+        // Validate the request through ActivateSubscriptionRequest
+
+        // Get validated data
+        $validatedData = $request->validated();
+
+        // Create a new subscription
+        $pdf_subscription = PdfSubscription::create($validatedData);
 
         return ApiResponseHelper::success(
             new PdfSubscriptionAdminResource($pdf_subscription),
-            'PDF Subscription activated successfully'
+            'PDF Subscription created successfully'
         );
     }
 
     /**
      * Deactivate a PDF subscription.
      */
-    public function deactivateSubscription(PdfSubscription $pdf_subscription)
+    public function update(UpdatePdfSubscriptionRequest $request, PdfSubscription $pdf_subscription)
     {
-        $pdf_subscription->update([
-            'is_active' => false
-        ]);
+        // Validate the request
+        $validatedData = $request->validated();
+
+        // Update the subscription with new data
+        $pdf_subscription->update($validatedData);
 
         return ApiResponseHelper::success(
             new PdfSubscriptionAdminResource($pdf_subscription),
-            'PDF Subscription deactivated successfully'
+            'Subscription updated successfully'
         );
+    }
+    public function destroy(PdfSubscription $pdf_subscription)
+    {
+        if ($pdf_subscription->active) {
+            return ApiResponseHelper::error('Active subscription cannot be deleted', 400);
+        }
+        $pdf_subscription->delete();
+        return ApiResponseHelper::success(null, 'PDF Subscription deleted successfully');
     }
 }

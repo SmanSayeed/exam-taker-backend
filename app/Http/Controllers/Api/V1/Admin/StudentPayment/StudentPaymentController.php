@@ -28,6 +28,16 @@ class StudentPaymentController extends Controller
         );
     }
 
+    public function changeStatus(StudentPayment $student_payment): JsonResponse
+    {
+        $student_payment->verified = !$student_payment->verified;
+        $student_payment->save();
+        return ApiResponseHelper::success(
+            new StudentPaymentAdminResource($student_payment),
+            'Transaction status updated successfully'
+        );
+    }
+
     public function destroy(StudentPayment $student_payment): JsonResponse
     {
         // Check if the payment is verified

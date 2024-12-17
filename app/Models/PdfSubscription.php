@@ -14,7 +14,6 @@ class PdfSubscription extends Model
         'student_id',
         'package_id',
         'is_active',
-        'subscribed_at',
         'expires_at',
     ];
 }

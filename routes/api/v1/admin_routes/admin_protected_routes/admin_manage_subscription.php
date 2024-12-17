@@ -22,3 +22,5 @@ Route::get('student-payments', [StudentPaymentController::class, 'index']);
 Route::get('student-payments/{student_payment}', [StudentPaymentController::class, 'show']);
 
 Route::delete('student-payments/{student_payment}', [StudentPaymentController::class, 'destroy']);
+
+Route::patch('student-payments/{student_payment}/status', [StudentPaymentController::class, 'changeStatus']);
