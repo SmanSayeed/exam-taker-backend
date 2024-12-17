@@ -19,6 +19,7 @@ class StudentPdfResource extends JsonResource
         $data = [
             'id' => $this->id,
             'title' => $this->title,
+            'img' => $this->img ? asset('storage/' . $this->img) : null,
         ];
 
         // Check if the student is authenticated and add 'is_subscribed'
@@ -35,10 +36,12 @@ class StudentPdfResource extends JsonResource
             // If the student is subscribed, add the file details
             if ($isSubscribed) {
                 $data = array_merge($data, [
-                    'file_path' => $this->file_path,
                     'mime_type' => $this->mime_type,
                     'size' => $this->size,
                     'description' => $this->description,
+                    'img' => $this->img ? asset('storage/' . $this->img) : null,
+                    'storage_url' => $this->file_path ? asset('storage/' . $this->file_path) : null,
+                    'file_link' => $this->file_link ?? null,
                     'created_at' => $this->created_at,
                     'updated_at' => $this->updated_at,
                 ]);
