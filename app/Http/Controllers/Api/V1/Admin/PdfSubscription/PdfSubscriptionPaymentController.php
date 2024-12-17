@@ -35,6 +35,16 @@ class PdfSubscriptionPaymentController extends Controller
         );
     }
 
+    public function changeStatus(PdfSubscriptionPayment $pdf_subscription_payment): JsonResponse
+    {
+        $pdf_subscription_payment->verified = !$pdf_subscription_payment->verified;
+        $pdf_subscription_payment->save();
+        return ApiResponseHelper::success(
+            new PdfSubscriptionPaymentResource($pdf_subscription_payment),
+            'PDF Subscription Payment status updated successfully'
+        );
+    }
+
     /**
      * Remove the specified PDF subscription payment.
      */

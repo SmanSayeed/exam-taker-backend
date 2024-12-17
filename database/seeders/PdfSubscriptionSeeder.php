@@ -17,7 +17,6 @@ class PdfSubscriptionSeeder extends Seeder
             [
                 'student_id' => 1,
                 'pdf_id' => 1,
-                'subscribed_at' => Carbon::now()->subDays(5),
                 'expires_at' => Carbon::now()->addDays(25),
                 'is_active' => true,
                 'created_at' => Carbon::now(),
@@ -26,7 +25,6 @@ class PdfSubscriptionSeeder extends Seeder
             [
                 'student_id' => 1,
                 'pdf_id' => 2,
-                'subscribed_at' => Carbon::now()->subDays(10),
                 'expires_at' => Carbon::now()->addDays(20),
                 'is_active' => true,
                 'created_at' => Carbon::now(),
@@ -35,7 +33,6 @@ class PdfSubscriptionSeeder extends Seeder
             [
                 'student_id' => 1,
                 'pdf_id' => 1,
-                'subscribed_at' => Carbon::now()->subDays(15),
                 'expires_at' => Carbon::now()->subDays(1), // Expired subscription
                 'is_active' => false,
                 'created_at' => Carbon::now(),

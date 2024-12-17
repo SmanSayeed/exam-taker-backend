@@ -22,19 +22,23 @@ Route::get('pdfs/{pdf}', [PdfController::class, 'show']);
 
 
 Route::prefix('pdf-subscriptions')->group(function () {
-    Route::get('/', [PdfSubscriptionController::class, 'index'])->name('api.pdf.subscriptions.index');
+    Route::get('/', [PdfSubscriptionController::class, 'index']);
 
-    Route::get('/{pdf_subscription}', [PdfSubscriptionController::class, 'show'])->name('api.pdf.subscriptions.show');
+    Route::post('/', [PdfSubscriptionController::class, 'store']);
 
-    Route::patch('/{pdf_subscription}/activate', [PdfSubscriptionController::class, 'activateSubscription'])->name('api.pdf.subscriptions.activate');
+    Route::get('/{pdf_subscription}', [PdfSubscriptionController::class, 'show']);
 
-    Route::patch('/{pdf_subscription}/deactivate', [PdfSubscriptionController::class, 'deactivateSubscription'])->name('api.pdf.subscriptions.deactivate');
+    Route::put('/{pdf_subscription}', [PdfSubscriptionController::class, 'update']);
+
+    Route::delete('/{pdf_subscription}', [PdfSubscriptionController::class, 'destroy']);
 });
 
 Route::prefix('pdf-subscription-payments')->group(function () {
-    Route::get('/', [PdfSubscriptionPaymentController::class, 'index'])->name('api.pdf.subscription_payments.index');
+    Route::get('/', [PdfSubscriptionPaymentController::class, 'index']);
 
-    Route::get('/{pdf_subscription_payment}', [PdfSubscriptionPaymentController::class, 'show'])->name('api.pdf.subscription_payments.show');
+    Route::get('/{pdf_subscription_payment}', [PdfSubscriptionPaymentController::class, 'show']);
 
-    Route::delete('/{pdf_subscription_payment}', [PdfSubscriptionPaymentController::class, 'destroy'])->name('api.pdf.subscription_payments.destroy');
+    Route::delete('/{pdf_subscription_payment}', [PdfSubscriptionPaymentController::class, 'destroy']);
+
+    Route::patch('/{pdf_subscription_payment}/status', [PdfSubscriptionPaymentController::class, 'changeStatus']);
 });
