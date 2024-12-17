@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePdfRequest;
 use App\Http\Requests\UpdatePdfRequest;
 use App\Http\Resources\AdminPdfResource;
-use App\Http\Resources\StudentPdfResource;
 use App\Models\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -22,7 +21,7 @@ class PdfController extends Controller
         $perPage = $request->get('per_page', 15);
         $pdfs = Pdf::paginate($perPage);
         return ApiResponseHelper::success(
-            StudentPdfResource::collection($pdfs),
+            AdminPdfResource::collection($pdfs),
             'PDFs retrieved successfully'
         );
     }
@@ -31,8 +30,20 @@ class PdfController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Validate and store the PDF document
-            $pdf = Pdf::create($request->validated());
+            $data = $request->validated();  // Get the validated data
+
+            // Store the file if provided and add the file path to the data array
+            if ($request->hasFile('file')) {
+                $data['file_path'] = $request->file('file')->store('pdf', 'public');
+            }
+
+            if ($request->hasFile('img')) {
+                $data['img'] = $request->file('img')->store('pdf', 'public');
+            }
+
+            // Create the PDF record with the validated data (including the file path)
+            $pdf = Pdf::create($data);  // Save the data including the file_path
+
             DB::commit();
 
             return ApiResponseHelper::success(
@@ -45,6 +56,7 @@ class PdfController extends Controller
             return ApiResponseHelper::error('Failed to create PDF', 500, $e->getMessage());
         }
     }
+
 
     public function update(UpdatePdfRequest $request, Pdf $pdf): JsonResponse
     {

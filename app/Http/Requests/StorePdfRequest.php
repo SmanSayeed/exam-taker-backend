@@ -28,10 +28,13 @@ class StorePdfRequest extends FormRequest
             'title' => 'required|string|max:255',
             'file' => 'nullable|file|mimes:pdf|max:10240|required_without:file_link',
             'file_link' => 'nullable|url|required_without:file',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'is_active' => 'nullable|boolean',
             'mime_type' => 'nullable|string|max:255',
             'description' => 'nullable|string',
         ];
     }
+
 
     protected function failedValidation(Validator $validator)
     {

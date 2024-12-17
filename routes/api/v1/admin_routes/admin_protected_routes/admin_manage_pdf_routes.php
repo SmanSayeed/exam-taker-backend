@@ -12,7 +12,7 @@ Route::get('pdfs', [PdfController::class, 'index']);
 Route::post('pdfs', [PdfController::class, 'store']);
 
 // Route to update a specific PDF
-Route::post('pdfs/{pdf}', [PdfController::class, 'update']);
+Route::put('pdfs/{pdf}', [PdfController::class, 'update']);
 
 // Route to delete a specific PDF
 Route::delete('pdfs/{pdf}', [PdfController::class, 'destroy']);

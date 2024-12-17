@@ -25,11 +25,13 @@ class UpdatePdfRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'nullable|string|max:255',
-            'mime_type' => 'nullable|string|max:255',
-            'file' => 'nullable|file|mimes:pdf|max:10240|required_without:file_link',
-            'file_link' => 'nullable|url|required_without:file',
-            'description' => 'nullable|string',
+            'title' => 'sometimes|required|string|max:255',
+            'file' => 'sometimes|file|mimes:pdf|max:10240',
+            'file_link' => 'sometimes|url',
+            'is_active' => 'sometimes|boolean',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'mime_type' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
         ];
     }
     protected function failedValidation(Validator $validator)
