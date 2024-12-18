@@ -20,9 +20,13 @@ class MTAnswerController extends Controller
         $this->examService = $examService;
     }
 
+    
+
     public function finishExam(FinishExamRequest $request)
     {
         try {
+            $is_optional = false;
+            $is_negative_mark_applicable = false;
             // Retrieve student exam and examination details
             $answer = $this->examService->getStudentExam($request->examination_id, $request->student_id);
             if (!$answer) {
@@ -42,6 +46,18 @@ class MTAnswerController extends Controller
             // Check if exam time has ended
             if (Carbon::now()->gt($examination->end_time)) {
                 return response()->json(['error' => 'The exam has already ended.'], 403);
+            }
+
+            if(!$examination->is_active){
+                return response()->json(['error' => 'This examination is disabled'], 403);
+            }
+
+            if($examination->is_optional){
+                $is_optional = true;
+            }
+
+            if($examination->is_negative_mark_applicable){
+                $is_negative_mark_applicable = true;
             }
 
             // Process answers based on question type

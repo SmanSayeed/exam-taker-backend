@@ -31,9 +31,14 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('admin')->group(function () {
     Route::post('/exam/create/{model_test_id}', [MTExaminationController::class, 'createExam']);
+    Route::get('/model-test-exams/{model_test_id}', [MTExaminationController::class, 'getModelTestExams']);
 });
 
 Route::prefix('student')->group(function () {
+
+    /* for student */
+    Route::get('/model-test-exams/{model_test_id}', [MTExaminationController::class, 'getModelTestExams']);
+
     Route::post('/exam/start', [ExaminationController::class, 'startExam']);
     Route::post('/exam/{exam_id}/finish', [ExaminationController::class, 'finishExam']);
 

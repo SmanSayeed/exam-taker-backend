@@ -7,6 +7,7 @@ use App\Models\Examination;
 use App\Models\ModelTest;
 use App\Models\Question;
 use App\Models\Questionable;
+use App\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 class MTExaminationService
@@ -63,6 +64,7 @@ class MTExaminationService
                 'is_optional' => $request->input('is_optional', false),
                 'is_active' => $request->input('is_active', false),
                 // Storing question IDs as a comma-separated string
+                'model_test_id'=>$validatedData['model_test_id'],
             ]);
 
             // Handle any failure during exam creation
@@ -91,6 +93,28 @@ class MTExaminationService
             DB::rollBack();
             return ['error' => 'An error occurred while creating the exam.', 'status' => 500];
         }
+    }
+
+    public function studentStartExam( $student_id,$exam_id){
+        try{
+            $exam = Examination::find($exam_id);
+            $student=Student::find($student_id);
+              // Create an entry for the student's answer sheet
+            $start_exam =  Answer::create([
+                'examination_id' => $exam_id,
+                'student_id' => $student_id,
+                'type' => $exam->type,
+                'exam_start_time' => $exam->start_time,
+                'is_second_timer' => $request->is_second_timer ?? false,
+            ]);
+            return $start_exam;
+        }catch (\Exception $e) {
+            // Handle any exception during the process
+            \Log::error('Error creating exam: ' . $e);
+            return ['error' => 'An error occurred while starting the exam.', 'status' => 500];
+        }
+
+
     }
 
 
