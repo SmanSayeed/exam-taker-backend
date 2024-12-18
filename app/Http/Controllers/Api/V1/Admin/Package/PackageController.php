@@ -18,9 +18,7 @@ use App\Http\Requests\Package\StorePackageRequest;
 use App\Http\Requests\PackageIndexRequest;
 use App\Http\Resources\PackageAdminResource;
 use App\Http\Resources\StudentResource\StudentResource;
-use App\Models\PackageTag;
 use App\Models\Pdf;
-use App\Models\Tag;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -78,9 +76,10 @@ class PackageController extends Controller
                 $categoryData = [
                     'section_id' => $request->input('section_id'),
                     'exam_type_id' => $request->input('exam_type_id'),
-                    'exam_sub_type_id' => $request->input('exam_sub_type_id')
+                    'exam_sub_type_id' => $request->input('exam_sub_type_id'),
+                    'additional_package_category_id' => $request->input('additional_package_category_id')
                 ];
-                $package->packageCategory()->create($categoryData);
+                $package->packageCategory()->updateOrCreate($categoryData);
             }
 
             DB::commit();

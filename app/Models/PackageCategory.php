@@ -14,6 +14,7 @@ class PackageCategory extends Model
         'section_id',
         'exam_type_id',
         'exam_sub_type_id',
+        'additional_package_category_id'
     ];
 
     public function package()

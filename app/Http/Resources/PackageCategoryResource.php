@@ -19,6 +19,7 @@ class PackageCategoryResource extends JsonResource
             'section_id' => $this->section_id,
             'exam_type_id' => $this->exam_type_id,
             'exam_sub_type_id' => $this->exam_sub_type_id,
+            'additional_package_category_id' => $this->additional_package_category_id
         ];
     }
 }

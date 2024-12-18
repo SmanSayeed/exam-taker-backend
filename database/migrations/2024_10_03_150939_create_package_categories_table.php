@@ -17,13 +17,15 @@ return new class extends Migration
             $table->unsignedBigInteger('section_id')->nullable(); // Foreign key to Section
             $table->unsignedBigInteger('exam_type_id')->nullable(); // Foreign key to Exam Type
             $table->unsignedBigInteger('exam_sub_type_id')->nullable(); // Foreign key to Exam Sub-Type
+            // Add a special categorization for packages
+            $table->unsignedBigInteger('additional_package_category_id')->nullable(); // Corrected data type
             $table->timestamps();
-
             // Foreign key constraints
             $table->foreign('package_id')->references('id')->on('packages')->onDelete('cascade');
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('set null');
             $table->foreign('exam_type_id')->references('id')->on('exam_types')->onDelete('set null');
             $table->foreign('exam_sub_type_id')->references('id')->on('exam_sub_types')->onDelete('set null');
+            $table->foreign('additional_package_category_id')->references('id')->on('additional_package_categories')->onDelete('set null');
         });
     }
 
