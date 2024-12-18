@@ -35,6 +35,7 @@ class StorePackageRequest extends FormRequest
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'discount' => 'nullable|numeric',
             'discount_type' => 'nullable|string|in:percentage,amount',
+            'additional_package_category_id' => 'nullable|exists:additional_package_categories,id',
             'section_id' => 'required|exists:sections,id', // section_id is now required
             'exam_type_id' => [
                 'nullable',

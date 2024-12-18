@@ -33,8 +33,7 @@ class DatabaseSeeder extends Seeder
             TagsTableSeeder::class,
             PdfSeeder::class,
             PackageTagSeeder::class,
-            // PdfSubscriptionSeeder::class,
-            // PdfSubscriptionPaymentSeeder::class,
+            AdditionalPackageCategoriesSeeder::class
         ]);
     }
 }
