@@ -129,7 +129,42 @@ class MTExaminationController extends Controller
         return response()->json(['exams' => $exams]);
     }
 
-    public function getMTResult($student_id){
-        // need to work here
+    public function getMTResult($student_id, $model_test_id) {
+        try {
+            // Fetch the examinations related to the model test
+            $examinations = DB::table('examinations')->where('id', $model_test_id)->get();
+
+            
+            if ($examinations->isEmpty()) {
+                return ApiResponseHelper::error( "No examinations found for the provided model test ID.", 404);
+            }
+
+            $results = [];
+
+            // Iterate over the examinations and fetch the answers
+            foreach ($examinations as $exam) {
+                $answer = Answer::where('examination_id', $exam->id)->first();
+                if ($answer) {
+                    $results[] = $answer; // Add to results if an answer exists
+                }
+            }
+
+            if (empty($results)) {
+                return ApiResponseHelper::error( "No result found for the given examinations.", 404);
+            }
+
+            return ApiResponseHelper::success($results);
+
+        } catch (\Exception $e) {
+            // Log the exception for debugging purposes
+            \Log::error('Error fetching model test results: ' . $e->getMessage(), [
+                'student_id' => $student_id,
+                'model_test_id' => $model_test_id
+            ]);
+
+            // Return a generic error response
+            return ApiResponseHelper::error("An error occurred while fetching the results. Please try again later.", 500);
+        }
     }
+
 }
