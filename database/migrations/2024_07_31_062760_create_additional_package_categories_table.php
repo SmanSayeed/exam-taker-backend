@@ -12,8 +12,7 @@ class CreateAdditionalPackageCategoriesTable extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->timestamps(); // Adds created_at and updated_at
-            $table->softDeletes(); // Adds deleted_at for soft deletes
+            $table->timestamps();
         });
     }
 
