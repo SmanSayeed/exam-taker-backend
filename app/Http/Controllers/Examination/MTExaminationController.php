@@ -128,4 +128,8 @@ class MTExaminationController extends Controller
         $exams = $this->examinationService->getAllExamsWithStudents($withQuestionList);
         return response()->json(['exams' => $exams]);
     }
+
+    public function getMTResult($student_id){
+        // need to work here
+    }
 }

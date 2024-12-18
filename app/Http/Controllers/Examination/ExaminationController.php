@@ -71,4 +71,6 @@ class ExaminationController extends Controller
         $exams = $this->examinationService->getAllExamsWithStudents($withQuestionList);
         return response()->json(['exams' => $exams]);
     }
+
+   
 }

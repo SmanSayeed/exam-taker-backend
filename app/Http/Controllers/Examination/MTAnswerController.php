@@ -36,7 +36,7 @@ class MTAnswerController extends Controller
                 return response()->json(['error' => 'Examination not found.'], 404);
             }
 
-         
+
 
             // Check if exam has started
             if (Carbon::now()->lt($examination->start_time)) {
@@ -51,8 +51,6 @@ class MTAnswerController extends Controller
             if(!$examination->is_active){
                 return response()->json(['error' => 'This examination is disabled'], 403);
             }
-
-
 
             // Process answers based on question type
             $totalMarks = 0;
