@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('country_code')->nullable(); // Country Code field (2 characters)
             $table->string('address')->nullable(); // Address field
             $table->boolean('active_status')->default(false); // Active Status field
+            $table->unsignedBigInteger('section_id')->nullable();
             $table->timestamps();
         });
 }
