@@ -51,7 +51,18 @@ class MTExaminationController extends Controller
         return ApiResponseHelper::success($exams,"Exams retrieved successfully");
     }
 
-    public function studentStartExam($student_id,$exam_id){
+    public function studentStartExam(Request $request){
+        //validation
+        $validatedData = $request->validate([
+            'is_second_timer' => 'boolean',
+            'student_id'=>'required|exists:students,id',
+            'exam_id'=>'required|exists:examinations,id',
+        ]);
+
+        $student_id = $validatedData['student_id'];
+        $exam_id = $validatedData['exam_id'];
+        $is_second_timer = $validatedData['is_second_timer'] ?? false;
+
         $exam = Examination::find($exam_id);
         $student=Student::find($student_id);
 
@@ -66,17 +77,27 @@ class MTExaminationController extends Controller
 
         $package = DB::table('packages')->where('id', $model_test->package_id)->first();
 
-        if (!$package) {
-            return response()->json(['error' => 'Package not found'], 404);
+        if (!$package ) {
+            return ApiResponseHelper::error('Package not found.', status: 404);
         }
 
-        if($student->package_id != $package->id){
-            return response()->json(['error' => 'You are not subscribed to this package'], 403);
+        if(!$package->is_active){
+            return ApiResponseHelper::error('Package not active.', status: 404);
+        }
+
+        if($package->id){
+            $isSubscribed = $student->subscriptions()->where('package_id', $package->id)->exists();
+            if(!$isSubscribed){
+                return ApiResponseHelper::error('You are not subscribed to this package', status: 404);
+            }
         }
 
         $result = $this->examinationService->studentStartExam($student_id,$exam_id);
+
+        return ApiResponseHelper::success($result,"Exam started successfully");
+
         if (isset($result['error'])) {
-            return response()->json(['error' => $result['error']], $result['status']);
+            return ApiResponseHelper::error('Something went wrong', status: 404);
         }
     }
     // Get exam by ID function

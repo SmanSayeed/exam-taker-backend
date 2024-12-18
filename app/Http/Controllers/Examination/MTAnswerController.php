@@ -20,13 +20,11 @@ class MTAnswerController extends Controller
         $this->examService = $examService;
     }
 
-    
+
 
     public function finishExam(FinishExamRequest $request)
     {
         try {
-            $is_optional = false;
-            $is_negative_mark_applicable = false;
             // Retrieve student exam and examination details
             $answer = $this->examService->getStudentExam($request->examination_id, $request->student_id);
             if (!$answer) {
@@ -37,6 +35,8 @@ class MTAnswerController extends Controller
             if (!$examination) {
                 return response()->json(['error' => 'Examination not found.'], 404);
             }
+
+         
 
             // Check if exam has started
             if (Carbon::now()->lt($examination->start_time)) {
@@ -52,13 +52,7 @@ class MTAnswerController extends Controller
                 return response()->json(['error' => 'This examination is disabled'], 403);
             }
 
-            if($examination->is_optional){
-                $is_optional = true;
-            }
 
-            if($examination->is_negative_mark_applicable){
-                $is_negative_mark_applicable = true;
-            }
 
             // Process answers based on question type
             $totalMarks = 0;
@@ -72,7 +66,7 @@ class MTAnswerController extends Controller
             $mcqAnswers = $creativeAnswers = $normalAnswers = [];
 
             if ($examination->type == 'mcq') {
-                [$mcqAnswers, $totalMarks, $correctCount] = $this->examService->processMcqAnswers($request->mcq_answers, $totalMarks, $correctCount);
+                [$mcqAnswers, $totalMarks, $correctCount] = $this->examService->processMcqAnswers($request->mcq_answers, $totalMarks, $correctCount,$examination);
                 if (empty($mcqAnswers)) {
                     return response()->json(['error' => 'Error processing MCQ answers.'], 400);
                 }

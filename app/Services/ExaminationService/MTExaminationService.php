@@ -98,7 +98,11 @@ class MTExaminationService
     public function studentStartExam( $student_id,$exam_id){
         try{
             $exam = Examination::find($exam_id);
-            $student=Student::find($student_id);
+            // Get randomized and formatted questions
+            $questionsList = $this->formatQuestionData($exam->questions, $exam->type)
+            ->random($exam->question_limit);
+        // Get the result collection
+        // Extract the question IDs from the list
               // Create an entry for the student's answer sheet
             $start_exam =  Answer::create([
                 'examination_id' => $exam_id,
@@ -107,18 +111,15 @@ class MTExaminationService
                 'exam_start_time' => $exam->start_time,
                 'is_second_timer' => $request->is_second_timer ?? false,
             ]);
-            return $start_exam;
+
+            return ['exam' => $exam, 'questions_list' => $questionsList];
         }catch (\Exception $e) {
             // Handle any exception during the process
             \Log::error('Error creating exam: ' . $e);
             return ['error' => 'An error occurred while starting the exam.', 'status' => 500];
         }
 
-
     }
-
-
-
 
 
     // Fetch exam details by ID
@@ -243,11 +244,23 @@ class MTExaminationService
 
 
     // Process MCQ answers
-    public function processMcqAnswers($mcqAnswers, $totalMarks, $correctCount)
+    public function processMcqAnswers($mcqAnswers, $totalMarks, $correctCount,$examination)
     {
         $processedMcqAnswers = [];
+        $is_optional = $examination->is_optional;
+        $is_negative_mark_applicable = $examination->is_negative_mark_applicable;
+        $negative_mark = 0;
+        if($is_negative_mark_applicable){
+            $negative_mark = 0.5;
+        }
+        $maximum_questions_to_answer = 0;
+        if($is_optional){
+            $maximum_questions_to_answer = 2;
+        }
+        $i = 0;
 
         foreach ($mcqAnswers as $ans) {
+            $i++;
             try {
                 $question = Question::find($ans['question_id']); // Get the first related MCQ question
                 $correct_option_serial = null;
@@ -278,6 +291,12 @@ class MTExaminationService
                     $mcqAnswer['is_submitted_correct'] = true;
                     $correctCount++;
                     $totalMarks += $question->mark;
+                }else{
+                    if($maximum_questions_to_answer>0 &&                    $i>$maximum_questions_to_answer){
+                            $totalMarks -= 0;
+                    }else{
+                        $totalMarks -= $negative_mark;
+                    }
                 }
 
                 $processedMcqAnswers[] = $mcqAnswer;
