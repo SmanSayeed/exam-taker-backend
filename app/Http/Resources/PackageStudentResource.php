@@ -26,6 +26,7 @@ class PackageStudentResource extends JsonResource
             'discount' => $this->discount,
             'discount_type' => $this->discount_type,
             'section_id' => $this->packageCategory ? $this->packageCategory->section_id : null,
+            'tags' => TagResource::collection($this->tags),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
@@ -36,7 +37,7 @@ class PackageStudentResource extends JsonResource
             $data['is_subscribed'] = $student->subscriptions()
                 ->where('package_id', $this->id)
                 ->where('is_active', true)
-                ->where('expires_at', '>', now()) // Check if not expired
+                ->where('expires_at', '>', now())
                 ->exists();
         }
 
