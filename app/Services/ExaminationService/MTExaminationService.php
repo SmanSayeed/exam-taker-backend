@@ -99,8 +99,11 @@ class MTExaminationService
         try{
             $exam = Examination::find($exam_id);
             // Get randomized and formatted questions
-            $questionsList = $this->formatQuestionData($exam->questions, $exam->type)
-            ->random($exam->question_limit);
+            // turn $exam->questions comma seperated string of id to array
+            $questionIds = explode(',', $exam->questions);
+
+            $questionsList = $this->formatQuestionData($questionIds, $exam->type);
+           // ->random($exam->question_limit);
         // Get the result collection
         // Extract the question IDs from the list
               // Create an entry for the student's answer sheet
@@ -204,7 +207,6 @@ class MTExaminationService
                 $query->with(['creativeQuestions', 'mcqQuestions']);
                 break;
         }
-
         // Always include the attachable relation
         return $query->with('attachable')->get();
     }
