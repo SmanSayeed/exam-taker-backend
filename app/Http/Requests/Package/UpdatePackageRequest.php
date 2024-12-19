@@ -37,20 +37,10 @@ class UpdatePackageRequest extends FormRequest
             'discount' => 'nullable|numeric',
             'discount_type' => 'nullable|string|in:percentage,amount',
             'section_id' => 'nullable|exists:sections,id', // section_id is now optional for update
-            'exam_type_id' => [
-                'nullable',
-                Rule::exists('exam_types', 'id')->where(function ($query) {
-                    $query->where('section_id', $this->input('section_id'));
-                }),
-                Rule::requiredIf(fn() => $this->input('exam_sub_type_id') !== null),
-            ],
-            'exam_sub_type_id' => [
-                'nullable',
-                Rule::exists('exam_sub_types', 'id')->where(function ($query) {
-                    $query->where('exam_type_id', $this->input('exam_type_id'));
-                })
-            ],
-        ];
+            'exam_type_id' =>'nullable',
+            'exam_sub_type_id' => 'nullable'
+            ]
+            ;
     }
 
     /**

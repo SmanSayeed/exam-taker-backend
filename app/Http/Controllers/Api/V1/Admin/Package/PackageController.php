@@ -72,7 +72,12 @@ class PackageController extends Controller
             $package = Package::create($data);
 
             // Create or update the related package category (now as separate fields)
+
             if ($request->has('section_id') || $request->has('exam_type_id') || $request->has('exam_sub_type_id')) {
+                $sectionId = $request->filled('section_id') ? $request->input('section_id') : null;
+                $examTypeId = $request->filled('exam_type_id') ? $request->input('exam_type_id') : null;
+                $examSubTypeId = $request->filled('exam_sub_type_id') ? $request->input('exam_sub_type_id') : null;
+
                 $categoryData = [
                     'section_id' => $request->input('section_id'),
                     'exam_type_id' => $request->input('exam_type_id'),
