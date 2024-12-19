@@ -24,6 +24,7 @@ class PackageAdminResource extends JsonResource
             'discount' => $this->discount,
             'discount_type' => $this->discount_type,
             'is_active' => $this->is_active,
+            'tags' => TagResource::collection($this->tags),
             'category' => new PackageCategoryResource($this->packageCategory),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
