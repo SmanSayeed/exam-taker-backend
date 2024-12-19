@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Student\ModelTest\ModelTestController;
 use App\Http\Controllers\Api\V1\Student\Package\PackageController;
 use App\Http\Controllers\Api\V1\Student\PDF\PdfController;
 use App\Http\Controllers\Api\V1\Student\StudentAuthController;
@@ -17,4 +18,7 @@ Route::prefix('student')->group(function () {
     Route::get('/packages/{package}', [PackageController::class, 'show']);
     Route::get('pdfs', [PdfController::class, 'index']);
     Route::get('pdfs/{pdf}', [PdfController::class, 'show']);
+
+    Route::get('/packages/{package}/model-tests', [ModelTestController::class, 'index']);
+    Route::get('/model-tests/{modelTest}', [ModelTestController::class, 'show']);
 });
