@@ -37,10 +37,9 @@ class UpdatePackageRequest extends FormRequest
             'discount' => 'nullable|numeric',
             'discount_type' => 'nullable|string|in:percentage,amount',
             'section_id' => 'nullable|exists:sections,id', // section_id is now optional for update
-            'exam_type_id' =>'nullable',
+            'exam_type_id' => 'nullable',
             'exam_sub_type_id' => 'nullable'
-            ]
-            ;
+        ];
     }
 
     /**
@@ -70,23 +69,4 @@ class UpdatePackageRequest extends FormRequest
         Log::info('Incoming request data:', $this->all());
     }
 
-    public function messages()
-    {
-        return [
-            'section_id.exists' => 'The selected section is invalid.',
-            'exam_type_id.exists' => 'The selected exam type is invalid or does not belong to the selected section.',
-            'exam_sub_type_id.exists' => 'The selected exam sub type is invalid or does not belong to the selected exam type.',
-            'exam_type_id.required' => 'The exam type field is required when exam sub type is filled.',
-            'exam_sub_type_id.required' => 'The exam sub type field is required when exam type is filled.',
-        ];
-    }
-
-    public function attributes()
-    {
-        return [
-            'section_id' => 'section',
-            'exam_type_id' => 'exam type',
-            'exam_sub_type_id' => 'exam sub type',
-        ];
-    }
 }
