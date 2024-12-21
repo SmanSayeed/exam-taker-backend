@@ -26,8 +26,7 @@ class StudentPaymentAdminResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'student_id' => $this->student_id,
-            'subscription_id' => $this->subscription_id,
-            'package_id' => $this->package_id,
+            'package' => $this->package,
         ];
     }
 }

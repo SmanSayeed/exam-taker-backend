@@ -30,7 +30,7 @@ class StudentPayment extends Model
 
     public function package()
     {
-        return $this->belongsTo(Package::class);
+        return $this->belongsTo(Package::class, 'resource_id');
     }
 
     public function student(): BelongsTo
