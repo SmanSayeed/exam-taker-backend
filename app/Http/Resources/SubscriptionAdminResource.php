@@ -17,7 +17,6 @@ class SubscriptionAdminResource extends JsonResource
         return [
             'id' => $this->id,
             'is_active' => $this->is_active,
-            'subscribed_at' => $this->subscribed_at,
             'expires_at' => $this->expires_at,
             'package_id' => $this->package_id,
             'student_id' => $this->student_id,
