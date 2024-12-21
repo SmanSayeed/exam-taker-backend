@@ -26,7 +26,6 @@ class UpdateSubscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'expires_at' => 'nullable|date|after_or_equal:today', // expiration date is optional, but must be valid if provided
             'is_active' => 'nullable|boolean', // is_active is optional for update, but must be a boolean if provided
         ];
     }

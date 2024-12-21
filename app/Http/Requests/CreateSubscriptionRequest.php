@@ -6,6 +6,7 @@ use App\Helpers\ApiResponseHelper;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class CreateSubscriptionRequest extends FormRequest
 {
@@ -26,9 +27,27 @@ class CreateSubscriptionRequest extends FormRequest
     {
         return [
             'student_id' => 'required|exists:students,id', // Ensure student exists in the 'students' table
-            'package_id' => 'required|exists:packages,id', // Ensure package exists in the 'packages' table
-            'expires_at' => 'required|date|after_or_equal:today', // Ensure expiration date is valid
+            'package_id' => [
+                'required',
+                'exists:packages,id', // Ensure package exists in the 'packages' table
+                Rule::unique('subscriptions')->where(function ($query) {
+                    return $query->where('student_id', $this->student_id)
+                        ->where('package_id', $this->package_id);
+                }),
+            ],
             'is_active' => 'required|boolean', // Ensure is_active is a boolean value
+        ];
+    }
+
+    /**
+     * Custom validation messages.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'package_id.unique' => 'This student has already subscribed to this package.',
         ];
     }
 
