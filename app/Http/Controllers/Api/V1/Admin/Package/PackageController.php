@@ -60,39 +60,36 @@ class PackageController extends Controller
     public function store(StorePackageRequest $request): JsonResponse
     {
         DB::beginTransaction();
+
         try {
+            // Gather validated data from the request
             $data = $request->validated();
 
-            // Store the image if provided
+            // Handle image upload if provided
             if ($request->hasFile('img')) {
+                Log::info('Image file found.');
                 $data['img'] = $request->file('img')->store('packages', 'public');
             }
 
             // Create the package
             $package = Package::create($data);
 
-            // Create or update the related package category (now as separate fields)
+            // Prepare the category data for updateOrCreate
+            $categoryData = [
+                'section_id' => $request->input('section_id'),
+                'exam_type_id' => $request->input('exam_type_id'),
+                'exam_sub_type_id' => $request->input('exam_sub_type_id'),
+                'additional_package_category_id' => $request->input('additional_package_category_id')
+            ];
 
-            if ($request->has('section_id') || $request->has('exam_type_id') || $request->has('exam_sub_type_id')) {
-                $sectionId = $request->filled('section_id') ? $request->input('section_id') : null;
-                $examTypeId = $request->filled('exam_type_id') ? $request->input('exam_type_id') : null;
-                $examSubTypeId = $request->filled('exam_sub_type_id') ? $request->input('exam_sub_type_id') : null;
-
-                $categoryData = [
-                    'section_id' => $request->input('section_id'),
-                    'exam_type_id' => $request->input('exam_type_id'),
-                    'exam_sub_type_id' => $request->input('exam_sub_type_id'),
-                    'additional_package_category_id' => $request->input('additional_package_category_id')
-                ];
-                $package->packageCategory()->updateOrCreate($categoryData);
-            }
+            // Update or create the package category
+            $package->packageCategory()->updateOrCreate($categoryData);
 
             DB::commit();
 
             return ApiResponseHelper::success(
                 new PackageAdminResource($package),
-                'Package created successfully',
-                201
+                'Package created successfully'
             );
         } catch (\Exception $e) {
             DB::rollBack();
@@ -100,38 +97,39 @@ class PackageController extends Controller
         }
     }
 
+
     public function update(UpdatePackageRequest $request, Package $package): JsonResponse
     {
         DB::beginTransaction();
+
         try {
+            // Gather validated data from the request
             $data = $request->validated();
 
-            // Update the image if provided
+            // Handle image upload if provided
             if ($request->hasFile('img')) {
-                // Delete old image if exists
-                if ($package->img) {
+                // Delete the old image if it exists
+                if ($package->img && Storage::disk('public')->exists($package->img)) {
                     Storage::disk('public')->delete($package->img);
                 }
+
+                // Store the new image
                 $data['img'] = $request->file('img')->store('packages', 'public');
             }
-            Log::info($request->all());
-            // Update package
+
+            // Update the package
             $package->update($data);
 
-            // Update or create the related package category (now as separate fields)
-            if ($request->has('section_id') || $request->has('exam_type_id') || $request->has('exam_sub_type_id')) {
-                $categoryData = [
-                    'section_id' => $request->input('section_id'),
-                    'exam_type_id' => $request->input('exam_type_id'),
-                    'exam_sub_type_id' => $request->input('exam_sub_type_id')
-                ];
+            // Prepare the category data for updateOrCreate
+            $categoryData = [
+                'section_id' => $request->input('section_id'),
+                'exam_type_id' => $request->input('exam_type_id'),
+                'exam_sub_type_id' => $request->input('exam_sub_type_id'),
+                'additional_package_category_id' => $request->input('additional_package_category_id')
+            ];
 
-                if ($package->packageCategory) {
-                    $package->packageCategory()->update($categoryData);
-                } else {
-                    $package->packageCategory()->create($categoryData);
-                }
-            }
+            // Update or create the package category
+            $package->packageCategory()->updateOrCreate($categoryData);
 
             DB::commit();
 
@@ -144,6 +142,8 @@ class PackageController extends Controller
             return ApiResponseHelper::error('Failed to update package', 500, $e->getMessage());
         }
     }
+
+
 
     public function destroy(Package $package): JsonResponse
     {

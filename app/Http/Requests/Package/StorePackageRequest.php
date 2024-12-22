@@ -37,10 +37,9 @@ class StorePackageRequest extends FormRequest
             'discount_type' => 'nullable|string|in:percentage,amount',
             'additional_package_category_id' => 'nullable|exists:additional_package_categories,id',
             'section_id' => 'nullable|exists:sections,id', // section_id is now required
-            'exam_type_id' =>'nullable',
+            'exam_type_id' => 'nullable',
             'exam_sub_type_id' => 'nullable'
-            ]
-            ;
+        ];
     }
 
     /**
@@ -63,19 +62,6 @@ class StorePackageRequest extends FormRequest
     {
         return [
             'section_id.required' => 'The section field is required.',
-            'exam_type_id.required' => 'The exam type field is required when exam sub type is filled.',
-            'exam_sub_type_id.required' => 'The exam sub type field is required when exam type is filled.',
-            'exam_type_id.exists' => 'The selected exam type is invalid or does not belong to the selected section.',
-            'exam_sub_type_id.exists' => 'The selected exam sub type is invalid or does not belong to the selected exam type.',
-        ];
-    }
-
-    public function attributes()
-    {
-        return [
-            'section_id' => 'section',
-            'exam_type_id' => 'exam type',
-            'exam_sub_type_id' => 'exam sub type',
         ];
     }
 }
