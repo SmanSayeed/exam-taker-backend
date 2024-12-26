@@ -12,5 +12,6 @@ class AdditionalPackageCategory extends Model
     protected $fillable = [
         'name',
         'description',
+        'is_active',
     ];
 }

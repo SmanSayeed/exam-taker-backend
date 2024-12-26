@@ -27,6 +27,7 @@ class StoreAdditionalPackageCategoryRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'is_active' => 'required|boolean',
         ];
     }
     protected function failedValidation(Validator $validator)
@@ -35,5 +36,4 @@ class StoreAdditionalPackageCategoryRequest extends FormRequest
         // Use ApiResponseHelper for JSON response
         throw new HttpResponseException(ApiResponseHelper::error('Store validation errors occurred', 422, $errors->messages()));
     }
-
 }
