@@ -38,7 +38,9 @@ class UpdatePackageRequest extends FormRequest
             'discount_type' => 'nullable|string|in:percentage,amount',
             'section_id' => 'nullable|exists:sections,id', // section_id is now optional for update
             'exam_type_id' => 'nullable',
-            'exam_sub_type_id' => 'nullable'
+            'exam_sub_type_id' => 'nullable',
+            'tag_ids' => 'nullable|array', // Ensure it is an array
+            'tag_ids.*' => 'integer|exists:tags,id', // Each item in the array must be a valid tag ID
         ];
     }
 
@@ -68,5 +70,4 @@ class UpdatePackageRequest extends FormRequest
     {
         Log::info('Incoming request data:', $this->all());
     }
-
 }
