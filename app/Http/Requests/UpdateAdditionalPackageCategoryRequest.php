@@ -27,6 +27,7 @@ class UpdateAdditionalPackageCategoryRequest extends FormRequest
         return [
             'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
+            'is_active' => 'sometimes|boolean',
         ];
     }
     protected function failedValidation(Validator $validator)
