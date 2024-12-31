@@ -7,6 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log; // Import Logging
 use Illuminate\Validation\Rule;
 
 class StorePackageRequest extends FormRequest
@@ -16,6 +17,12 @@ class StorePackageRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        // Log the request data
+        Log::info('StorePackageRequest Authorization Check', [
+            'user_id' => Auth::id(),
+            'request_data' => $this->all(),
+        ]);
+
         return Auth::guard('admin-api')->check();
     }
 
@@ -26,6 +33,11 @@ class StorePackageRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Log the validation rules being applied
+        Log::info('StorePackageRequest Validation Rules Applied', [
+            'request_data' => $this->all(),
+        ]);
+
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -38,7 +50,9 @@ class StorePackageRequest extends FormRequest
             'additional_package_category_id' => 'nullable|exists:additional_package_categories,id',
             'section_id' => 'nullable|exists:sections,id', // section_id is now required
             'exam_type_id' => 'nullable',
-            'exam_sub_type_id' => 'nullable'
+            'exam_sub_type_id' => 'nullable',
+            'tag_ids' => 'nullable|array', // Ensure it is an array
+            'tag_ids.*' => 'integer|exists:tags,id', // Each item in the array must be a valid tag ID
         ];
     }
 
@@ -53,6 +67,12 @@ class StorePackageRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();
+
+        // Log validation errors
+        Log::error('StorePackageRequest Validation Failed', [
+            'errors' => $errors->messages(),
+            'request_data' => $this->all(),
+        ]);
 
         // Use ApiResponseHelper for JSON response
         throw new HttpResponseException(ApiResponseHelper::error('Validation errors occurred', 422, $errors->messages()));
