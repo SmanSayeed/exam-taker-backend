@@ -74,6 +74,11 @@ class PackageController extends Controller
             // Create the package
             $package = Package::create($data);
 
+            // Attach tags if provided
+            if (isset($data['tag_ids']) && is_array($data['tag_ids'])) {
+                $package->tags()->attach($data['tag_ids']);
+            }
+
             // Prepare the category data for updateOrCreate
             $categoryData = [
                 'section_id' => $request->input('section_id'),
@@ -98,6 +103,7 @@ class PackageController extends Controller
     }
 
 
+
     public function update(UpdatePackageRequest $request, Package $package): JsonResponse
     {
         DB::beginTransaction();
@@ -119,6 +125,11 @@ class PackageController extends Controller
 
             // Update the package
             $package->update($data);
+
+            // Sync tags if provided
+            if (isset($data['tag_ids']) && is_array($data['tag_ids'])) {
+                $package->tags()->sync($data['tag_ids']);
+            }
 
             // Prepare the category data for updateOrCreate
             $categoryData = [
@@ -142,6 +153,7 @@ class PackageController extends Controller
             return ApiResponseHelper::error('Failed to update package', 500, $e->getMessage());
         }
     }
+
 
 
 
