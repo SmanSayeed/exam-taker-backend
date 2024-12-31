@@ -13,6 +13,7 @@ use App\Http\Requests\StartExamRequest;
 use App\Services\ExaminationService\MTExaminationService;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class MTExaminationController extends Controller
 {
@@ -25,7 +26,7 @@ class MTExaminationController extends Controller
     }
 
     // Start exam function
-    public function createExam(MTStartExamRequest $request,$model_test_id)
+    public function createExam(MTStartExamRequest $request, $model_test_id)
     {
         $validatedData = $request->validated();
 
@@ -46,60 +47,96 @@ class MTExaminationController extends Controller
         ], 201);
     }
 
-    public function getModelTestExams($model_test_id){
+    public function getModelTestExams($model_test_id)
+    {
         $exams = Examination::where('model_test_id', $model_test_id)->get();
-        return ApiResponseHelper::success($exams,"Exams retrieved successfully");
+        return ApiResponseHelper::success($exams, "Exams retrieved successfully");
     }
 
-    public function studentStartExam(Request $request){
-        //validation
-        $validatedData = $request->validate([
-            'is_second_timer' => 'boolean',
-            'student_id'=>'required|exists:students,id',
-            'exam_id'=>'required|exists:examinations,id',
-        ]);
+    public function studentStartExam(Request $request)
+    {
+        try {
+            // Validation
+            $validatedData = $request->validate([
+                'is_second_timer' => 'boolean',
+                'student_id' => 'required|exists:students,id',
+                'exam_id' => 'required|exists:examinations,id',
+            ]);
 
-        $student_id = $validatedData['student_id'];
-        $exam_id = $validatedData['exam_id'];
-        $is_second_timer = $validatedData['is_second_timer'] ?? false;
+            $student_id = $validatedData['student_id'];
+            $exam_id = $validatedData['exam_id'];
+            $is_second_timer = $validatedData['is_second_timer'] ?? false;
 
-        $exam = Examination::find($exam_id);
-        $student=Student::find($student_id);
+            // Fetch exam and student
+            $exam = Examination::find($exam_id);
+            $student = Student::find($student_id);
 
-        $model_test_id = $exam->model_test_id;
-        if(!$model_test_id){
-            return response()->json(['error' => 'Model test not found'], 404);
-        }
-        $model_test = DB::table('model_tests')->where('id', $model_test_id)->first();
-        if (!$model_test) {
-            return response()->json(['error' => 'Model test not found'], 404);
-        }
-
-        $package = DB::table('packages')->where('id', $model_test->package_id)->first();
-
-        if (!$package ) {
-            return ApiResponseHelper::error('Package not found.', status: 404);
-        }
-
-        if(!$package->is_active){
-            return ApiResponseHelper::error('Package not active.', status: 404);
-        }
-
-        if($package->id){
-            $isSubscribed = $student->subscriptions()->where('package_id', $package->id)->exists();
-            if(!$isSubscribed){
-                return ApiResponseHelper::error('You are not subscribed to this package', status: 404);
+            if (!$exam || !$student) {
+                return ApiResponseHelper::error('Invalid exam or student ID', 404);
             }
-        }
 
-        $result = $this->examinationService->studentStartExam($student_id,$exam_id);
+            // Check if the exam has ended
+            if (Carbon::now()->greaterThan(Carbon::parse($exam->end_time))) {
+                return ApiResponseHelper::error('Exam time is already ended', 400);
+            }
 
-        return ApiResponseHelper::success($result,"Exam started successfully");
+            // Check if the student has already started the exam
+            $existingAnswer = Answer::where('student_id', $student_id)
+                ->where('examination_id', $exam_id)
+                ->first();
 
-        if (isset($result['error'])) {
-            return ApiResponseHelper::error('Something went wrong', status: 404);
+
+            if($existingAnswer->is_answer_submitted){
+                return ApiResponseHelper::error('You have already submitted the answer', 400);
+            }
+
+            // Validate model test ID
+            $model_test_id = $exam->model_test_id;
+            if (!$model_test_id) {
+                return ApiResponseHelper::error('Model test not found', 404);
+            }
+
+            // Check if the model test exists
+            $model_test = DB::table('model_tests')->where('id', $model_test_id)->first();
+            if (!$model_test) {
+                return ApiResponseHelper::error('Model test not found', 404);
+            }
+
+            // Check if the package exists and is active
+            $package = DB::table('packages')->where('id', $model_test->package_id)->first();
+            if (!$package) {
+                return ApiResponseHelper::error('Package not found', 404);
+            }
+
+            if (!$package->is_active) {
+                return ApiResponseHelper::error('Package not active', 404);
+            }
+
+            // Verify subscription to the package
+            if ($package->id) {
+                $isSubscribed = $student->subscriptions()->where('package_id', $package->id)->exists();
+                if (!$isSubscribed) {
+                    return ApiResponseHelper::error('You are not subscribed to this package', 403);
+                }
+            }
+
+            // Call the service to start the exam
+            $result = $this->examinationService->studentStartExam($student_id, $exam_id);
+
+            // Handle success response
+            return ApiResponseHelper::success($result, "Exam started successfully");
+        } catch (\Throwable $e) {
+            // Log the error details
+            Log::error('Error starting exam', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Return a generic error response
+            return ApiResponseHelper::error('Internal Server Error', 500, ['details' => $e->getMessage()]);
         }
     }
+
     // Get exam by ID function
     public function getExamById($examId)
     {
@@ -129,14 +166,15 @@ class MTExaminationController extends Controller
         return response()->json(['exams' => $exams]);
     }
 
-    public function getMTResult($student_id, $model_test_id) {
+    public function getMTResult($student_id, $model_test_id)
+    {
         try {
             // Fetch the examinations related to the model test
             $examinations = DB::table('examinations')->where('id', $model_test_id)->get();
 
-            
+
             if ($examinations->isEmpty()) {
-                return ApiResponseHelper::error( "No examinations found for the provided model test ID.", 404);
+                return ApiResponseHelper::error("No examinations found for the provided model test ID.", 404);
             }
 
             $results = [];
@@ -150,7 +188,7 @@ class MTExaminationController extends Controller
             }
 
             if (empty($results)) {
-                return ApiResponseHelper::error( "No result found for the given examinations.", 404);
+                return ApiResponseHelper::error("No result found for the given examinations.", 404);
             }
 
             return ApiResponseHelper::success($results);

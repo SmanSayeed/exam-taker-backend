@@ -249,16 +249,12 @@ class MTExaminationService
     public function processMcqAnswers($mcqAnswers, $totalMarks, $correctCount,$examination)
     {
         $processedMcqAnswers = [];
-        $is_optional = $examination->is_optional;
         $is_negative_mark_applicable = $examination->is_negative_mark_applicable;
         $negative_mark = 0;
         if($is_negative_mark_applicable){
             $negative_mark = 0.5;
         }
-        $maximum_questions_to_answer = 0;
-        if($is_optional){
-            $maximum_questions_to_answer = 2;
-        }
+
         $i = 0;
 
         foreach ($mcqAnswers as $ans) {
@@ -275,7 +271,6 @@ class MTExaminationService
                         $correct_option_id = $mcq->id;
                     }
                 }
-
                 $mcqAnswer = [
                     'question_id' => $question->id,
                     'mcq_question_id' => $ans['mcq_question_id'],
@@ -294,13 +289,8 @@ class MTExaminationService
                     $correctCount++;
                     $totalMarks += $question->mark;
                 }else{
-                    if($maximum_questions_to_answer>0 &&                    $i>$maximum_questions_to_answer){
-                            $totalMarks -= 0;
-                    }else{
                         $totalMarks -= $negative_mark;
-                    }
                 }
-
                 $processedMcqAnswers[] = $mcqAnswer;
             } catch (\Exception $e) {
                 \Log::error('Error processing MCQ answer: ' . $e->getMessage());
