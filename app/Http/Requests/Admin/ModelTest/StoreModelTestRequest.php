@@ -33,7 +33,9 @@ class StoreModelTestRequest extends FormRequest
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
             'is_active' => 'boolean',
-            'category' => 'required|array',
+            'category' => 'array',
+            'pass_mark' => 'required|numeric|min:0', // Validation for pass_mark
+            'full_mark' => 'required|numeric|min:0|gte:pass_mark', // Validation for full_mark, should be >= pass_mark
             'category.group_id' => [
                 'nullable',
                 'exists:groups,id',

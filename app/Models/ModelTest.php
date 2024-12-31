@@ -13,7 +13,9 @@ class ModelTest extends Model
         'description',   // Description of the model test
         'start_time',    // Start time of the model test
         'end_time',      // End time of the model test
-        'is_active'      // Indicates if the test is active
+        'is_active',      // Indicates if the test is active
+        'pass_mark',
+        'full_mark'
     ];
 
     use HasFactory;

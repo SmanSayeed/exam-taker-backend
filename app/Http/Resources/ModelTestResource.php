@@ -21,6 +21,8 @@ class ModelTestResource extends JsonResource
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,
             'is_active' => $this->is_active,
+            'pass_mark'=>$this->pass_mark,
+            'full_mark'=>$this->full_mark,
             'package' => $this->package,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\Student\ModelTest\ModelTestController;
 use App\Http\Controllers\Api\V1\Student\Package\PackageController;
 use App\Http\Controllers\Examination\AnswerController;
 use App\Http\Controllers\Examination\ExaminationController;
+use App\Http\Controllers\Examination\MTAnswerController;
 use App\Http\Controllers\Examination\MTExaminationController;
 use App\Http\Controllers\StudentController;
 use App\Models\Package;
@@ -37,12 +38,18 @@ Route::prefix('admin')->group(function () {
 Route::prefix('student')->group(function () {
 
     /* for student */
+
+    /* model test */
     Route::get('/model-test-exams/{model_test_id}', [MTExaminationController::class, 'getModelTestExams']);
 
     Route::post('/model-test-exam-start',[MTExaminationController::class,'studentStartExam']);
 
     Route::get('/model-test-result/{student_id}/{model_test_id}', [MTExaminationController::class, 'getMTResult']);
 
+    Route::post('/model-test-exam-finish', [MTAnswerController::class, 'finishExam']);
+
+    /* model test XXXXXXXXXXX */
+    
     Route::post('/exam/start', [ExaminationController::class, 'startExam']);
     Route::post('/exam/{exam_id}/finish', [ExaminationController::class, 'finishExam']);
 
