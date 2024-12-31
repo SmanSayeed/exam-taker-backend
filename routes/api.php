@@ -48,8 +48,12 @@ Route::prefix('student')->group(function () {
 
     Route::post('/model-test-exam-finish', [MTAnswerController::class, 'finishExam']);
 
+    Route::get('/model-test-exam-result-with-merit/{student_id}/{model_test_id}', [MTAnswerController::class, 'getStudentResult']);
+
+    Route::get('/model-test-all-students-exam-result/{model_test_id}', [MTAnswerController::class, 'getStudentResult']);
+
     /* model test XXXXXXXXXXX */
-    
+
     Route::post('/exam/start', [ExaminationController::class, 'startExam']);
     Route::post('/exam/{exam_id}/finish', [ExaminationController::class, 'finishExam']);
 
