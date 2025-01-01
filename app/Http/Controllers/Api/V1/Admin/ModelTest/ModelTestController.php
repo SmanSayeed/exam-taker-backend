@@ -4,80 +4,42 @@ namespace App\Http\Controllers\Api\V1\Admin\ModelTest;
 
 use App\Http\Requests\Admin\ModelTest\StoreModelTestRequest;
 use App\Http\Requests\Admin\ModelTest\UpdateModelTestRequest;
-use App\Helpers\ApiResponseHelper;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ModelTest\UpdateModelTestStatusRequest;
 use App\Http\Requests\AttachExaminationsRequest;
-use App\Http\Requests\AttachPdfRequest;
 use App\Http\Requests\DetachExaminationsRequest;
-use App\Http\Requests\DetachPdfRequest;
 use App\Http\Requests\ModelTestIndexRequest;
+use App\Helpers\ApiResponseHelper;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\ExaminationResource;
 use App\Http\Resources\ModelTestResource;
-use App\Http\Resources\ModelTestWithQuestionsResource;
 use App\Models\ModelTest;
-use App\Models\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 
 class ModelTestController extends Controller
 {
     public function index(ModelTestIndexRequest $request): JsonResponse
     {
-        // Get the 'per_page' parameter from the request, defaulting to 15 if not provided
         $perPage = $request->get('per_page', 15);
-
-        // Start the query for ModelTest, eager loading the related modelTestCategory
         $query = ModelTest::with('modelTestCategory');
 
-        // Apply filters based on request parameters if they are present
-        if ($request->has('group_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('group_id', $request->input('group_id'));
-            });
+        // Dynamically apply filters for category fields if provided
+        $filters = ['group_id', 'level_id', 'subject_id', 'lesson_id', 'topic_id', 'sub_topic_id'];
+        foreach ($filters as $filter) {
+            if ($request->has($filter)) {
+                $query->whereHas('modelTestCategory', function ($q) use ($filter, $request) {
+                    $q->where($filter, $request->input($filter));
+                });
+            }
         }
 
-        if ($request->has('level_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('level_id', $request->input('level_id'));
-            });
-        }
-
-        if ($request->has('subject_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('subject_id', $request->input('subject_id'));
-            });
-        }
-
-        if ($request->has('lesson_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('lesson_id', $request->input('lesson_id'));
-            });
-        }
-
-        if ($request->has('topic_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('topic_id', $request->input('topic_id'));
-            });
-        }
-
-        if ($request->has('sub_topic_id')) {
-            $query->whereHas('modelTestCategory', function ($q) use ($request) {
-                $q->where('sub_topic_id', $request->input('sub_topic_id'));
-            });
-        }
-
-        // Execute the query with pagination
         $modelTests = $query->paginate($perPage);
 
-        // Return a successful response with the paginated results
         return ApiResponseHelper::success(
             ModelTestResource::collection($modelTests),
             'Model tests retrieved successfully'
         );
     }
-
 
     public function store(StoreModelTestRequest $request): JsonResponse
     {
@@ -85,7 +47,10 @@ class ModelTestController extends Controller
         try {
             $modelTest = ModelTest::create($request->validated());
 
-            $modelTest->modelTestCategory()->create($request->category);
+            // Create category if provided
+            if ($request->has('category') && !empty($request->category)) {
+                $modelTest->modelTestCategory()->create($request->category);
+            }
 
             DB::commit();
 
@@ -104,16 +69,13 @@ class ModelTestController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Update the model test attributes
             $modelTest->update($request->validated());
 
-            // If category data is provided in the request, update the related category
+            // Update or create category if provided
             if ($request->has('category')) {
                 if ($modelTest->modelTestCategory) {
-                    // Update the existing category
                     $modelTest->modelTestCategory()->update($request->category);
-                } else {
-                    // Create a new category if none exists
+                } elseif (!empty($request->category)) {
                     $modelTest->modelTestCategory()->create($request->category);
                 }
             }
@@ -134,9 +96,15 @@ class ModelTestController extends Controller
     {
         DB::beginTransaction();
         try {
-            $modelTest->category()->delete();
+            // Check if the model test has a category and delete it if it exists
+            if ($modelTest->modelTestCategory) {
+                $modelTest->modelTestCategory()->delete();
+            }
+
             $modelTest->delete();
+
             DB::commit();
+
             return ApiResponseHelper::success('Model test deleted successfully');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -169,10 +137,7 @@ class ModelTestController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Get the list of examination IDs from the request
-            $examinationIds = $request->input('examination_ids'); // Assume this is an array of examination IDs
-
-            // Attach the examinations to the model test using the pivot table
+            $examinationIds = $request->input('examination_ids');
             $modelTest->examinations()->attach($examinationIds);
 
             DB::commit();
@@ -188,10 +153,7 @@ class ModelTestController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Get the list of examination IDs from the request
-            $examinationIds = $request->input('examination_ids'); // Assume this is an array of examination IDs
-
-            // Detach the examinations from the model test
+            $examinationIds = $request->input('examination_ids');
             $modelTest->examinations()->detach($examinationIds);
 
             DB::commit();
@@ -206,16 +168,16 @@ class ModelTestController extends Controller
     public function getExaminations(ModelTest $modelTest): JsonResponse
     {
         try {
-            // Get all examinations associated with the model test
             $examinations = $modelTest->examinations;
 
-            // Check if there are no examinations
             if ($examinations->isEmpty()) {
                 return ApiResponseHelper::success(null, 'No examinations found for this model test');
             }
 
-            // Return the examinations using the ExaminationResource
-            return ApiResponseHelper::success(ExaminationResource::collection($examinations), 'Examinations retrieved successfully');
+            return ApiResponseHelper::success(
+                ExaminationResource::collection($examinations),
+                'Examinations retrieved successfully'
+            );
         } catch (\Exception $e) {
             return ApiResponseHelper::error('Failed to retrieve examinations', 500, $e->getMessage());
         }
