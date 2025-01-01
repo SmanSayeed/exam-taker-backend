@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Api\V1\Admin\ModelTest;
 
 use App\Http\Requests\Admin\ModelTest\StoreModelTestRequest;
 use App\Http\Requests\Admin\ModelTest\UpdateModelTestRequest;
+use App\Http\Requests\Admin\ModelTest\UpdateModelTestStatusRequest;
+use App\Http\Requests\AttachExaminationsRequest;
+use App\Http\Requests\DetachExaminationsRequest;
+use App\Http\Requests\ModelTestIndexRequest;
 use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ModelTestIndexRequest;
+use App\Http\Resources\ExaminationResource;
 use App\Http\Resources\ModelTestResource;
 use App\Models\ModelTest;
 use Illuminate\Http\JsonResponse;
@@ -114,5 +118,68 @@ class ModelTestController extends Controller
             new ModelTestResource($modelTest),
             'Model test retrieved successfully'
         );
+    }
+
+    public function changeStatus(UpdateModelTestStatusRequest $request, ModelTest $modelTest): JsonResponse
+    {
+        try {
+            $modelTest->update(['is_active' => $request->is_active]);
+            return ApiResponseHelper::success(
+                new ModelTestResource($modelTest),
+                'Model test status changed successfully'
+            );
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('Failed to change model test status', 500, $e->getMessage());
+        }
+    }
+
+    public function attachExamination(AttachExaminationsRequest $request, ModelTest $modelTest): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $examinationIds = $request->input('examination_ids');
+            $modelTest->examinations()->attach($examinationIds);
+
+            DB::commit();
+
+            return ApiResponseHelper::success(null, 'Examinations added successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponseHelper::error('Failed to attach examinations', 500, $e->getMessage());
+        }
+    }
+
+    public function detachExamination(DetachExaminationsRequest $request, ModelTest $modelTest): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $examinationIds = $request->input('examination_ids');
+            $modelTest->examinations()->detach($examinationIds);
+
+            DB::commit();
+
+            return ApiResponseHelper::success(null, 'Examinations detached successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return ApiResponseHelper::error('Failed to detach examinations', 500, $e->getMessage());
+        }
+    }
+
+    public function getExaminations(ModelTest $modelTest): JsonResponse
+    {
+        try {
+            $examinations = $modelTest->examinations;
+
+            if ($examinations->isEmpty()) {
+                return ApiResponseHelper::success(null, 'No examinations found for this model test');
+            }
+
+            return ApiResponseHelper::success(
+                ExaminationResource::collection($examinations),
+                'Examinations retrieved successfully'
+            );
+        } catch (\Exception $e) {
+            return ApiResponseHelper::error('Failed to retrieve examinations', 500, $e->getMessage());
+        }
     }
 }
