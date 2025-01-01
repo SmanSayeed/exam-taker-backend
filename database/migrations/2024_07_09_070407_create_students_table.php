@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('country_code')->nullable(); // Country Code field (2 characters)
             $table->string('address')->nullable(); // Address field
             $table->boolean('active_status')->default(false); // Active Status field
+            $table->unsignedInteger('paid_exam_quota')->default(0)->nullable(); // Quota for paid exams
+            $table->unsignedInteger('exams_count')->default(0)->nullable(); // Number of exams attended
             $table->unsignedBigInteger('section_id')->nullable();
             $table->timestamps();
         });

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Admin\StudentPayment\StudentPaymentController;
 use App\Http\Controllers\Api\V1\Admin\Subscription\SubscriptionController;
 
+use App\Http\Controllers\ExamQuotaSubscriptionController;
 use Illuminate\Support\Facades\Route;
 Route::get('subscriptions', [SubscriptionController::class, 'index']);  // GET list of subscriptions
 
@@ -24,3 +25,12 @@ Route::get('student-payments/{student_payment}', [StudentPaymentController::clas
 Route::delete('student-payments/{student_payment}', [StudentPaymentController::class, 'destroy']);
 
 Route::patch('student-payments/{student_payment}/status', [StudentPaymentController::class, 'changeStatus']);
+
+
+
+    /* exam quota subscribe */
+    Route::get('/exam-quota-subscriptions', [ExamQuotaSubscriptionController::class, 'getFilteredSubscriptions']);
+
+Route::post('/exam-quota-subscriptions/{id}/verify', [ExamQuotaSubscriptionController::class, 'verifySubscription']);
+
+Route::put('/{studentId}/update-quota', [ExamQuotaSubscriptionController::class, 'updateStudentQuota']);

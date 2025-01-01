@@ -12,6 +12,7 @@ use App\Http\Controllers\Examination\AnswerController;
 use App\Http\Controllers\Examination\ExaminationController;
 use App\Http\Controllers\Examination\MTAnswerController;
 use App\Http\Controllers\Examination\MTExaminationController;
+use App\Http\Controllers\ExamQuotaSubscriptionController;
 use App\Http\Controllers\StudentController;
 use App\Models\Package;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,8 @@ Route::get('/swagger.json', function () {
 Route::prefix('admin')->group(function () {
     Route::post('/maintenance/clear-cache', [AdminMaintenanceController::class, 'clearCache']);
     Route::post('/maintenance/optimize', [AdminMaintenanceController::class, 'optimize']);
+
+
 });
 
 Route::prefix('admin')->group(function () {
@@ -53,6 +56,13 @@ Route::prefix('student')->group(function () {
     Route::get('/model-test-all-students-exam-result/{model_test_id}', [MTAnswerController::class, 'getStudentResult']);
 
     /* model test XXXXXXXXXXX */
+
+    /*  exam quota subscription */
+
+    Route::post('/exam-quota-subscriptions', [ExamQuotaSubscriptionController::class, 'submitSubscriptionRequest']);
+
+
+    /* free exam quota subscription XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX */
 
     Route::post('/exam/start', [ExaminationController::class, 'startExam']);
     Route::post('/exam/{exam_id}/finish', [ExaminationController::class, 'finishExam']);

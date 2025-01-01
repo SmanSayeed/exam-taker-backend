@@ -25,7 +25,9 @@ class Student extends  Authenticatable
         'country_code',
         'section_id',
         'address',
-        'active_status'
+        'active_status',
+        'paid_exam_quota',
+        'exams_count'
     ];
 
     protected $hidden = [
@@ -54,4 +56,10 @@ class Student extends  Authenticatable
     {
         return $this->hasMany(PdfSubscription::class);
     }
+
+    public function examQuotaSubscriptions()
+{
+    return $this->hasMany(ExamQuotaSubscription::class);
+}
+
 }

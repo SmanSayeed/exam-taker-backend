@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Examination;
 
 use App\Http\Controllers\Controller;
 use App\Models\Answer;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Models\Examination;
 use App\Services\ExaminationService\ExaminationService;
@@ -24,11 +25,26 @@ class ExaminationController extends Controller
     // Start exam function
     public function startExam(StartExamRequest $request)
     {
+
         $validatedData = $request->validated();
+
+        $maximum_free_exam = 2;
 
         if ($request->created_by_role != "student") {
             return response()->json(['error' => 'Only students can start an exam'], 400);
         }
+
+        $student = Student::find($request->created_by);
+       // Check if the student has exceeded the maximum free exam quota and paid quota.
+
+    if ($student->exams_count >= $maximum_free_exam && $student->paid_exam_quota <= $student->exams_count) {
+        return response()->json(['error' => 'You have reached the maximum number of exams, Please subscribe for more exams'], 400);
+    }
+
+        /* Updating students exam count by 1 for free exams and paid exams quota */
+        $student->update([
+            'exams_count' => DB::raw('exams_count + 1'),
+        ]);
 
         // Delegating the exam creation logic to the service
         $result = $this->examinationService->startExam($validatedData, $request);
@@ -72,5 +88,5 @@ class ExaminationController extends Controller
         return response()->json(['exams' => $exams]);
     }
 
-   
+
 }
