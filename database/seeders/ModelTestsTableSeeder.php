@@ -22,6 +22,8 @@ class ModelTestsTableSeeder extends Seeder
                 'start_time' => now()->addDays(rand(1, 7)), // Random start time within the next 7 days
                 'end_time' => now()->addDays(rand(1, 7))->addHours(rand(1, 2)), // Random end time (1 to 2 hours after start time)
                 'is_active' => true,
+                'full_mark' => rand(100, 200),
+                'pass_mark' => rand(50, 100),
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

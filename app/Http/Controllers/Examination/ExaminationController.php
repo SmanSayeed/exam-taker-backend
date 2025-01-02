@@ -25,9 +25,7 @@ class ExaminationController extends Controller
     // Start exam function
     public function startExam(StartExamRequest $request)
     {
-
         $validatedData = $request->validated();
-
         $maximum_free_exam = 2;
 
         if ($request->created_by_role != "student") {
@@ -35,13 +33,22 @@ class ExaminationController extends Controller
         }
 
         $student = Student::find($request->created_by);
-       // Check if the student has exceeded the maximum free exam quota and paid quota.
 
-    if ($student->exams_count >= $maximum_free_exam && $student->paid_exam_quota <= $student->exams_count) {
-        return response()->json(['error' => 'You have reached the maximum number of exams, Please subscribe for more exams'], 400);
-    }
+        // Check if the student has exceeded the maximum free exam quota and paid quota.
+        $isFreeQuotaExceeded = $student->exams_count >= $maximum_free_exam;
+        $isPaidQuotaExceeded = $student->paid_exam_quota <= $student->exams_count;
 
-        /* Updating students exam count by 1 for free exams and paid exams quota */
+        if ($isFreeQuotaExceeded && $isPaidQuotaExceeded) {
+            return response()->json([
+                'error' => 'You have reached the maximum number of exams. Please subscribe for more exams',
+                'quota_info' => [
+                    'free_quota_exceeded' => $isFreeQuotaExceeded,
+                    'paid_quota_exceeded' => $isPaidQuotaExceeded,
+                ],
+            ], 400);
+        }
+
+        // Update the student's exam count
         $student->update([
             'exams_count' => DB::raw('exams_count + 1'),
         ]);
@@ -56,8 +63,13 @@ class ExaminationController extends Controller
         return response()->json([
             'exam' => $result['exam'],
             'questions_list' => $result['questions_list'],
+            'quota_info' => [
+                'free_quota_exceeded' => $isFreeQuotaExceeded,
+                'paid_quota_exceeded' => $isPaidQuotaExceeded,
+            ],
         ], 201);
     }
+
 
     // Get exam by ID function
     public function getExamById($examId)
@@ -87,6 +99,4 @@ class ExaminationController extends Controller
         $exams = $this->examinationService->getAllExamsWithStudents($withQuestionList);
         return response()->json(['exams' => $exams]);
     }
-
-
 }
