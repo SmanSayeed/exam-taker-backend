@@ -11,6 +11,7 @@ use App\Services\ExaminationService\ExaminationService;
 use App\Http\Requests\StartExamRequest;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class ExaminationController extends Controller
 {
@@ -40,7 +41,7 @@ class ExaminationController extends Controller
 
         if ($isFreeQuotaExceeded && $isPaidQuotaExceeded) {
             return response()->json([
-                'error' => 'You have reached the maximum number of exams. Please subscribe for more exams',
+                'error' => 'You have reached the maximum number of exams. Please subscribe for more exams.',
                 'quota_info' => [
                     'free_quota_exceeded' => $isFreeQuotaExceeded,
                     'paid_quota_exceeded' => $isPaidQuotaExceeded,
@@ -48,17 +49,18 @@ class ExaminationController extends Controller
             ], 400);
         }
 
-        // Update the student's exam count
-        $student->update([
-            'exams_count' => DB::raw('exams_count + 1'),
-        ]);
-
-        // Delegating the exam creation logic to the service
+        // Delegate the exam creation logic to the service
         $result = $this->examinationService->startExam($validatedData, $request);
 
+        // Check for errors in the result
         if (isset($result['error'])) {
             return response()->json(['error' => $result['error']], $result['status']);
         }
+
+        // Only update the student's exam count if the exam is successfully created
+        $student->update([
+            'exams_count' => DB::raw('exams_count + 1'),
+        ]);
 
         return response()->json([
             'exam' => $result['exam'],
@@ -69,6 +71,7 @@ class ExaminationController extends Controller
             ],
         ], 201);
     }
+
 
 
     // Get exam by ID function
