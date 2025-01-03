@@ -86,9 +86,10 @@ class MTExaminationController extends Controller
                 ->first();
 
 
-            if($existingAnswer->is_answer_submitted){
-                return ApiResponseHelper::error('You have already submitted the answer', 400);
-            }
+
+        if ($existingAnswer && $existingAnswer->is_answer_submitted) {
+            return ApiResponseHelper::error('You have already submitted the answer', 400);
+        }
 
             // Validate model test ID
             $model_test_id = $exam->model_test_id;
