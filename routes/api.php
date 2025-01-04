@@ -53,7 +53,7 @@ Route::prefix('student')->group(function () {
 
     Route::get('/model-test-exam-result-with-merit/{student_id}/{model_test_id}', [MTAnswerController::class, 'getStudentResult']);
 
-    Route::get('/model-test-all-students-exam-result/{model_test_id}', [MTAnswerController::class, 'getStudentResult']);
+    Route::get('/model-test-all-students-exam-result/{model_test_id}', [MTAnswerController::class, 'getAllStudentsResult']);
 
     /* model test XXXXXXXXXXX */
 
