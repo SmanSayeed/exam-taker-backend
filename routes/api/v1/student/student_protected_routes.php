@@ -26,3 +26,5 @@ Route::get('que/all', [QuestionController::class, 'searchAndFilterQuestions']);
 
 Route::get('/student-payments', [StudentPaymentController::class, 'index']);
 Route::get('/student-payments/{student_payment}', [StudentPaymentController::class, 'show']);
+
+Route::post('/logout', [StudentAuthController::class, 'logout']);
