@@ -303,56 +303,21 @@ class MTExaminationService
 
 
     // Process Creative answers
-    public function processCreativeAnswers($creativeAnswers)
+    public function processCreativeAnswers($uploadedFilePath)
     {
-        $processedCreativeAnswers = [];
-
-        foreach ($creativeAnswers as $ans) {
-            $question = Question::find($ans['question_id']);
-            try {
-                $allCreative = $question->creativeQuestions->all();
-                if (!$allCreative) {
-                    throw new \Exception('Creative question not found for question ID: ' . $question->id);
-                }
-
-                $processedCreativeAnswer = [
-                    'question_id' => $question->id,
-                    'creative_question_id' => $creativeQuestion->id ?? null,
-                    // 'creative_question_option' => $creativeAnswers->firstWhere('creative_question_id', $creativeQuestion->id)['creative_question_option'] ?? null,
-                    // 'creative_question_text' => $creativeQuestion->creative_question_text ?? null,
-                ];
-
-                $processedCreativeAnswers[] = $processedCreativeAnswer;
-            } catch (\Exception $e) {
-                \Log::error('Error processing creative answer: ' . $e->getMessage());
-                return []; // Return empty array on error
-            }
-        }
-
-        return $processedCreativeAnswers;
+        // Return the file path for storage
+        return ['file_path' => $uploadedFilePath];
     }
+
 
 
     // Process Normal answers
-    public function processNormalAnswers($normalAnswers)
-    {
-        $processedNormalAnswers = [];
+    public function processNormalAnswers($uploadedFilePath)
+{
+    // Return the file path for storage
+    return ['file_path' => $uploadedFilePath];
+}
 
-        foreach ($normalAnswers as $ans) {
-            $question = Question::find($ans['question_id']);
-            try {
-                $processedNormalAnswers[] = [
-                    'question_id' => $question->id,
-                    'normal_answer_text' => $normalAnswers->firstWhere('question_id', $question->id)['normal_answer_text'] ?? null,
-                ];
-            } catch (\Exception $e) {
-                \Log::error('Error processing normal answer: ' . $e->getMessage());
-                return []; // Return empty array on error
-            }
-        }
-
-        return $processedNormalAnswers;
-    }
 
     // Update the answer record in the database
     public function updateAnswerRecord($answer, $mcqAnswers, $creativeAnswers, $normalAnswers, $totalMarks, $correctCount)

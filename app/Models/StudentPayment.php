@@ -33,6 +33,7 @@ class StudentPayment extends Model
         return $this->belongsTo(Package::class, 'resource_id');
     }
 
+
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'student_id');
