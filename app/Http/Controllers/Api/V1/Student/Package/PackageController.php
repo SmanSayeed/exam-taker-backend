@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PackageIndexRequest;
 use App\Http\Resources\PackageStudentResource;
 use App\Models\Package;
+use App\Models\PackageCategory;
 use Illuminate\Http\JsonResponse;
 
 class PackageController extends Controller
@@ -41,6 +42,24 @@ class PackageController extends Controller
         return ApiResponseHelper::success(
             new PackageStudentResource($package),
             'Package retrieved successfully'
+        );
+    }
+
+    public function getPackageCategories(): JsonResponse
+    {
+        // Load package categories along with related models
+        $categories = PackageCategory::with([
+            'package',
+            'additionalPackageCategory'
+            //  => function ($query) {
+            //     $query->where('is_active', true); // Optional: Filter active categories
+            // },
+        ])->get();
+
+        // Return the response with categories
+        return ApiResponseHelper::success(
+            $categories,
+            'Package categories retrieved successfully'
         );
     }
 }

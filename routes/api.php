@@ -37,14 +37,13 @@ Route::prefix('admin')->group(function () {
     Route::post('/exam/create/{model_test_id}', [MTExaminationController::class, 'createExam']);
     Route::get('/model-test-exams/{model_test_id}', [MTExaminationController::class, 'getModelTestExams']);
 
-    Route::get('/model-test-exam-result-with-merit/{student_id}/{model_test_id}', [MTAnswerController::class, 'getStudentResult']);
 
-    Route::get('/model-test-all-students-exam-result/{model_test_id}', [MTAnswerController::class, 'getAllStudentsResult']);
 });
 
 Route::prefix('student')->group(function () {
 
-    /* for student */
+    /* for student package */
+     Route::get('/package-categories', [PackageController::class, 'getPackageCategories']);
 
     /* model test */
     Route::get('/model-test-exams/{model_test_id}', [MTExaminationController::class, 'getModelTestExams']);

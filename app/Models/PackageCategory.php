@@ -21,4 +21,9 @@ class PackageCategory extends Model
     {
         return $this->belongsTo(Package::class);
     }
+
+    public function additionalPackageCategory()
+    {
+        return $this->belongsTo(AdditionalPackageCategory::class, 'additional_package_category_id');
+    }
 }

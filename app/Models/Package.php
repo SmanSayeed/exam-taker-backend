@@ -57,5 +57,5 @@ class Package extends Model
         return $this->belongsToMany(Tag::class , 'package_tags');
     }
 
-    
+
 }
