@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin\Package;
 
 use App\Http\Controllers\Controller;
 use App\Models\Package;
+use App\Models\PackageCategory;
 use Illuminate\Http\Request;
 use App\Helpers\ApiResponseHelper;
 use App\Http\Requests\AttachPackageTagRequest;
@@ -27,10 +28,11 @@ class PackageController extends Controller
     public function index(PackageIndexRequest $request): JsonResponse
     {
         // Get per_page value from request or set default to 15
-        $perPage = $request->get('per_page', 15);
+        $perPage = $request->get('per_page', 15000000);
 
-        // Initialize the query
-        $query = Package::query();
+            // Initialize the query and add ordering
+        $query = Package::query()->orderBy('created_at', 'desc');
+
 
         // Check for filtering parameters
         if ($request->has('section_id')) {
@@ -278,4 +280,11 @@ class PackageController extends Controller
             return ApiResponseHelper::error('Failed to detach tag', 500, $e->getMessage());
         }
     }
+
+    public function getPackageCategories(){
+        $categories = PackageCategory::all();
+        return ApiResponseHelper::success($categories, 'Package categories retrieved successfully');
+    }
+
+
 }

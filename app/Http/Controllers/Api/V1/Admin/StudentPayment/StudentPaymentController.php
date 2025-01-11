@@ -13,12 +13,46 @@ use App\Models\StudentPayment;
 class StudentPaymentController extends Controller
 {
 
-    public function index(Request $request): JsonResponse
-    {
-        $perPage = $request->get('per_page', 15);
-        $studentPayments = StudentPayment::paginate($perPage);
-        return ApiResponseHelper::success(StudentPaymentAdminResource::collection($studentPayments), 'Transactions retrieved successfully');
-    }
+public function index(Request $request): JsonResponse
+{
+    // Retrieve 'per_page' value from the request, defaulting to 300
+    $perPage = $request->get('per_page', 300);
+
+    // Query the StudentPayment model, ordering by 'created_at' in descending order
+    $studentPayments = StudentPayment::orderBy('created_at', 'desc')->paginate($perPage);
+
+    // Format the data manually
+    $data = $studentPayments->map(function ($payment) {
+        return [
+            'id' => $payment->id,
+            'payment_method' => $payment->payment_method,
+            'mobile_number' => $payment->mobile_number,
+            'transaction_id' => $payment->transaction_id,
+            'amount' => $payment->amount,
+            'verified' => $payment->verified,
+            'verified_at' => $payment->verified_at,
+            'created_at' => $payment->created_at,
+            'updated_at' => $payment->updated_at,
+            'student_id' => $payment->student_id,
+            'resource_type' => $payment->resource_type,
+            'resource_id' => $payment->resource_id,
+            'package' => $payment->resource_type === 'package' ? ['id' => $payment->resource_id] : null,
+        ];
+    });
+
+    // Build the response with pagination details
+    return ApiResponseHelper::success([
+        'data' => $data,
+        'pagination' => [
+            'per_page' => $studentPayments->perPage(),
+            'total_pages' => $studentPayments->lastPage(),
+            'current_page' => $studentPayments->currentPage(),
+            'prev_page' => $studentPayments->previousPageUrl(),
+            'next_page' => $studentPayments->nextPageUrl(),
+            'last_page' => $studentPayments->lastPage(),
+        ],
+    ], 'Transactions retrieved successfully');
+}
 
     public function show(StudentPayment $student_payment): JsonResponse
     {
