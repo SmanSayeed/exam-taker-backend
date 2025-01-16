@@ -13,6 +13,7 @@ use App\Http\Controllers\Examination\ExaminationController;
 use App\Http\Controllers\Examination\MTAnswerController;
 use App\Http\Controllers\Examination\MTAnswerFileController;
 use App\Http\Controllers\Examination\MTExaminationController;
+use App\Http\Controllers\Examination\MTSubmissionController;
 use App\Http\Controllers\ExamQuotaSubscriptionController;
 
 use App\Http\Controllers\StudentController;
@@ -39,7 +40,8 @@ Route::prefix('admin')->group(function () {
     Route::post('/exam/create/{model_test_id}', [MTExaminationController::class, 'createExam']);
     Route::get('/model-test-exams/{model_test_id}', [MTExaminationController::class, 'getModelTestExams']);
 
-
+    Route::get('mt-submissions/{mt_id}/{exam_id}', [MTSubmissionController::class, 'getSubmissionsByExam']);
+    Route::get('mt-submissions/{mt_id}/{exam_id}/{student_id}', [MTSubmissionController::class, 'getStudentSubmission']);
 });
 
 Route::prefix('student')->group(function () {

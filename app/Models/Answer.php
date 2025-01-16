@@ -42,4 +42,10 @@ class Answer extends Model
     {
         return $this->belongsTo(Question::class, 'question_id');
     }
+
+    // Add this relationship
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 }
