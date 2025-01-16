@@ -42,6 +42,7 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
             'throw' => false,
+            'cdn_url' => env('CDN_URL', env('APP_URL').'/storage'),
         ],
 
         's3' => [

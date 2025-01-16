@@ -11,8 +11,10 @@ use App\Http\Controllers\Api\V1\Student\Package\PackageController;
 use App\Http\Controllers\Examination\AnswerController;
 use App\Http\Controllers\Examination\ExaminationController;
 use App\Http\Controllers\Examination\MTAnswerController;
+use App\Http\Controllers\Examination\MTAnswerFileController;
 use App\Http\Controllers\Examination\MTExaminationController;
 use App\Http\Controllers\ExamQuotaSubscriptionController;
+
 use App\Http\Controllers\StudentController;
 use App\Models\Package;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +43,9 @@ Route::prefix('admin')->group(function () {
 });
 
 Route::prefix('student')->group(function () {
+
+    Route::post('answer-files/upload', [MTAnswerFileController::class, 'upload']);
+    Route::get('answer-files/{examId}', [MTAnswerFileController::class, 'getFilesByExam']);
 
     /* for student package */
      Route::get('/package-categories', [PackageController::class, 'getPackageCategories']);

@@ -58,7 +58,6 @@ class MTAnswerController extends Controller
 
         $mcqAnswers = [];
         $creativeAnswers = $normalAnswers = null;
-        $uploadedFilePath = null;
 
         if ($examination->type == 'mcq') {
             [$mcqAnswers, $totalMarks, $correctCount] = $this->examService->processMcqAnswers(
@@ -73,31 +72,18 @@ class MTAnswerController extends Controller
         }
 
         if (in_array($examination->type, ['creative', 'normal'])) {
-            // Handle file upload
-            if ($request->hasFile('answer_file')) {
-                $file = $request->file('answer_file');
-                if ($file->isValid() && $file->extension() === 'pdf') {
-                    $fileName = sprintf(
-                        '%s_%s_%s_%s.pdf',
-                        $examination->type,
-                        $examination->name,
-                        $request->student_id,
-                        now()->format('Y_m_d_His')
-                    );
-                    $uploadedFilePath = $file->storeAs('answers', $fileName, 'public');
-                } else {
-                    return ApiResponseHelper::error('Invalid file uploaded. Only PDF files are allowed.', 400);
-                }
-            } else {
-                return ApiResponseHelper::error('No answer file uploaded.', 400);
+            $fileUrl = $request->input('file_url');
+
+            if (!$fileUrl) {
+                return ApiResponseHelper::error('File URL is required for creative/normal exams.', 400);
             }
 
             if ($examination->type == 'creative') {
-                $creativeAnswers = ['file_path' => $uploadedFilePath];
+                $creativeAnswers = ['file_url' => $fileUrl];
             }
 
             if ($examination->type == 'normal') {
-                $normalAnswers = ['file_path' => $uploadedFilePath];
+                $normalAnswers = ['file_url' => $fileUrl];
             }
         }
 
@@ -108,8 +94,7 @@ class MTAnswerController extends Controller
             $creativeAnswers,
             $normalAnswers,
             $totalMarks,
-            $correctCount,
-            $uploadedFilePath
+            $correctCount
         );
 
         // Prepare and return the success response
@@ -119,26 +104,23 @@ class MTAnswerController extends Controller
             $creativeAnswers,
             $normalAnswers,
             $totalMarks,
-            $correctCount,
-            $uploadedFilePath
+            $correctCount
         );
 
         return ApiResponseHelper::success($response, 'Exam finished successfully.');
+
     } catch (Exception $e) {
-        // Log the error details
         Log::error('Error finishing exam', [
             'message' => $e->getMessage(),
             'trace' => $e->getTraceAsString(),
             'request' => $request->all()
         ]);
 
-        // Return a generic error response
         return ApiResponseHelper::error('An error occurred while processing the exam.', 500, [
             'details' => $e->getMessage()
         ]);
     }
 }
-
 
 
 
