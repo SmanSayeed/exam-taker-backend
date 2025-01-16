@@ -37,6 +37,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(false)->nullable();
             $table->string('model_test_id')->nullable();
             $table->json('questions'); // JSON for storing question IDs
+            $table->boolean('is_reviewed')->nullable()->default(false);
             $table->softDeletes(); // For soft delete
             $table->timestamps();
         });

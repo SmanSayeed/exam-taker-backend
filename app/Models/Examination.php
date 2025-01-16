@@ -34,6 +34,7 @@ class Examination extends Model
         'is_optional',
         'is_active',
         'model_test_id',
+        'is_reviewed'
     ];
 
     protected $casts = [

@@ -12,18 +12,21 @@ class Answer extends Model
     protected $fillable = [
         'examination_id',
         'student_id',
-        'question_id',
-        'question_type',
+        'type',
         'is_answer_submitted',
         'is_exam_time_out',
         'mcq_answers',
         'creative_answers',
         'normal_answers',
-        'obtained_mark',
+        'total_marks',
+        'correct_count',
+        'total_questions_count',
         'exam_start_time',
         'submission_time',
         'is_second_timer',
         'status',
+        'comments',
+        'is_reviewed'  // Add this
     ];
 
     protected $casts = [

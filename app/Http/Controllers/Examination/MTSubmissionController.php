@@ -10,7 +10,9 @@ use App\Helpers\ApiResponseHelper;
 use App\Services\ExaminationService\MTExaminationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class MTSubmissionController extends Controller
 {
@@ -247,4 +249,154 @@ class MTSubmissionController extends Controller
             return ApiResponseHelper::error('An error occurred while retrieving the submission.', 500);
         }
     }
+
+
+    public function updateAnswerReview($mtId, $examId, $studentId, Request $request)
+{
+    try {
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'total_marks' => 'nullable|numeric|min:0',
+            'comments' => 'nullable|string|max:1000'
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponseHelper::error('Validation failed', 422, $validator->errors());
+        }
+
+        // Check if examination exists and belongs to the model test
+        $examination = Examination::where('id', $examId)
+            ->where('model_test_id', $mtId)
+            ->first();
+
+        if (!$examination) {
+            return ApiResponseHelper::error('Examination not found.', 404);
+        }
+
+        // Get the answer record
+        $answer = Answer::where('examination_id', $examId)
+            ->where('student_id', $studentId)
+            ->first();
+
+        if (!$answer) {
+            return ApiResponseHelper::error('Answer record not found.', 404);
+        }
+
+        // Start transaction
+        DB::beginTransaction();
+
+        try {
+            // Update answer record
+            $updateData = [];
+
+            if ($request->has('total_marks')) {
+                $updateData['total_marks'] = $request->total_marks;
+                $updateData['is_reviewed'] = true;
+            }
+
+            if ($request->has('comments')) {
+                $updateData['comments'] = $request->comments;
+            }
+
+            if (!empty($updateData)) {
+                $answer->update($updateData);
+
+                // Check if all answers for this exam are reviewed
+                $totalAnswers = Answer::where('examination_id', $examId)
+                    ->where('is_answer_submitted', true)
+                    ->count();
+
+                $reviewedAnswers = Answer::where('examination_id', $examId)
+                    ->where('is_answer_submitted', true)
+                    ->where('is_reviewed', true)
+                    ->count();
+            }
+
+            DB::commit();
+
+            return ApiResponseHelper::success([
+                'answer' => [
+                    'id' => $answer->id,
+                    'total_marks' => $answer->total_marks,
+                    'comments' => $answer->comments,
+                    'is_reviewed' => $answer->is_reviewed
+                ],
+                'examination' => [
+                    'id' => $examination->id,
+                    'is_reviewed' => $examination->is_reviewed
+                ]
+            ], 'Answer review updated successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+    } catch (\Exception $e) {
+        Log::error('Error updating answer review', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'mt_id' => $mtId,
+            'exam_id' => $examId,
+            'student_id' => $studentId,
+            'request' => $request->all()
+        ]);
+
+        return ApiResponseHelper::error(
+            'An error occurred while updating the answer review.',
+            500,
+            ['details' => $e->getMessage()]
+        );
+    }
+}
+
+public function updateExaminationReviewStatus($mtId, $examId, Request $request)
+{
+    try {
+        // Validation
+        $validator = Validator::make($request->all(), [
+            'is_reviewed' => 'required|boolean'
+        ]);
+
+        if ($validator->fails()) {
+            return ApiResponseHelper::error('Validation failed', 422, $validator->errors());
+        }
+
+        // Check if examination exists and belongs to the model test
+        $examination = Examination::where('id', $examId)
+            ->where('model_test_id', $mtId)
+            ->first();
+
+        if (!$examination) {
+            return ApiResponseHelper::error('Examination not found.', 404);
+        }
+
+        // Update examination review status
+        $examination->is_reviewed = $request->is_reviewed;
+        $examination->save();
+
+        return ApiResponseHelper::success([
+            'examination' => [
+                'id' => $examination->id,
+                'title' => $examination->title,
+                'is_reviewed' => $examination->is_reviewed
+            ]
+        ], 'Examination review status updated successfully');
+
+    } catch (\Exception $e) {
+        Log::error('Error updating examination review status', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'mt_id' => $mtId,
+            'exam_id' => $examId,
+            'request' => $request->all()
+        ]);
+
+        return ApiResponseHelper::error(
+            'An error occurred while updating examination review status.',
+            500,
+            ['details' => $e->getMessage()]
+        );
+    }
+}
 }

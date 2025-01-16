@@ -30,6 +30,7 @@ return new class extends Migration
             $table->boolean('is_second_timer')->default(false)->nullable(); // For admission test
             $table->boolean('status')->default(true); // Managed by admin
             $table->longText('comments')->nullable();
+            $table->boolean('is_reviewed')->nullable()->default(false);
             $table->softDeletes(); // For soft delete
             $table->timestamps();
         });

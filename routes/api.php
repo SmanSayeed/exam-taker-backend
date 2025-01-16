@@ -42,6 +42,9 @@ Route::prefix('admin')->group(function () {
 
     Route::get('mt-submissions/{mt_id}/{exam_id}', [MTSubmissionController::class, 'getSubmissionsByExam']);
     Route::get('mt-submissions/{mt_id}/{exam_id}/{student_id}', [MTSubmissionController::class, 'getStudentSubmission']);
+    Route::put('mt-submissions/{mt_id}/{exam_id}/{student_id}', [MTSubmissionController::class, 'updateAnswerReview']);
+
+    Route::put('mt-submissions-review/{mt_id}/{exam_id}', [MTSubmissionController::class, 'updateExaminationReviewStatus']);
 });
 
 Route::prefix('student')->group(function () {
