@@ -215,4 +215,6 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    'maximum_free_exam' => env('MAXIMUM_FREE_EXAM', 10),
+
 ];

@@ -22,6 +22,8 @@ class StudentResource extends JsonResource
             'active_status' => $this->active_status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'exams_count' => $this->exams_count,
+            'paid_exam_quota' => $this->paid_exam_quota,
         ];
     }
 }

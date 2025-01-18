@@ -27,7 +27,7 @@ class ExaminationController extends Controller
     public function startExam(StartExamRequest $request)
     {
         $validatedData = $request->validated();
-        $maximum_free_exam = 2;
+        $maximum_free_exam = config('app.maximum_free_exam', 2);
 
         if ($request->created_by_role != "student") {
             return response()->json(['error' => 'Only students can start an exam'], 400);

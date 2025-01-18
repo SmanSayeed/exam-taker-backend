@@ -25,6 +25,14 @@ use App\Http\Controllers\StorageController;
 Route::get('link-storage', [StorageController::class, 'linkStorage']);
 
 
+Route::get('/student/config/maximum-free-exam', function() {
+    return response()->json([
+
+            'maximum_free_exam' => config('app.maximum_free_exam', 2)
+       ]);
+});
+
+
 Route::get('/swagger.json', function () {
     Generator::scan([app_path(),])->toJson();
 });
