@@ -20,7 +20,7 @@ class ModelTestController extends Controller
 {
     public function index(ModelTestIndexRequest $request): JsonResponse
     {
-        $perPage = $request->get('per_page', 15);
+        $perPage = $request->get('per_page', 1500000);
         $query = ModelTest::with('modelTestCategory');
 
         // Dynamically apply filters for category fields if provided
@@ -33,7 +33,8 @@ class ModelTestController extends Controller
             }
         }
 
-        $modelTests = $query->paginate($perPage);
+        // Add orderBy clause for created_at in descending order
+        $modelTests = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
         return ApiResponseHelper::success(
             ModelTestResource::collection($modelTests),

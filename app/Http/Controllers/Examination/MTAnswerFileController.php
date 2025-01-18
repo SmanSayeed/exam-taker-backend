@@ -48,12 +48,12 @@ class MTAnswerFileController extends Controller
 
             // Check exam time
             $now = Carbon::now();
-            if ($now->lt($examination->start_time)) {
-                return ApiResponseHelper::error('The exam has not started yet.', 403);
-            }
-            if ($now->gt($examination->end_time)) {
-                return ApiResponseHelper::error('The exam has already ended.', 403);
-            }
+            // if ($now->lt($examination->start_time)) {
+            //     return ApiResponseHelper::error('The exam has not started yet.', 403);
+            // }
+            // if ($now->gt($examination->end_time)) {
+            //     return ApiResponseHelper::error('The exam has already ended.', 403);
+            // }
 
             // Check if answer exists and is submitted
             $answer = Answer::where('examination_id', $request->exam_id)

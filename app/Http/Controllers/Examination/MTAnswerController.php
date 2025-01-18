@@ -39,14 +39,14 @@ class MTAnswerController extends Controller
         }
 
         // Check if exam has started
-        if (Carbon::now()->lt($examination->start_time)) {
-            return ApiResponseHelper::error('The exam has not started yet.', 403);
-        }
+        // if (Carbon::now()->lt($examination->start_time)) {
+        //     return ApiResponseHelper::error('The exam has not started yet.', 403);
+        // }
 
-        // Check if exam time has ended
-        if (Carbon::now()->gt($examination->end_time)) {
-            return ApiResponseHelper::error('The exam has already ended.', 403);
-        }
+        // // Check if exam time has ended
+        // if (Carbon::now()->gt($examination->end_time)) {
+        //     return ApiResponseHelper::error('The exam has already ended.', 403);
+        // }
 
         if (!$examination->is_active) {
             return ApiResponseHelper::error('This examination is disabled.', 403);
@@ -136,9 +136,9 @@ class MTAnswerController extends Controller
         $modelTestEndTimeWithBuffer = Carbon::parse($modelTest->end_time)->addMinute();
 
         // If the current time is before the adjusted end time, show an error
-        if ($currentTime->lessThan($modelTestEndTimeWithBuffer)) {
-            return ApiResponseHelper::error('Examination time is not yet over. Results cannot be viewed now.', 400);
-        }
+        // if ($currentTime->lessThan($modelTestEndTimeWithBuffer)) {
+        //     return ApiResponseHelper::error('Examination time is not yet over. Results cannot be viewed now.', 400);
+        // }
 
 
             // Fetch examinations related to the model test
@@ -180,6 +180,7 @@ class MTAnswerController extends Controller
                         'wrong_answers' => $totalQuestions - $correctAnswers,
                         'total_questions' => $totalQuestions,
                         'answers' => $answers,
+                        'is_exam_reviewed'=> $examination->is_reviewed
                     ];
                 }
             }
@@ -278,6 +279,7 @@ public function getAllStudentsResult(Request $request, $modelTestId)
                     'wrong_answers' => $totalQuestions - $correctAnswers,
                     'total_questions' => $totalQuestions,
                     'answers' => $answer,
+                    'is_exam_reviewed'=> $examination->is_reviewed
                 ];
             }
         }
