@@ -6,6 +6,23 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class StudentResource extends JsonResource
 {
+    public static function collection($resource)
+    {
+        return [
+            'data' => $resource->map(function ($item) {
+                return new static($item);
+            }),
+            'pagination' => [
+                'per_page' => $resource->perPage(),
+                'total_pages' => $resource->lastPage(),
+                'current_page' => $resource->currentPage(),
+                'prev_page' => $resource->previousPageUrl(),
+                'next_page' => $resource->nextPageUrl(),
+                'total_data' => $resource->total(),
+            ],
+        ];
+    }
+
     public function toArray($request)
     {
         return [
