@@ -53,6 +53,11 @@ Route::prefix('admin')->group(function () {
     Route::put('mt-submissions/{mt_id}/{exam_id}/{student_id}', [MTSubmissionController::class, 'updateAnswerReview']);
 
     Route::put('mt-submissions-review/{mt_id}/{exam_id}', [MTSubmissionController::class, 'updateExaminationReviewStatus']);
+
+
+    Route::get('/model-test-exam-result-with-merit/{student_id}/{model_test_id}', [MTAnswerController::class, 'getStudentResult']);
+
+    Route::get('/model-test-all-students-exam-result/{model_test_id}', [MTAnswerController::class, 'getAllStudentsResult']);
 });
 
 Route::prefix('student')->group(function () {

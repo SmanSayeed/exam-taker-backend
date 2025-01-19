@@ -7,10 +7,12 @@ use App\Http\Requests\FinishMTExamRequest;
 use App\Models\Answer;
 use App\Models\Examination;
 use App\Models\ModelTest;
+use App\Models\Question;
 use App\Models\Student;
 use App\Services\ExaminationService\MTExaminationService;
 use App\Helpers\ApiResponseHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
 use Carbon\Carbon;
@@ -123,98 +125,174 @@ class MTAnswerController extends Controller
 }
 
 
+public function getStudentResult(Request $request, $studentId, $modelTestId)
+{
+    try {
+        // First check if the student exists
+        $student = Student::find($studentId);
+        if (!$student) {
+            return ApiResponseHelper::error("Student not found", 404);
+        }
 
-    public function getStudentResult(Request $request, $modelTestId, $studentId)
-    {
-        try {
-            // Fetch student and model test details
-            $modelTest = ModelTest::findOrFail($modelTestId);
-            $student = Student::findOrFail($studentId);
+        // Then check if the model test exists
+        $modelTest = ModelTest::find($modelTestId);
+        if (!$modelTest) {
+            return ApiResponseHelper::error("Model test not found", 404);
+        }
 
-             // Check if the model test is finished based on the end_time (with 1 minute buffer)
-        $currentTime = Carbon::now();
-        $modelTestEndTimeWithBuffer = Carbon::parse($modelTest->end_time)->addMinute();
+        // Fetch examinations related to the model test
+        $examinations = Examination::where('model_test_id', $modelTestId)->get();
 
-        // If the current time is before the adjusted end time, show an error
-        // if ($currentTime->lessThan($modelTestEndTimeWithBuffer)) {
-        //     return ApiResponseHelper::error('Examination time is not yet over. Results cannot be viewed now.', 400);
-        // }
+        if ($examinations->isEmpty()) {
+            return ApiResponseHelper::error('No examinations found for this model test.', 404);
+        }
 
+        // Get all answers for this student
+        $answers = Answer::whereIn('examination_id', $examinations->pluck('id'))
+            ->where('student_id', $studentId)
+            ->get()
+            ->keyBy('examination_id');
 
-            // Fetch examinations related to the model test
-            $examinations = Examination::where('model_test_id', $modelTestId)->get();
+        if ($answers->isEmpty()) {
+            return ApiResponseHelper::error('No answers found for this student in this model test.', 404);
+        }
 
-            $allExaminationDetails = [];
-            $combinedResult = [
-                'total_obtained_marks' => 0,
-                'correct_answers' => 0,
-                'wrong_answers' => 0,
-                'skipped_questions' => 0,
-                'total_questions' => 0,
-            ];
+        $examinationDetails = [];
+        $totalMarks = 0;
 
-            foreach ($examinations as $examination) {
-                // Fetch answers for the student for this examination
-                $answers = Answer::where('examination_id', $examination->id)
-                    ->where('student_id', $studentId)
-                    ->first();
-
-                if ($answers) {
-                    // Calculate metrics for this examination
-                    $correctAnswers = $answers->correct_count ?? 0;
-                    $totalQuestions = $answers->total_questions_count ?? 0;
-                    $obtainedMarks = $answers->total_marks ?? 0;
-
-                    $combinedResult['total_obtained_marks'] += $obtainedMarks;
-                    $combinedResult['correct_answers'] += $correctAnswers;
-                    $combinedResult['total_questions'] += $totalQuestions;
-                    $combinedResult['wrong_answers'] += $totalQuestions - $correctAnswers - ($answers->is_answer_submitted ? 0 : 1);
-                    $combinedResult['skipped_questions'] += $answers->is_answer_submitted ? 0 : 1;
-
-                    $allExaminationDetails[] = [
-                        'examination_id' => $examination->id,
-                        'title' => $examination->title,
-                        'type' => $examination->type,
-                        'obtained_marks' => $obtainedMarks,
-                        'correct_answers' => $correctAnswers,
-                        'wrong_answers' => $totalQuestions - $correctAnswers,
-                        'total_questions' => $totalQuestions,
-                        'answers' => $answers,
-                        'is_exam_reviewed'=> $examination->is_reviewed
-                    ];
-                }
+        foreach ($examinations as $examination) {
+            $answer = $answers->get($examination->id);
+            if (!$answer) {
+                continue;
             }
 
-            // Fetch all students for merit list
-            $studentsAnswers = Answer::whereIn('examination_id', $examinations->pluck('id'))
-                ->groupBy('student_id')
-                ->selectRaw('student_id, SUM(total_marks) as total_marks')
-                ->orderBy('total_marks', 'desc')
-                ->get();
+            // Get questions details
+            $questionIds = explode(',', $examination->questions);
+            $questions = Question::whereIn('id', $questionIds)
+                ->with(['mcqQuestions', 'creativeQuestions'])
+                ->get()
+                ->map(function ($question) use ($answer) {
+                    $questionData = [
+                        'id' => $question->id,
+                        'title' => $question->title,
+                        'description' => $question->description,
+                        'type' => $question->type,
+                        'mark' => $question->mark,
+                        'images' => $question->images,
+                        'tags' => $question->tags
+                    ];
 
-            $meritList = $studentsAnswers->pluck('student_id')->toArray();
-            $studentRank = array_search($studentId, $meritList) + 1;
+                    // Add type-specific question details and student answers
+                    if ($question->type === 'mcq') {
+                        $questionData['mcq_options'] = $question->mcqQuestions;
+                        if (!empty($answer->mcq_answers)) {
+                            $studentAnswer = collect($answer->mcq_answers)
+                                ->firstWhere('question_id', $question->id);
+                            if ($studentAnswer) {
+                                $questionData['student_answer'] = $studentAnswer;
+                            }
+                        }
+                    } elseif ($question->type === 'creative') {
+                        $questionData['creative_parts'] = $question->creativeQuestions;
+                        if (!empty($answer->creative_answers)) {
+                            $questionData['student_answer'] = $answer->creative_answers;
+                        }
+                    } elseif ($question->type === 'normal') {
+                        if (!empty($answer->normal_answers)) {
+                            $questionData['student_answer'] = $answer->normal_answers;
+                        }
+                    }
 
-            // Build response data
-            $response = [
-                'student_details' => $student,
-                'model_test_details' => $modelTest,
-                'all_examination_details' => $allExaminationDetails,
-                'combined_result' => $combinedResult,
-                'student_result' => [
-                    'total_obtained_marks' => $combinedResult['total_obtained_marks'],
-                    'merit_rank' => $studentRank,
-                    'total_participants' => count($meritList),
-                ],
+                    return $questionData;
+                });
+
+            $examDetail = [
+                'examination_id' => $examination->id,
+                'title' => $examination->title,
+                'description' => $examination->description,
+                'type' => $examination->type,
+                'start_time' => $examination->start_time,
+                'end_time' => $examination->end_time,
+                'time_limit' => $examination->time_limit,
+                'is_negative_mark_applicable' => $examination->is_negative_mark_applicable,
+                'is_optional' => $examination->is_optional,
+                'is_active' => $examination->is_active,
+                'obtained_marks' => $answer->total_marks ?? 0,
+                'correct_answers' => $answer->correct_count ?? 0,
+                'total_questions' => count($questionIds),
+                'submission_time' => $answer->submission_time,
+                'is_answer_submitted' => $answer->is_answer_submitted,
+                'is_exam_time_out' => $answer->is_exam_time_out,
+                'exam_start_time' => $answer->exam_start_time,
+                'is_reviewed' => $examination->is_reviewed,
+                'questions' => $questions
             ];
 
-            return ApiResponseHelper::success('Student result fetched successfully', $response);
-        } catch (\Exception $e) {
-            Log::error('Error fetching student result: ' . $e->getMessage());
-            return ApiResponseHelper::error('Failed to fetch student result', 500);
+            $examinationDetails[] = $examDetail;
+            $totalMarks += $answer->total_marks ?? 0;
         }
-    }
 
+        // Calculate merit position using DB transaction for consistency
+        $meritPosition = DB::transaction(function () use ($examinations, $studentId) {
+            return Answer::whereIn('examination_id', $examinations->pluck('id'))
+                ->groupBy('student_id')
+                ->select('student_id', DB::raw('SUM(total_marks) as total_marks'))
+                ->orderByDesc('total_marks')
+                ->get()
+                ->search(function($item) use ($studentId) {
+                    return $item->student_id == $studentId;
+                }) + 1;
+        });
+
+        $totalParticipants = Answer::whereIn('examination_id', $examinations->pluck('id'))
+            ->distinct('student_id')
+            ->count('student_id');
+
+        $response = [
+            'student_details' => [
+                'id' => $student->id,
+                'name' => $student->name,
+                'email' => $student->email,
+                'phone' => $student->phone,
+                'profile_image' => $student->profile_image,
+                'section_id' => $student->section_id,
+                'active_status' => $student->active_status,
+                'exams_count' => $student->exams_count
+            ],
+            'model_test_details' => [
+                'id' => $modelTest->id,
+                'title' => $modelTest->title,
+                'description' => $modelTest->description,
+                'start_time' => $modelTest->start_time,
+                'end_time' => $modelTest->end_time,
+                'status' => $modelTest->status
+            ],
+            'examination_details' => $examinationDetails,
+            'result_summary' => [
+                'total_marks' => $totalMarks,
+                'merit_position' => $meritPosition,
+                'total_participants' => $totalParticipants
+            ]
+        ];
+
+        return ApiResponseHelper::success('Student result fetched successfully', $response);
+
+    } catch (\Exception $e) {
+        Log::error('Error fetching student result: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString(),
+            'model_test_id' => $modelTestId,
+            'student_id' => $studentId
+        ]);
+
+        // Return a more specific error message based on the exception
+        $errorMessage = 'Failed to fetch student result';
+        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+            $errorMessage = 'Student or model test not found';
+        }
+
+        return ApiResponseHelper::error($errorMessage, 500);
+    }
+}
 public function getAllStudentsResult(Request $request, $modelTestId)
 {
     try {
@@ -224,92 +302,138 @@ public function getAllStudentsResult(Request $request, $modelTestId)
         // Fetch all examinations related to the model test
         $examinations = Examination::where('model_test_id', $modelTestId)->get();
 
-        // Check if the model test is finished based on the end_time (with 1-minute buffer)
-        $currentTime = Carbon::now();
-        $modelTestEndTimeWithBuffer = Carbon::parse($modelTest->end_time)->addMinute();
+        // Get all valid student IDs who have answers for this model test's examinations
+        $studentIds = Answer::whereIn('examination_id', $examinations->pluck('id'))
+            ->distinct('student_id')
+            ->pluck('student_id');
 
-        // If the current time is before the adjusted end time, show an error
-        if ($currentTime->lessThan($modelTestEndTimeWithBuffer)) {
-            return ApiResponseHelper::error('Examination time is not yet over. Results cannot be viewed now.', 400);
-        }
+        // Fetch all relevant students in one query
+        $students = Student::whereIn('id', $studentIds)
+            ->get()
+            ->keyBy('id');
 
-        $combinedResults = [];
-        $allExaminationDetails = [];
         $studentsResults = [];
 
         foreach ($examinations as $examination) {
-            // Fetch all answers for the current examination
-            $answers = Answer::where('examination_id', $examination->id)->get();
+            // Get questions details once for the examination
+            $questionIds = explode(',', $examination->questions);
+            $questions = Question::whereIn('id', $questionIds)
+                ->with(['mcqQuestions', 'creativeQuestions'])
+                ->get();
+
+            // Fetch all answers for this examination
+            $answers = Answer::where('examination_id', $examination->id)
+                ->whereIn('student_id', $studentIds)
+                ->get();
 
             foreach ($answers as $answer) {
-                $student = Student::find($answer->student_id);
-                if (!$student) continue;
+                // Skip if student doesn't exist
+                if (!isset($students[$answer->student_id])) {
+                    continue;
+                }
 
-                // Initialize student's result data
+                $student = $students[$answer->student_id];
+
                 if (!isset($studentsResults[$answer->student_id])) {
                     $studentsResults[$answer->student_id] = [
-                        'student_details' => $student,
-                        'total_obtained_marks' => 0,
-                        'correct_answers' => 0,
-                        'wrong_answers' => 0,
-                        'skipped_questions' => 0,
-                        'total_questions' => 0,
-                        'examinations' => [],
+                        'student_details' => [
+                            'id' => $student->id,
+                            'name' => $student->name,
+                            'email' => $student->email,
+                            'phone' => $student->phone,
+                            'profile_image' => $student->profile_image,
+                            'section_id' => $student->section_id,
+                            'active_status' => $student->active_status
+                        ],
+                        'total_marks' => 0,
+                        'examinations' => []
                     ];
                 }
 
-                // Calculate metrics for this examination for the student
-                $correctAnswers = $answer->correct_count ?? 0;
-                $totalQuestions = $answer->total_questions_count ?? 0;
-                $obtainedMarks = $answer->total_marks ?? 0;
+                // Map questions with student answers
+                $questionDetails = $questions->map(function ($question) use ($answer) {
+                    $questionData = [
+                        'id' => $question->id,
+                        'title' => $question->title,
+                        'description' => $question->description,
+                        'type' => $question->type,
+                        'mark' => $question->mark
+                    ];
 
-                $studentsResults[$answer->student_id]['total_obtained_marks'] += $obtainedMarks;
-                $studentsResults[$answer->student_id]['correct_answers'] += $correctAnswers;
-                $studentsResults[$answer->student_id]['total_questions'] += $totalQuestions;
-                $studentsResults[$answer->student_id]['wrong_answers'] += $totalQuestions - $correctAnswers - ($answer->is_answer_submitted ? 0 : 1);
-                $studentsResults[$answer->student_id]['skipped_questions'] += $answer->is_answer_submitted ? 0 : 1;
+                    if ($question->type === 'mcq') {
+                        $questionData['mcq_options'] = $question->mcqQuestions;
+                        if (!empty($answer->mcq_answers)) {
+                            $studentAnswer = collect($answer->mcq_answers)
+                                ->firstWhere('question_id', $question->id);
+                            if ($studentAnswer) {
+                                $questionData['student_answer'] = $studentAnswer;
+                            }
+                        }
+                    } elseif ($question->type === 'creative') {
+                        $questionData['creative_parts'] = $question->creativeQuestions;
+                        if (!empty($answer->creative_answers)) {
+                            $questionData['student_answer'] = $answer->creative_answers;
+                        }
+                    } elseif ($question->type === 'normal') {
+                        if (!empty($answer->normal_answers)) {
+                            $questionData['student_answer'] = $answer->normal_answers;
+                        }
+                    }
 
-                // Save the examination details for each student
+                    return $questionData;
+                });
+
+                // Add examination details to student's result
                 $studentsResults[$answer->student_id]['examinations'][] = [
                     'examination_id' => $examination->id,
                     'title' => $examination->title,
                     'type' => $examination->type,
-                    'obtained_marks' => $obtainedMarks,
-                    'correct_answers' => $correctAnswers,
-                    'wrong_answers' => $totalQuestions - $correctAnswers,
-                    'total_questions' => $totalQuestions,
-                    'answers' => $answer,
-                    'is_exam_reviewed'=> $examination->is_reviewed
+                    'obtained_marks' => $answer->total_marks ?? 0,
+                    'correct_answers' => $answer->correct_count ?? 0,
+                    'total_questions' => count($questionIds),
+                    'submission_time' => $answer->submission_time,
+                    'is_answer_submitted' => $answer->is_answer_submitted,
+                    'is_exam_time_out' => $answer->is_exam_time_out,
+                    'exam_start_time' => $answer->exam_start_time,
+                    'is_reviewed' => $examination->is_reviewed,
+                    'questions' => $questionDetails
                 ];
+
+                $studentsResults[$answer->student_id]['total_marks'] += $answer->total_marks ?? 0;
             }
         }
 
-        // Sort students by total marks in descending order
-        $sortedStudents = collect($studentsResults)->sortByDesc(function ($studentResult) {
-            return $studentResult['total_obtained_marks'];
+        // Sort students by total marks and assign ranks
+        $sortedResults = collect($studentsResults)
+            ->sortByDesc('total_marks')
+            ->values();
+
+        // Add rank to each student
+        $rankedResults = $sortedResults->map(function ($result, $index) {
+            $result['merit_rank'] = $index + 1;
+            return $result;
         });
 
-        // Create merit list with rank position
-        $meritList = [];
-        $rank = 1;
-        foreach ($sortedStudents as $studentId => $studentResult) {
-            $studentResult['merit_rank'] = $rank++;
-            $studentsResults[$studentId] = $studentResult;
-            $meritList[] = $studentResult;  // Add student with rank to the merit list
-        }
-
-        // Build the response data
         $response = [
-            'model_test_details' => $modelTest,
-            'all_examination_details' => $allExaminationDetails,
-            'students_results' => $studentsResults,
-            'merit_list' => $meritList,
-            'total_participants' => count($studentsResults),
+            'model_test_details' => [
+                'id' => $modelTest->id,
+                'title' => $modelTest->title,
+                'start_time' => $modelTest->start_time,
+                'end_time' => $modelTest->end_time,
+                'description' => $modelTest->description,
+                'status' => $modelTest->status
+            ],
+            'students_results' => $rankedResults,
+            'total_participants' => count($studentsResults)
         ];
 
-        return ApiResponseHelper::success('All students result fetched successfully', $response);
+        return ApiResponseHelper::success('All students results fetched successfully', $response);
+
     } catch (\Exception $e) {
-        Log::error('Error fetching all students results: ' . $e->getMessage());
+        Log::error('Error fetching all students results: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString(),
+            'model_test_id' => $modelTestId
+        ]);
         return ApiResponseHelper::error('Failed to fetch all students results', 500);
     }
 }
