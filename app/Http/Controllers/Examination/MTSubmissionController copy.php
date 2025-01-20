@@ -28,46 +28,73 @@ class MTSubmissionController extends Controller
     public function getSubmissionsByExam($mtId, $examId)
     {
         try {
-            // Get examination with questions
-            $examData = $this->examinationService->getExamById($examId);
-            if (!$examData || $examData['exam']->model_test_id != $mtId) {
-                return ApiResponseHelper::error('Examination not found.', 404);
-            }
+            // Get model test details first
+            $modelTest = ModelTest::findOrFail($mtId);
 
-            // Get all submitted answers
+            // Get examination
+            $examination = Examination::where('id', $examId)
+                ->where('model_test_id', $mtId)
+                ->firstOrFail();
+
+            // Get questions with their options
+            $questionIds = is_string($examination->questions) ?
+                explode(',', $examination->questions) :
+                $examination->questions;
+
+            $questions = Question::whereIn('id', $questionIds)
+                ->with(['mcqQuestions', 'creativeQuestions'])
+                ->get();
+
+            // Get all submitted answers with student details
             $answers = Answer::where('examination_id', $examId)
                 ->where('is_answer_submitted', true)
-                ->with(['student:id,name,email,phone,profile_image,section_id'])
+                ->with(['student:id,name,email,phone,profile_image,section_id,active_status'])
                 ->get();
 
             if ($answers->isEmpty()) {
                 return ApiResponseHelper::error('No submissions found for this exam.', 404);
             }
 
-            // Prepare examination data
-            $exam = $examData['exam'];
-            $questions = $examData['questions_list'];
-
             // Format response data
             $responseData = [
+                'model_test' => [
+                    'id' => $modelTest->id,
+                    'title' => $modelTest->title,
+                    'description' => $modelTest->description,
+                    'start_time' => $modelTest->start_time,
+                    'end_time' => $modelTest->end_time,
+                    'is_active' => $modelTest->is_active,
+                    'pass_mark' => $modelTest->pass_mark,
+                    'full_mark' => $modelTest->full_mark
+                ],
                 'examination' => [
-                    'id' => $exam->id,
-                    'title' => $exam->title,
-                    'description' => $exam->description,
-                    'type' => $exam->type,
-                    'start_time' => $exam->start_time,
-                    'end_time' => $exam->end_time,
-                    'time_limit' => $exam->time_limit,
-                    'is_negative_mark_applicable' => $exam->is_negative_mark_applicable,
-                    'total_questions' => $questions->count(),
+                    'id' => $examination->id,
+                    'title' => $examination->title,
+                    'description' => $examination->description,
+                    'type' => $examination->type,
+                    'start_time' => $examination->start_time,
+                    'end_time' => $examination->end_time,
+                    'student_ended_at' => $examination->student_ended_at,
+                    'time_limit' => $examination->time_limit,
+                    'is_negative_mark_applicable' => $examination->is_negative_mark_applicable,
+                    'is_optional' => $examination->is_optional,
+                    'is_active' => $examination->is_active,
+                    'is_reviewed' => $examination->is_reviewed,
+                    'section_id' => $examination->section_id,
+                    'exam_type_id' => $examination->exam_type_id,
+                    'exam_sub_type_id' => $examination->exam_sub_type_id,
+                    'subject_id' => $examination->subject_id,
+                    'lesson_id' => $examination->lesson_id,
+                    'topic_id' => $examination->topic_id,
+                    'sub_topic_id' => $examination->sub_topic_id,
+                    'total_questions' => count($questionIds),
                     'total_submissions' => $answers->count()
                 ],
-                'answers' => []
+                'submissions' => []
             ];
 
-            // Process each answer
             foreach ($answers as $answer) {
-                $answerData = [
+                $submissionData = [
                     'answer_id' => $answer->id,
                     'student' => [
                         'id' => $answer->student->id,
@@ -75,7 +102,8 @@ class MTSubmissionController extends Controller
                         'email' => $answer->student->email,
                         'phone' => $answer->student->phone,
                         'profile_image' => $answer->student->profile_image,
-                        'section_id' => $answer->student->section_id
+                        'section_id' => $answer->student->section_id,
+                        'active_status' => $answer->student->active_status
                     ],
                     'submission_details' => [
                         'exam_start_time' => $answer->exam_start_time,
@@ -85,56 +113,65 @@ class MTSubmissionController extends Controller
                         'correct_count' => $answer->correct_count,
                         'total_questions_count' => $answer->total_questions_count,
                         'status' => $answer->status,
-                        'comments' => $answer->comments
-                    ]
-                ];
-
-                // Add type-specific data
-                if ($exam->type === 'mcq') {
-                    $answerData['questions'] = $questions->map(function ($question) use ($answer) {
-                        $submittedAnswer = collect($answer->mcq_answers)->firstWhere('question_id', $question->id);
-
+                        'comments' => $answer->comments,
+                        'is_reviewed' => $answer->is_reviewed
+                    ],
+                    'questions' => $questions->map(function ($question) use ($answer, $examination) {
                         $questionData = [
                             'id' => $question->id,
+                            'title' => $question->title,
                             'description' => $question->description,
+                            'type' => $question->type,
                             'mark' => $question->mark,
-                            'options' => $question->mcqQuestions->map(function ($option) {
+                            'images' => $question->images,
+                            'tags' => $question->tags,
+                            'is_paid' => $question->is_paid,
+                            'is_featured' => $question->is_featured,
+                            'status' => $question->status
+                        ];
+
+                        if ($examination->type === 'mcq') {
+                            $questionData['mcq_options'] = $question->mcqQuestions->map(function ($option) {
                                 return [
                                     'id' => $option->id,
                                     'mcq_option_serial' => $option->mcq_option_serial,
-                                    'mcq_question_text' => $option->mcq_question_text,
+                                    'mcq_option_text' => $option->mcq_option_text,
                                     'is_correct' => $option->is_correct
                                 ];
-                            })
-                        ];
+                            });
 
-                        if ($submittedAnswer) {
-                            $questionData['submitted_answer'] = [
-                                'submitted_option' => $submittedAnswer['submitted_mcq_option'],
-                                'is_correct' => $submittedAnswer['is_submitted_correct'],
-                                'correct_option_serial' => $submittedAnswer['correct_option_serial']
-                            ];
+                            $submittedAnswer = collect($answer->mcq_answers)
+                                ->firstWhere('question_id', $question->id);
+                            if ($submittedAnswer) {
+                                $questionData['student_answer'] = [
+                                    'submitted_option' => $submittedAnswer['submitted_mcq_option'],
+                                    'is_correct' => $submittedAnswer['is_submitted_correct'],
+                                    'correct_option' => $submittedAnswer['correct_option_serial']
+                                ];
+                            }
+                        } elseif ($examination->type === 'creative') {
+                            $questionData['creative_parts'] = $question->creativeQuestions;
+                            if (!empty($answer->creative_answers)) {
+                                $questionData['student_answer'] = $answer->creative_answers;
+                            }
+                        } elseif ($examination->type === 'normal') {
+                            if (!empty($answer->normal_answers)) {
+                                $questionData['student_answer'] = $answer->normal_answers;
+                            }
                         }
 
                         return $questionData;
-                    });
-                } else {
-                    // For creative/normal type
-                    $answerData['questions'] = $questions->map(function ($question) {
-                        return [
-                            'id' => $question->id,
-                            'description' => $question->description,
-                            'mark' => $question->mark
-                        ];
-                    });
+                    })
+                ];
 
-                    // Add file information
+                // Add file information for creative/normal type
+                if ($examination->type !== 'mcq') {
                     $file = MTAnswerFile::where('student_id', $answer->student_id)
                         ->where('exam_id', $examId)
                         ->first();
 
                     if ($file) {
-                        $answerData['submitted_file'] = [
+                        $submissionData['submitted_file'] = [
                             'file_url' => $file->file_url,
                             'cdn_url' => config('filesystems.disks.public.cdn_url', config('app.url').'/storage') . '/' .
                                 ltrim(str_replace('/storage/', '', $file->file_url), '/'),
@@ -142,16 +179,9 @@ class MTSubmissionController extends Controller
                             'uploaded_at' => $file->created_at
                         ];
                     }
-
-                    // Add type-specific answers
-                    if ($exam->type === 'creative') {
-                        $answerData['creative_answers'] = $answer->creative_answers;
-                    } else {
-                        $answerData['normal_answers'] = $answer->normal_answers;
-                    }
                 }
 
-                $responseData['answers'][] = $answerData;
+                $responseData['submissions'][] = $submissionData;
             }
 
             return ApiResponseHelper::success($responseData, 'Submissions retrieved successfully');
@@ -266,7 +296,7 @@ class MTSubmissionController extends Controller
                             return [
                                 'id' => $option->id,
                                 'mcq_option_serial' => $option->mcq_option_serial,
-                                'mcq_question_text' => $option->mcq_question_text,
+                                'mcq_option_text' => $option->mcq_option_text,
                                 'is_correct' => $option->is_correct
                             ];
                         });
