@@ -68,6 +68,9 @@ Route::prefix('student')->group(function () {
     /* for student package */
      Route::get('/package-categories', [PackageController::class, 'getPackageCategories']);
 
+
+     Route::get('/all-package-categories', [PackageController::class, 'getAllPackageCategories']);
+
     /* model test */
     Route::get('/model-test-exams/{model_test_id}', [MTExaminationController::class, 'getModelTestExams']);
 

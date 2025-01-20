@@ -6,6 +6,7 @@ use App\Helpers\ApiResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PackageIndexRequest;
 use App\Http\Resources\PackageStudentResource;
+use App\Models\AdditionalPackageCategory;
 use App\Models\Package;
 use App\Models\PackageCategory;
 use Illuminate\Http\JsonResponse;
@@ -57,6 +58,14 @@ class PackageController extends Controller
         ])->get();
 
         // Return the response with categories
+        return ApiResponseHelper::success(
+            $categories,
+            'Package categories retrieved successfully'
+        );
+    }
+
+    public function getAllPackageCategories(){
+        $categories = AdditionalPackageCategory::all();
         return ApiResponseHelper::success(
             $categories,
             'Package categories retrieved successfully'
